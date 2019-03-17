@@ -87,24 +87,36 @@ class Lexer(object):
 
     t_ignore        = ' \t\r\n\f\v'
     t_MCOM          = r'/\*(.|\n)*?\*/'
+    t_SCOM          = r'//.*'
     t_COMMA         = ','
     t_COL           = ':'
     t_SEMICOL       = ';'
+    t_DOT           = '.'
+
     t_MINUS         = r'-'
     t_MUL           = r'\*'
     t_DIV           = r'/'
     t_PLUS          = r'\+'
-    t_EQUAL         = '='
+
+    t_IS            = '='
+    t_EQUAL         = '=='
+    t_GEQ           = '>='
+    t_LEQ           = '<='
+    t_LT            = '<'
+    t_GT            = '>'
+    t_NEQ           = '!='
+    t_NOT           = '!'
+    t_OR            = r'\|\|'
+    t_AND           = r'\&\&'
+
+    t_LC            = r'\['
+    t_RC            = r'\]'
 
     t_LP            = r'\('
     t_RP            = r'\)'
+
     t_LB            = r'\{'
     t_RB            = r'\}'
-
-    t_NEQ           = '<>'
-    t_LT            = '<'
-    t_GT            = '>'
-    #Check if correct*
 
 
     def t_ID(self,t):
@@ -133,4 +145,4 @@ class Lexer(object):
  # Build the lexer and try it out
 #m = Lexer()
 #m.build()           # Build the lexer
-#m.test("/* AOIDJNA980394U10IJRNASFD AOISDFBNASDJ */")
+#m.test("")
