@@ -10,42 +10,79 @@ class Lexer(object):
     # Reserved words
     reserved = {
     'program'   : 'PROG',
-    'var'       : 'VAR',
     'if'        : 'IF',
     'else'      : 'ELSE',
+    'while'     : 'WHILE',
+    'input'     : 'INPUT',
     'print'     : 'PRINT',
+    'var'       : 'VAR',
+    'let'       : 'LET',
+    'function'  : 'FUNCTION',
+    'class'     : 'CLASS',
+    'return'    : 'RETURN',
+    'init'      : 'INIT',
+    'main'      : 'MAIN',
     'int'       : 'INT',
     'float'     : 'FLOAT',
-    'cte.float' : 'CTE_F',
-    'cte.int'   : 'CTE_I',
-    'cte.string': 'CTE_S',
-
+    'bool'      : 'BOOL',
+    'true'      : 'TRUE',
+    'false'     : 'FALSE',
+    'find'      : 'FIND',
+    'append'    : 'APPEND',
+    'size'      : 'SIZE',
+    'emtpy'     : 'EMPTY',
+    'sort'      : 'SORT',
+    'pow'       : 'POW',
+    'ceil'      : 'CEIL',
+    'floor'     : 'FLOOR',
     }
 
+    #'cte.float' : 'CTE_F',
+    #'cte.int'   : 'CTE_I',
+    #'cte.string': 'CTE_S',
     # List of token names.
     tokens =[
     'ID',
+    'COL',
+    'DOT',
     'COMMA',
-    'NUMBER',
+    'SEMICOL',
+    # TO is ' -> '
+    'TO',
     'PLUS',
     'MINUS',
     'MUL',
     'DIV',
+    'AND',
+    'OR',
+    'NOT',
+    # IS is ' = '
+    'IS',
+    #Greater tan
+    'GT',
+    #Less tan
+    'LT',
+    # EQ is ' == '
     'EQUAL',
-    #Left/Right Parentesis
-    'LP',
-    'RP',
+    # Not Equal to
+    'NEQ',
+    # Greater or Equal To  ' >= '
+    'GEQ',
+    # Less or Equal To  ' >= '
+    'LEQ',
+    #Left/Right Corchet [ ]
+    'LC',
+    'RC',
     #Left/Right brackets
     'LB',
     'RB',
-    'COL',
-    'SEMICOL',
-    # Not Equal to
-    'NEQ',
-    #Less tan
-    'LT',
-    #Greater tan
-    'GT'
+    #Left/Right Parentesis
+    'LP',
+    'RP',
+    #Simple comment //
+    'SCOM',
+    #Multi line Comment /* */
+    'MCOM'
     ] + list(reserved.values())
 
     t_ignore        = ' \t\r\n\f\v'
@@ -66,16 +103,13 @@ class Lexer(object):
     t_NEQ           = '<>'
     t_LT            = '<'
     t_GT            = '>'
+    #Check if correct*
+    t_MCOM          = r'/\*[a-zA-Z_0-9]*\*/'
 
 
     def t_ID(self,t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = self.reserved.get(t.value, t.type)
-        return t
-
-    def t_NUMBER(self,t):
-        r'\d+'
-        t.value = int(t.value)
         return t
 
     # Error handling rule
@@ -96,7 +130,7 @@ class Lexer(object):
                 break
             print(tok)
 
-# # Build the lexer and try it out
-#m = Lexer()
-#m.build()           # Build the lexer
-#m.test("program Foo; { if (value > value) { } else { };}"#)     # Test it##
+ # Build the lexer and try it out
+m = Lexer()
+m.build()           # Build the lexer
+m.test("program Foo; { if (value > value) { } else { };}"#)     # Test it##
