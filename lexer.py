@@ -131,6 +131,6 @@ class Lexer(object):
             print(tok)
 
  # Build the lexer and try it out
-m = Lexer()
-m.build()           # Build the lexer
-m.test("/* AOIDJNA980394U10IJRNASFD AOISDFBNASDJ */")
+#m = Lexer()
+#m.build()           # Build the lexer
+#m.test("/* AOIDJNA980394U10IJRNASFD AOISDFBNASDJ */")
