@@ -86,6 +86,7 @@ class Lexer(object):
     ] + list(reserved.values())
 
     t_ignore        = ' \t\r\n\f\v'
+    t_MCOM          = r'/\*(.|\n)*?\*/'
     t_COMMA         = ','
     t_COL           = ':'
     t_SEMICOL       = ';'
@@ -104,7 +105,6 @@ class Lexer(object):
     t_LT            = '<'
     t_GT            = '>'
     #Check if correct*
-    t_MCOM          = r'/\*[a-zA-Z_0-9]*\*/'
 
 
     def t_ID(self,t):
@@ -133,4 +133,4 @@ class Lexer(object):
  # Build the lexer and try it out
 m = Lexer()
 m.build()           # Build the lexer
-m.test("program Foo; { if (value > value) { } else { };}"#)     # Test it##
+m.test("/* AOIDJNA980394U10IJRNASFD AOISDFBNASDJ */")
