@@ -3,6 +3,8 @@
 #
 # Luis Salomon Flores Ugalde
 # A00817435
+# Diego Contreras
+# A00817441
 # ------------------------------------------------------------
 import ply.lex as lex
 
