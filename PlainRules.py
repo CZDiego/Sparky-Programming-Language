@@ -1,21 +1,26 @@
 
 def p_program(p):
-    'program   : program_a program_b program_c main'
+    'program   : program_a program_c program_d main'
 
 def p_program_a(p):
     '''
-    program_a  : lets program_a
-    | clases program_a
+    program_a  : proram_b program_a
     | empty
     '''
 def p_program_b(p):
     '''
-    program_b  : var program_b
+    program_b  : let
+    | class
     | emtpy
     '''
 def p_program_c(p):
     '''
-    program_c  : function program_c
+    program_c  : var program_c
+    | emtpy
+    '''
+def p_program_d(p):
+    '''
+    program_d  : function program_d
     | emtpy
     '''
 # No definition for cte variables.
@@ -92,9 +97,11 @@ def p_function_block_b(p):
     | let
     | empty
     '''
+    
 def p_main(p):
-    ''
+    'main   : FUNCTION MAIN LP RP function_block'
 
+def p_class
 
 
 
