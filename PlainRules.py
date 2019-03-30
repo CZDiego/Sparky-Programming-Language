@@ -91,17 +91,62 @@ def p_function_block_a(p):
     function_block_a   : function_block_b function_block_a
     | empty
     '''
+# Possible change of name to neutral declaration
 def p_function_block_b(p):
     '''
     p_function_block_b : var
     | let
     | empty
     '''
-    
+
 def p_main(p):
     'main   : FUNCTION MAIN LP RP function_block'
 
-def p_class
+# class_a = optional ->  : id
+# class_b = optional ->  recursive(optional(private) var|let )
+# class_c = optional ->  recursive(init)
+# class_d = optional ->  recursive(optional(private)function)
+# class_e = optional -> private
+# class_f = mandatory -> var|let
+def p_class(p):
+    'class     : CLASS ID class_a LB class_b init class_c class_d RB'
+
+def p_class_a(p):
+    '''
+    class_a   : COL ID
+    | empty
+    '''
+
+def p_class_b(p):
+    '''
+    class_b : class_e class_f class_b
+    | empty
+    '''
+# TODO: No PRIVATE in Lexer!!!
+def p_class_e(p):
+    '''
+    class_e : PRIVATE
+    | empty
+    '''
+
+def p_class_f(p):
+    '''
+    class_f : var
+    | let
+    '''
+# first mandatory init already stablished
+def p_class_c(p):
+    '''
+    class_c : init class_c
+    | empty
+    '''
+# class_d = optional ->  recursive(optional(private)function)
+def p_class_d(p):
+    '''
+    class_d : class_e function p_class_d
+    | empty
+    '''
+
 
 
 
