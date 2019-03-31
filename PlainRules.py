@@ -244,6 +244,62 @@ def p_comparasion_b(p):
     | NEQ
     '''
 
+def p_exp(p):
+    'exp    : term exp_a'
+def p_exp_a(p):
+    '''
+    exp_a   : PLUS exp
+    | MINUS exp
+    | empty
+    '''
+
+def p_term(p):
+    'exp    : factor term_a'
+def p_term_a(p):
+    '''
+    term_a   : MUL term
+    | div term
+    | empty
+    '''
+
+def p_factor(p):
+    '''
+    factor  : LP expression RP
+    | factor_b var_cte
+    '''
+def p_factor_a(p):
+    '''
+    factor_a    : PLUS
+    | MINUS
+    | NOT
+    | empty
+    '''
+def p_var_cte(p):
+    '''
+    var_cte : ID array attribute
+    | ID LP call_params RP array attribute
+    | CTE_I
+    | CTE_F
+    | CTE_B
+    '''
+def p_array(p):
+    'array   : LC expression RC array_a'
+def p_array_a(p):
+    '''
+    array_a :  LC expression RC
+    | empty
+    '''
+
+def p_attribute(p):
+    'attribute   : DOT ID attribute_a'
+def p_attribute_a(p):
+    '''
+    attribute_a   : LP call_params RP
+    | empty
+    '''
+
+#no need for comment since lexer ignores it
+
 
 def p_empty(p):
     'empty :'
