@@ -11,6 +11,7 @@ import ply.lex as lex
 reservedWords = {
     'if'        : 'IF',
     'else'      : 'ELSE',
+    'elseif'    : 'ELSEIF',
     'while'     : 'WHILE',
     'input'     : 'INPUT',
     'print'     : 'PRINT',

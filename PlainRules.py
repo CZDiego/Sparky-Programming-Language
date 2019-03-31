@@ -218,7 +218,7 @@ def p_condition_b(p):
     '''
 
 def p_elseif(p):
-    'elseif : ELSE IF expression block'
+    'elseif : ELSEIF expression block'
 
 def p_else(p):
     'else   : ELSE block'

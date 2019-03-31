@@ -81,7 +81,7 @@ Rule 75    condition_a -> elseif condition_a
 Rule 76    condition_a -> empty
 Rule 77    condition_b -> else
 Rule 78    condition_b -> empty
-Rule 79    elseif -> ELSE IF expression block
+Rule 79    elseif -> ELSEIF expression block
 Rule 80    else -> ELSE block
 Rule 81    expression -> comparison expression_a
 Rule 82    expression_a -> AND expression
@@ -137,14 +137,15 @@ CTE_I                : 10 10 11 20 110
 CTE_S                : 65
 DIV                  : 100
 DOT                  : 116
-ELSE                 : 79 80
+ELSE                 : 80
+ELSEIF               : 79
 EQUAL                : 92
 FLOAT                : 15
 FUNCTION             : 25
 GEQ                  : 88
 GT                   : 90
 ID                   : 13 17 23 25 28 40 41 62 67 69 108 109 116
-IF                   : 74 79
+IF                   : 74
 INIT                 : 53
 INPUT                : 67
 INT                  : 14
@@ -2233,11 +2234,11 @@ state 157
     (74) condition -> IF expression block . condition_a condition_b
     (75) condition_a -> . elseif condition_a
     (76) condition_a -> . empty
-    (79) elseif -> . ELSE IF expression block
+    (79) elseif -> . ELSEIF expression block
     (119) empty -> .
 
-  ! shift/reduce conflict for ELSE resolved as shift
-    ELSE            shift and go to state 200
+    ELSEIF          shift and go to state 200
+    ELSE            reduce using rule 119 (empty -> .)
     PRINT           reduce using rule 119 (empty -> .)
     INPUT           reduce using rule 119 (empty -> .)
     ID              reduce using rule 119 (empty -> .)
@@ -2245,8 +2246,6 @@ state 157
     WHILE           reduce using rule 119 (empty -> .)
     RETURN          reduce using rule 119 (empty -> .)
     RB              reduce using rule 119 (empty -> .)
-
-  ! ELSE            [ reduce using rule 119 (empty -> .) ]
 
     condition_a                    shift and go to state 197
     elseif                         shift and go to state 198
@@ -2977,11 +2976,11 @@ state 198
     (75) condition_a -> elseif . condition_a
     (75) condition_a -> . elseif condition_a
     (76) condition_a -> . empty
-    (79) elseif -> . ELSE IF expression block
+    (79) elseif -> . ELSEIF expression block
     (119) empty -> .
 
-  ! shift/reduce conflict for ELSE resolved as shift
-    ELSE            shift and go to state 200
+    ELSEIF          shift and go to state 200
+    ELSE            reduce using rule 119 (empty -> .)
     PRINT           reduce using rule 119 (empty -> .)
     INPUT           reduce using rule 119 (empty -> .)
     ID              reduce using rule 119 (empty -> .)
@@ -2989,8 +2988,6 @@ state 198
     WHILE           reduce using rule 119 (empty -> .)
     RETURN          reduce using rule 119 (empty -> .)
     RB              reduce using rule 119 (empty -> .)
-
-  ! ELSE            [ reduce using rule 119 (empty -> .) ]
 
     elseif                         shift and go to state 198
     condition_a                    shift and go to state 227
@@ -3012,10 +3009,35 @@ state 199
 
 state 200
 
-    (79) elseif -> ELSE . IF expression block
+    (79) elseif -> ELSEIF . expression block
+    (81) expression -> . comparison expression_a
+    (85) comparison -> . exp comparison_a
+    (94) exp -> . term exp_a
+    (98) term -> . factor term_a
+    (102) factor -> . LP expression RP
+    (103) factor -> . factor_a var_cte
+    (104) factor_a -> . PLUS
+    (105) factor_a -> . MINUS
+    (106) factor_a -> . NOT
+    (107) factor_a -> . empty
+    (119) empty -> .
 
-    IF              shift and go to state 228
+    LP              shift and go to state 133
+    PLUS            shift and go to state 135
+    MINUS           shift and go to state 136
+    NOT             shift and go to state 137
+    ID              reduce using rule 119 (empty -> .)
+    CTE_I           reduce using rule 119 (empty -> .)
+    CTE_F           reduce using rule 119 (empty -> .)
+    CTE_B           reduce using rule 119 (empty -> .)
 
+    expression                     shift and go to state 228
+    comparison                     shift and go to state 129
+    exp                            shift and go to state 130
+    term                           shift and go to state 131
+    factor                         shift and go to state 132
+    factor_a                       shift and go to state 134
+    empty                          shift and go to state 138
 
 state 201
 
@@ -3208,6 +3230,7 @@ state 211
     PRIVATE         reduce using rule 32 (block -> LB block_a RB .)
     RB              reduce using rule 32 (block -> LB block_a RB .)
     FUNCTION        reduce using rule 32 (block -> LB block_a RB .)
+    ELSEIF          reduce using rule 32 (block -> LB block_a RB .)
     ELSE            reduce using rule 32 (block -> LB block_a RB .)
     PRINT           reduce using rule 32 (block -> LB block_a RB .)
     INPUT           reduce using rule 32 (block -> LB block_a RB .)
@@ -3464,35 +3487,12 @@ state 227
 
 state 228
 
-    (79) elseif -> ELSE IF . expression block
-    (81) expression -> . comparison expression_a
-    (85) comparison -> . exp comparison_a
-    (94) exp -> . term exp_a
-    (98) term -> . factor term_a
-    (102) factor -> . LP expression RP
-    (103) factor -> . factor_a var_cte
-    (104) factor_a -> . PLUS
-    (105) factor_a -> . MINUS
-    (106) factor_a -> . NOT
-    (107) factor_a -> . empty
-    (119) empty -> .
+    (79) elseif -> ELSEIF expression . block
+    (32) block -> . LB block_a RB
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LB              shift and go to state 145
 
-    expression                     shift and go to state 237
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    block                          shift and go to state 237
 
 state 229
 
@@ -3580,12 +3580,18 @@ state 236
 
 state 237
 
-    (79) elseif -> ELSE IF expression . block
-    (32) block -> . LB block_a RB
+    (79) elseif -> ELSEIF expression block .
 
-    LB              shift and go to state 145
+    ELSEIF          reduce using rule 79 (elseif -> ELSEIF expression block .)
+    ELSE            reduce using rule 79 (elseif -> ELSEIF expression block .)
+    PRINT           reduce using rule 79 (elseif -> ELSEIF expression block .)
+    INPUT           reduce using rule 79 (elseif -> ELSEIF expression block .)
+    ID              reduce using rule 79 (elseif -> ELSEIF expression block .)
+    IF              reduce using rule 79 (elseif -> ELSEIF expression block .)
+    WHILE           reduce using rule 79 (elseif -> ELSEIF expression block .)
+    RETURN          reduce using rule 79 (elseif -> ELSEIF expression block .)
+    RB              reduce using rule 79 (elseif -> ELSEIF expression block .)
 
-    block                          shift and go to state 242
 
 state 238
 
@@ -3594,7 +3600,7 @@ state 238
 
     LC              shift and go to state 127
 
-    array                          shift and go to state 243
+    array                          shift and go to state 242
 
 state 239
 
@@ -3642,28 +3648,14 @@ state 241
 
 state 242
 
-    (79) elseif -> ELSE IF expression block .
-
-    ELSE            reduce using rule 79 (elseif -> ELSE IF expression block .)
-    PRINT           reduce using rule 79 (elseif -> ELSE IF expression block .)
-    INPUT           reduce using rule 79 (elseif -> ELSE IF expression block .)
-    ID              reduce using rule 79 (elseif -> ELSE IF expression block .)
-    IF              reduce using rule 79 (elseif -> ELSE IF expression block .)
-    WHILE           reduce using rule 79 (elseif -> ELSE IF expression block .)
-    RETURN          reduce using rule 79 (elseif -> ELSE IF expression block .)
-    RB              reduce using rule 79 (elseif -> ELSE IF expression block .)
-
-
-state 243
-
     (109) var_cte -> ID LP call_params RP array . attribute
     (116) attribute -> . DOT ID attribute_a
 
     DOT             shift and go to state 152
 
-    attribute                      shift and go to state 244
+    attribute                      shift and go to state 243
 
-state 244
+state 243
 
     (109) var_cte -> ID LP call_params RP array attribute .
 
@@ -3685,8 +3677,3 @@ state 244
     COMMA           reduce using rule 109 (var_cte -> ID LP call_params RP array attribute .)
     RC              reduce using rule 109 (var_cte -> ID LP call_params RP array attribute .)
 
-WARNING: 
-WARNING: Conflicts:
-WARNING: 
-WARNING: shift/reduce conflict for ELSE in state 157 resolved as shift
-WARNING: shift/reduce conflict for ELSE in state 198 resolved as shift
