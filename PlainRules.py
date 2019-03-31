@@ -146,9 +146,103 @@ def p_class_d(p):
     class_d : class_e function p_class_d
     | empty
     '''
+def p_init(p):
+    'init   : INIT LP params RP block'
+
+def p_statute(p):
+    '''
+    statute : print
+    | input
+    | assignment
+    | condition
+    | loop
+    | call_function
+    | return
+    '''
+
+def p_return(p):
+    'return : RETURN expression SEMICOL'
+
+def p_assignement(p):
+    'assignment : ID array attribute IS expression SEMICOL'
+
+def p_print(p):
+    'print : PRINT LP print_a RP SEMICOL'
+def p_print_a(p):
+    '''
+    print_a : expression
+    | CTE_S
+    | emtpy
+    '''
+def p_input(p):
+    'input  : INPUT LP ID array attribute RP SEMICOL'
+
+def p_loop(p):
+    'loop   : WHILE expression block'
+
+def p_call_function(p):
+    'call_function  : ID LP call_params RP SEMICOL'
+
+def p_call_params(p):
+    '''
+    call_params    : expression call_params_a
+    | empty
+    '''
+def p_call_params_a(p):
+    '''
+    call_params_a  : COMMA expression call_params_a
+    | emtpy
+    '''
+def p_condition(p):
+    'condition  : IF expression block condition_a condition_b'
+
+def p_condition_b(p):
+    '''
+    condition_b : else
+    | empty
+    '''
+def p_condition_a(p):
+    '''
+    condition_a  : elseif condition_c
+    | empty
+    '''
+def p_condition_c(p):
+    '''
+    condition_a  : elseif condition_c
+    | empty
+    '''
+
+def p_else(p):
+    'else   : ELSE block'
+
+def p_elseif(p):
+    'elseif : ELSE IF expression block'
 
 
-
+def p_expression(p):
+    'expression : comparasion expression_a'
+def p_expression_a(p):
+    '''
+    expression_a    : AND expression
+    | OR expression
+    | empty
+    '''
+def p_comparasion(p):
+    'comparasion    : exp comparasion_a'
+def p_comparasion_a(p):
+    '''
+    comparasion_a  : comparasion_b exp
+    | empty
+    '''
+def p_comparasion_b(p):
+    '''
+    comparasion_b  : GEQ
+    | LEQ
+    | GT
+    | LT
+    | EQUAL
+    | NEQ
+    '''
 
 
 def p_empty(p):
