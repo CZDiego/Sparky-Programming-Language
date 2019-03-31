@@ -1,5 +1,13 @@
+# ------------------------------------------------------------
+# yacc.py
+#
+# Luis Salomon Flores Ugalde
+# A00817435
+# Diego Contreras
+# A00817441
+# ------------------------------------------------------------
 import ply.yacc as yacc
-from lexer import tokens
+from lex import tokens
 
 def p_program(p):
     'program   : program_a program_c program_d main'
@@ -228,8 +236,8 @@ def p_expression(p):
 
 def p_expression_a(p):
     '''
-    expression_a    : AND expression
-    | OR expression
+    expression_a    : AND comparison expression_a
+    | OR comparison
     | empty
     '''
 
@@ -238,7 +246,7 @@ def p_comparison(p):
 
 def p_comparison_a(p):
     '''
-    comparison_a  : comparison_b exp
+    comparison_a  : comparison_b exp comparison_a
     | empty
     '''
 def p_comparison_b(p):
@@ -256,8 +264,8 @@ def p_exp(p):
 
 def p_exp_a(p):
     '''
-    exp_a   : PLUS exp
-    | MINUS exp
+    exp_a   : PLUS term exp_a
+    | MINUS term exp_a
     | empty
     '''
 
@@ -265,8 +273,8 @@ def p_term(p):
     'term    : factor term_a'
 def p_term_a(p):
     '''
-    term_a   : MUL term
-    | DIV term
+    term_a   : MUL factor term_a
+    | DIV factor term_a
     | empty
     '''
 
@@ -291,7 +299,10 @@ def p_var_cte(p):
     | CTE_B
     '''
 def p_array(p):
-    'array   : LC expression RC array_a'
+    '''
+    array   : LC expression RC array_a
+    | empty
+    '''
 def p_array_a(p):
     '''
     array_a  : LC expression RC
@@ -299,7 +310,10 @@ def p_array_a(p):
     '''
 
 def p_attribute(p):
-    'attribute   : DOT ID attribute_a'
+    '''
+    attribute   : DOT ID attribute_a
+    | empty
+    '''
 def p_attribute_a(p):
     '''
     attribute_a   : LP call_params RP
@@ -322,7 +336,7 @@ def p_error(p):
 parser = yacc.yacc(start='program')
 
 
-with open("program.txt", "r") as inputFile:
+with open("program.sdfm", "r") as inputFile:
     data = inputFile.read()
 
 result = 0;

@@ -1,0 +1,52 @@
+let diego : Int = 5;
+
+class Person{
+
+	var age : Int;
+	var name : Float;
+
+	init(){
+
+	}
+
+	function getAge() -> Int{
+
+	}
+
+}
+
+var diego : Int; 
+var diego : Float; 
+var diego2 : Bool;
+
+function factorial(number : Int) -> Int{
+	return 1;
+}
+
+main(){
+
+	var person : Person;
+
+	while true {
+		a = a + b;
+	}
+
+	if a > b {
+		b = b * 2 / 2;
+
+	}elseif notEmpty{
+
+		a = variable;
+
+	}else{
+		diego = variable + true;
+	}
+
+	a = factorial(4);
+
+	a = person.getAge();
+
+	getAge();
+
+	return 0;
+}

@@ -1,5 +1,5 @@
 # ------------------------------------------------------------
-# lexer.py
+# lex.py
 #
 # Luis Salomon Flores Ugalde
 # A00817435
@@ -25,8 +25,6 @@ reservedWords = {
     'Int'       : 'INT',
     'Float'     : 'FLOAT',
     'Bool'      : 'BOOL',
-    #'true'      : 'TRUE',
-    #'false'     : 'FALSE',
     #'find'      : 'FIND',
     #'append'    : 'APPEND',
     #'size'      : 'SIZE',
@@ -128,7 +126,7 @@ def t_CTE_S(t):
     return t
 
 def t_CTE_B(t):
-    r'\"[a-zA-Z_0-9]*\"'
+    r'true|false'
     return t
 
 def t_ID(t):
@@ -154,8 +152,10 @@ lexer = lex.lex()
 
 """
 data = '''
-
-
+true
+falase
+false
+truefalse
 '''
  
 # Give the lexer some input

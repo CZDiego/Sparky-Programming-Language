@@ -84,11 +84,11 @@ Rule 78    condition_b -> empty
 Rule 79    elseif -> ELSEIF expression block
 Rule 80    else -> ELSE block
 Rule 81    expression -> comparison expression_a
-Rule 82    expression_a -> AND expression
-Rule 83    expression_a -> OR expression
+Rule 82    expression_a -> AND comparison expression_a
+Rule 83    expression_a -> OR comparison
 Rule 84    expression_a -> empty
 Rule 85    comparison -> exp comparison_a
-Rule 86    comparison_a -> comparison_b exp
+Rule 86    comparison_a -> comparison_b exp comparison_a
 Rule 87    comparison_a -> empty
 Rule 88    comparison_b -> GEQ
 Rule 89    comparison_b -> LEQ
@@ -97,12 +97,12 @@ Rule 91    comparison_b -> LT
 Rule 92    comparison_b -> EQUAL
 Rule 93    comparison_b -> NEQ
 Rule 94    exp -> term exp_a
-Rule 95    exp_a -> PLUS exp
-Rule 96    exp_a -> MINUS exp
+Rule 95    exp_a -> PLUS term exp_a
+Rule 96    exp_a -> MINUS term exp_a
 Rule 97    exp_a -> empty
 Rule 98    term -> factor term_a
-Rule 99    term_a -> MUL term
-Rule 100   term_a -> DIV term
+Rule 99    term_a -> MUL factor term_a
+Rule 100   term_a -> DIV factor term_a
 Rule 101   term_a -> empty
 Rule 102   factor -> LP expression RP
 Rule 103   factor -> factor_a var_cte
@@ -116,12 +116,14 @@ Rule 110   var_cte -> CTE_I
 Rule 111   var_cte -> CTE_F
 Rule 112   var_cte -> CTE_B
 Rule 113   array -> LC expression RC array_a
-Rule 114   array_a -> LC expression RC
-Rule 115   array_a -> empty
-Rule 116   attribute -> DOT ID attribute_a
-Rule 117   attribute_a -> LP call_params RP
-Rule 118   attribute_a -> empty
-Rule 119   empty -> <empty>
+Rule 114   array -> empty
+Rule 115   array_a -> LC expression RC
+Rule 116   array_a -> empty
+Rule 117   attribute -> DOT ID attribute_a
+Rule 118   attribute -> empty
+Rule 119   attribute_a -> LP call_params RP
+Rule 120   attribute_a -> empty
+Rule 121   empty -> <empty>
 
 Terminals, with rules where they appear
 
@@ -136,7 +138,7 @@ CTE_F                : 21 111
 CTE_I                : 10 10 11 20 110
 CTE_S                : 65
 DIV                  : 100
-DOT                  : 116
+DOT                  : 117
 ELSE                 : 80
 ELSEIF               : 79
 EQUAL                : 92
@@ -144,17 +146,17 @@ FLOAT                : 15
 FUNCTION             : 25
 GEQ                  : 88
 GT                   : 90
-ID                   : 13 17 23 25 28 40 41 62 67 69 108 109 116
+ID                   : 13 17 23 25 28 40 41 62 67 69 108 109 117
 IF                   : 74
 INIT                 : 53
 INPUT                : 67
 INT                  : 14
 IS                   : 18 23 62
 LB                   : 32 35 40
-LC                   : 10 10 11 113 114
+LC                   : 10 10 11 113 115
 LEQ                  : 89
 LET                  : 23
-LP                   : 24 25 53 63 67 69 102 109 117
+LP                   : 24 25 53 63 67 69 102 109 119
 LT                   : 91
 MAIN                 : 24
 MINUS                : 96 105
@@ -166,9 +168,9 @@ PLUS                 : 95 104
 PRINT                : 63
 PRIVATE              : 45
 RB                   : 32 35 40
-RC                   : 10 10 11 113 114
+RC                   : 10 10 11 113 115
 RETURN               : 61
-RP                   : 24 25 53 63 67 69 102 109 117
+RP                   : 24 25 53 63 67 69 102 109 119
 SEMICOL              : 17 23 61 62 63 67 69
 VAR                  : 17
 WHILE                : 68
@@ -181,11 +183,11 @@ array_a              : 113
 assignment           : 56
 atomic               : 10 11 12
 attribute            : 62 67 108 109
-attribute_a          : 116
+attribute_a          : 117
 block                : 53 68 74 79 80
 block_a              : 32 33 35
 call_function        : 59
-call_params          : 69 109 117
+call_params          : 69 109 119
 call_params_a        : 70 72
 class                : 5
 class_a              : 40
@@ -194,20 +196,20 @@ class_c              : 40 49
 class_d              : 40 51
 class_e              : 43 51
 class_f              : 43
-comparison           : 81
-comparison_a         : 85
+comparison           : 81 82 83
+comparison_a         : 85 86
 comparison_b         : 86
 condition            : 57
 condition_a          : 74 75
 condition_b          : 74
 else                 : 77
 elseif               : 75
-empty                : 3 7 9 19 27 29 31 34 37 42 44 46 50 52 66 71 73 76 78 84 87 97 101 107 115 118
-exp                  : 85 86 95 96
-exp_a                : 94
-expression           : 61 62 64 68 70 72 74 79 82 83 102 113 114
-expression_a         : 81
-factor               : 98
+empty                : 3 7 9 19 27 29 31 34 37 42 44 46 50 52 66 71 73 76 78 84 87 97 101 107 114 116 118 120
+exp                  : 85 86
+exp_a                : 94 95 96
+expression           : 61 62 64 68 70 72 74 79 102 113 115
+expression_a         : 81 82
+factor               : 98 99 100
 factor_a             : 103
 function             : 8 51
 function_a           : 25
@@ -230,8 +232,8 @@ program_c            : 1 6
 program_d            : 1 8
 return               : 60
 statute              : 33
-term                 : 94 99 100
-term_a               : 98
+term                 : 94 95 96
+term_a               : 98 99 100
 type                 : 17 23 26 28
 var                  : 6 38 47
 var_a                : 17
@@ -248,13 +250,13 @@ state 0
     (3) program_a -> . empty
     (4) program_b -> . let
     (5) program_b -> . class
-    (119) empty -> .
+    (121) empty -> .
     (23) let -> . LET ID COL type IS var_b SEMICOL
     (40) class -> . CLASS ID class_a LB class_b init class_c class_d RB
 
-    VAR             reduce using rule 119 (empty -> .)
-    FUNCTION        reduce using rule 119 (empty -> .)
-    MAIN            reduce using rule 119 (empty -> .)
+    VAR             reduce using rule 121 (empty -> .)
+    FUNCTION        reduce using rule 121 (empty -> .)
+    MAIN            reduce using rule 121 (empty -> .)
     LET             shift and go to state 7
     CLASS           shift and go to state 8
 
@@ -277,11 +279,11 @@ state 2
     (6) program_c -> . var program_c
     (7) program_c -> . empty
     (17) var -> . VAR ID COL type var_a SEMICOL
-    (119) empty -> .
+    (121) empty -> .
 
     VAR             shift and go to state 12
-    FUNCTION        reduce using rule 119 (empty -> .)
-    MAIN            reduce using rule 119 (empty -> .)
+    FUNCTION        reduce using rule 121 (empty -> .)
+    MAIN            reduce using rule 121 (empty -> .)
 
     program_c                      shift and go to state 9
     var                            shift and go to state 10
@@ -294,13 +296,13 @@ state 3
     (3) program_a -> . empty
     (4) program_b -> . let
     (5) program_b -> . class
-    (119) empty -> .
+    (121) empty -> .
     (23) let -> . LET ID COL type IS var_b SEMICOL
     (40) class -> . CLASS ID class_a LB class_b init class_c class_d RB
 
-    VAR             reduce using rule 119 (empty -> .)
-    FUNCTION        reduce using rule 119 (empty -> .)
-    MAIN            reduce using rule 119 (empty -> .)
+    VAR             reduce using rule 121 (empty -> .)
+    FUNCTION        reduce using rule 121 (empty -> .)
+    MAIN            reduce using rule 121 (empty -> .)
     LET             shift and go to state 7
     CLASS           shift and go to state 8
 
@@ -361,10 +363,10 @@ state 9
     (8) program_d -> . function program_d
     (9) program_d -> . empty
     (25) function -> . FUNCTION ID LP params RP function_a function_block
-    (119) empty -> .
+    (121) empty -> .
 
     FUNCTION        shift and go to state 19
-    MAIN            reduce using rule 119 (empty -> .)
+    MAIN            reduce using rule 121 (empty -> .)
 
     program_d                      shift and go to state 16
     function                       shift and go to state 17
@@ -376,11 +378,11 @@ state 10
     (6) program_c -> . var program_c
     (7) program_c -> . empty
     (17) var -> . VAR ID COL type var_a SEMICOL
-    (119) empty -> .
+    (121) empty -> .
 
     VAR             shift and go to state 12
-    FUNCTION        reduce using rule 119 (empty -> .)
-    MAIN            reduce using rule 119 (empty -> .)
+    FUNCTION        reduce using rule 121 (empty -> .)
+    MAIN            reduce using rule 121 (empty -> .)
 
     var                            shift and go to state 10
     program_c                      shift and go to state 20
@@ -422,10 +424,10 @@ state 15
     (40) class -> CLASS ID . class_a LB class_b init class_c class_d RB
     (41) class_a -> . COL ID
     (42) class_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     COL             shift and go to state 24
-    LB              reduce using rule 119 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
 
     class_a                        shift and go to state 23
     empty                          shift and go to state 25
@@ -445,10 +447,10 @@ state 17
     (8) program_d -> . function program_d
     (9) program_d -> . empty
     (25) function -> . FUNCTION ID LP params RP function_a function_block
-    (119) empty -> .
+    (121) empty -> .
 
     FUNCTION        shift and go to state 19
-    MAIN            reduce using rule 119 (empty -> .)
+    MAIN            reduce using rule 121 (empty -> .)
 
     function                       shift and go to state 17
     program_d                      shift and go to state 28
@@ -649,12 +651,12 @@ state 38
     (44) class_b -> . empty
     (45) class_e -> . PRIVATE
     (46) class_e -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     PRIVATE         shift and go to state 48
-    INIT            reduce using rule 119 (empty -> .)
-    VAR             reduce using rule 119 (empty -> .)
-    LET             reduce using rule 119 (empty -> .)
+    INIT            reduce using rule 121 (empty -> .)
+    VAR             reduce using rule 121 (empty -> .)
+    LET             reduce using rule 121 (empty -> .)
 
     class_b                        shift and go to state 45
     class_e                        shift and go to state 46
@@ -679,10 +681,10 @@ state 41
     (25) function -> FUNCTION ID LP . params RP function_a function_block
     (28) params -> . ID COL type params_a
     (29) params -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     ID              shift and go to state 50
-    RP              reduce using rule 119 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
 
     params                         shift and go to state 51
     empty                          shift and go to state 52
@@ -692,10 +694,10 @@ state 42
     (17) var -> VAR ID COL type . var_a SEMICOL
     (18) var_a -> . IS var_b
     (19) var_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     IS              shift and go to state 54
-    SEMICOL         reduce using rule 119 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
 
     var_a                          shift and go to state 53
     empty                          shift and go to state 55
@@ -870,12 +872,12 @@ state 61
     (49) class_c -> . init class_c
     (50) class_c -> . empty
     (53) init -> . INIT LP params RP block
-    (119) empty -> .
+    (121) empty -> .
 
     INIT            shift and go to state 62
-    PRIVATE         reduce using rule 119 (empty -> .)
-    RB              reduce using rule 119 (empty -> .)
-    FUNCTION        reduce using rule 119 (empty -> .)
+    PRIVATE         reduce using rule 121 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
+    FUNCTION        reduce using rule 121 (empty -> .)
 
     init                           shift and go to state 75
     class_c                        shift and go to state 76
@@ -895,12 +897,12 @@ state 63
     (44) class_b -> . empty
     (45) class_e -> . PRIVATE
     (46) class_e -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     PRIVATE         shift and go to state 48
-    INIT            reduce using rule 119 (empty -> .)
-    VAR             reduce using rule 119 (empty -> .)
-    LET             reduce using rule 119 (empty -> .)
+    INIT            reduce using rule 121 (empty -> .)
+    VAR             reduce using rule 121 (empty -> .)
+    LET             reduce using rule 121 (empty -> .)
 
     class_e                        shift and go to state 46
     class_b                        shift and go to state 79
@@ -940,17 +942,17 @@ state 67
     (37) function_block_a -> . empty
     (38) function_block_b -> . var
     (39) function_block_b -> . let
-    (119) empty -> .
+    (121) empty -> .
     (17) var -> . VAR ID COL type var_a SEMICOL
     (23) let -> . LET ID COL type IS var_b SEMICOL
 
-    PRINT           reduce using rule 119 (empty -> .)
-    INPUT           reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    IF              reduce using rule 119 (empty -> .)
-    WHILE           reduce using rule 119 (empty -> .)
-    RETURN          reduce using rule 119 (empty -> .)
-    RB              reduce using rule 119 (empty -> .)
+    PRINT           reduce using rule 121 (empty -> .)
+    INPUT           reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    IF              reduce using rule 121 (empty -> .)
+    WHILE           reduce using rule 121 (empty -> .)
+    RETURN          reduce using rule 121 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
     VAR             shift and go to state 12
     LET             shift and go to state 7
 
@@ -985,10 +987,10 @@ state 69
     (25) function -> FUNCTION ID LP params RP . function_a function_block
     (26) function_a -> . ARROW type
     (27) function_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     ARROW           shift and go to state 87
-    LB              reduce using rule 119 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
 
     function_a                     shift and go to state 86
     empty                          shift and go to state 88
@@ -1063,12 +1065,12 @@ state 75
     (49) class_c -> . init class_c
     (50) class_c -> . empty
     (53) init -> . INIT LP params RP block
-    (119) empty -> .
+    (121) empty -> .
 
     INIT            shift and go to state 62
-    PRIVATE         reduce using rule 119 (empty -> .)
-    RB              reduce using rule 119 (empty -> .)
-    FUNCTION        reduce using rule 119 (empty -> .)
+    PRIVATE         reduce using rule 121 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
+    FUNCTION        reduce using rule 121 (empty -> .)
 
     init                           shift and go to state 75
     class_c                        shift and go to state 90
@@ -1081,11 +1083,11 @@ state 76
     (52) class_d -> . empty
     (45) class_e -> . PRIVATE
     (46) class_e -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     PRIVATE         shift and go to state 48
-    RB              reduce using rule 119 (empty -> .)
-    FUNCTION        reduce using rule 119 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
+    FUNCTION        reduce using rule 121 (empty -> .)
 
     class_d                        shift and go to state 91
     class_e                        shift and go to state 92
@@ -1105,10 +1107,10 @@ state 78
     (53) init -> INIT LP . params RP block
     (28) params -> . ID COL type params_a
     (29) params -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     ID              shift and go to state 50
-    RP              reduce using rule 119 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
 
     params                         shift and go to state 94
     empty                          shift and go to state 52
@@ -1132,7 +1134,7 @@ state 80
     (58) statute -> . loop
     (59) statute -> . call_function
     (60) statute -> . return
-    (119) empty -> .
+    (121) empty -> .
     (63) print -> . PRINT LP print_a RP SEMICOL
     (67) input -> . INPUT LP ID array attribute RP SEMICOL
     (62) assignment -> . ID array attribute IS expression SEMICOL
@@ -1141,7 +1143,7 @@ state 80
     (69) call_function -> . ID LP call_params RP SEMICOL
     (61) return -> . RETURN expression SEMICOL
 
-    RB              reduce using rule 119 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
     PRINT           shift and go to state 105
     INPUT           shift and go to state 106
     ID              shift and go to state 107
@@ -1167,17 +1169,17 @@ state 81
     (37) function_block_a -> . empty
     (38) function_block_b -> . var
     (39) function_block_b -> . let
-    (119) empty -> .
+    (121) empty -> .
     (17) var -> . VAR ID COL type var_a SEMICOL
     (23) let -> . LET ID COL type IS var_b SEMICOL
 
-    PRINT           reduce using rule 119 (empty -> .)
-    INPUT           reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    IF              reduce using rule 119 (empty -> .)
-    WHILE           reduce using rule 119 (empty -> .)
-    RETURN          reduce using rule 119 (empty -> .)
-    RB              reduce using rule 119 (empty -> .)
+    PRINT           reduce using rule 121 (empty -> .)
+    INPUT           reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    IF              reduce using rule 121 (empty -> .)
+    WHILE           reduce using rule 121 (empty -> .)
+    RETURN          reduce using rule 121 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
     VAR             shift and go to state 12
     LET             shift and go to state 7
 
@@ -1235,10 +1237,10 @@ state 85
     (28) params -> ID COL type . params_a
     (30) params_a -> . COMMA params
     (31) params_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     COMMA           shift and go to state 113
-    RP              reduce using rule 119 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
 
     params_a                       shift and go to state 112
     empty                          shift and go to state 114
@@ -1346,7 +1348,7 @@ state 96
     (58) statute -> . loop
     (59) statute -> . call_function
     (60) statute -> . return
-    (119) empty -> .
+    (121) empty -> .
     (63) print -> . PRINT LP print_a RP SEMICOL
     (67) input -> . INPUT LP ID array attribute RP SEMICOL
     (62) assignment -> . ID array attribute IS expression SEMICOL
@@ -1355,7 +1357,7 @@ state 96
     (69) call_function -> . ID LP call_params RP SEMICOL
     (61) return -> . RETURN expression SEMICOL
 
-    RB              reduce using rule 119 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
     PRINT           shift and go to state 105
     INPUT           shift and go to state 106
     ID              shift and go to state 107
@@ -1491,11 +1493,16 @@ state 107
     (62) assignment -> ID . array attribute IS expression SEMICOL
     (69) call_function -> ID . LP call_params RP SEMICOL
     (113) array -> . LC expression RC array_a
+    (114) array -> . empty
+    (121) empty -> .
 
     LP              shift and go to state 126
     LC              shift and go to state 127
+    DOT             reduce using rule 121 (empty -> .)
+    IS              reduce using rule 121 (empty -> .)
 
     array                          shift and go to state 125
+    empty                          shift and go to state 128
 
 state 108
 
@@ -1510,24 +1517,24 @@ state 108
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 128
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    expression                     shift and go to state 129
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
 state 109
 
@@ -1542,24 +1549,24 @@ state 109
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 139
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    expression                     shift and go to state 140
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
 state 110
 
@@ -1574,24 +1581,24 @@ state 110
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 140
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    expression                     shift and go to state 141
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
 state 111
 
@@ -1618,12 +1625,12 @@ state 113
     (30) params_a -> COMMA . params
     (28) params -> . ID COL type params_a
     (29) params -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     ID              shift and go to state 50
-    RP              reduce using rule 119 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
 
-    params                         shift and go to state 141
+    params                         shift and go to state 142
     empty                          shift and go to state 52
 
 state 114
@@ -1661,7 +1668,7 @@ state 117
     FLOAT           shift and go to state 36
     BOOL            shift and go to state 37
 
-    atomic                         shift and go to state 142
+    atomic                         shift and go to state 143
 
 state 118
 
@@ -1681,14 +1688,14 @@ state 119
     (52) class_d -> . empty
     (45) class_e -> . PRIVATE
     (46) class_e -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
     PRIVATE         shift and go to state 48
-    RB              reduce using rule 119 (empty -> .)
-    FUNCTION        reduce using rule 119 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
+    FUNCTION        reduce using rule 121 (empty -> .)
 
     class_e                        shift and go to state 92
-    class_d                        shift and go to state 143
+    class_d                        shift and go to state 144
     empty                          shift and go to state 93
 
 state 120
@@ -1696,9 +1703,9 @@ state 120
     (53) init -> INIT LP params RP . block
     (32) block -> . LB block_a RB
 
-    LB              shift and go to state 145
+    LB              shift and go to state 146
 
-    block                          shift and go to state 144
+    block                          shift and go to state 145
 
 state 121
 
@@ -1725,7 +1732,7 @@ state 123
     (65) print_a -> . CTE_S
     (66) print_a -> . empty
     (81) expression -> . comparison expression_a
-    (119) empty -> .
+    (121) empty -> .
     (85) comparison -> . exp comparison_a
     (94) exp -> . term exp_a
     (98) term -> . factor term_a
@@ -1736,41 +1743,45 @@ state 123
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
 
-    CTE_S           shift and go to state 148
-    RP              reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
+    CTE_S           shift and go to state 149
+    RP              reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
 
-    print_a                        shift and go to state 146
-    expression                     shift and go to state 147
-    empty                          shift and go to state 149
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
+    print_a                        shift and go to state 147
+    expression                     shift and go to state 148
+    empty                          shift and go to state 150
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
 
 state 124
 
     (67) input -> INPUT LP . ID array attribute RP SEMICOL
 
-    ID              shift and go to state 150
+    ID              shift and go to state 151
 
 
 state 125
 
     (62) assignment -> ID array . attribute IS expression SEMICOL
-    (116) attribute -> . DOT ID attribute_a
+    (117) attribute -> . DOT ID attribute_a
+    (118) attribute -> . empty
+    (121) empty -> .
 
-    DOT             shift and go to state 152
+    DOT             shift and go to state 153
+    IS              reduce using rule 121 (empty -> .)
 
-    attribute                      shift and go to state 151
+    attribute                      shift and go to state 152
+    empty                          shift and go to state 154
 
 state 126
 
@@ -1778,7 +1789,7 @@ state 126
     (70) call_params -> . expression call_params_a
     (71) call_params -> . empty
     (81) expression -> . comparison expression_a
-    (119) empty -> .
+    (121) empty -> .
     (85) comparison -> . exp comparison_a
     (94) exp -> . term exp_a
     (98) term -> . factor term_a
@@ -1789,24 +1800,24 @@ state 126
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
 
-    RP              reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
+    RP              reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
 
-    call_params                    shift and go to state 153
-    expression                     shift and go to state 154
-    empty                          shift and go to state 155
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
+    call_params                    shift and go to state 155
+    expression                     shift and go to state 156
+    empty                          shift and go to state 157
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
 
 state 127
 
@@ -1821,57 +1832,82 @@ state 127
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 156
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    expression                     shift and go to state 158
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
 state 128
+
+    (114) array -> empty .
+
+    DOT             reduce using rule 114 (array -> empty .)
+    IS              reduce using rule 114 (array -> empty .)
+    RP              reduce using rule 114 (array -> empty .)
+    MUL             reduce using rule 114 (array -> empty .)
+    DIV             reduce using rule 114 (array -> empty .)
+    PLUS            reduce using rule 114 (array -> empty .)
+    MINUS           reduce using rule 114 (array -> empty .)
+    GEQ             reduce using rule 114 (array -> empty .)
+    LEQ             reduce using rule 114 (array -> empty .)
+    GT              reduce using rule 114 (array -> empty .)
+    LT              reduce using rule 114 (array -> empty .)
+    EQUAL           reduce using rule 114 (array -> empty .)
+    NEQ             reduce using rule 114 (array -> empty .)
+    AND             reduce using rule 114 (array -> empty .)
+    OR              reduce using rule 114 (array -> empty .)
+    LB              reduce using rule 114 (array -> empty .)
+    SEMICOL         reduce using rule 114 (array -> empty .)
+    COMMA           reduce using rule 114 (array -> empty .)
+    RC              reduce using rule 114 (array -> empty .)
+
+
+state 129
 
     (74) condition -> IF expression . block condition_a condition_b
     (32) block -> . LB block_a RB
 
-    LB              shift and go to state 145
+    LB              shift and go to state 146
 
-    block                          shift and go to state 157
-
-state 129
-
-    (81) expression -> comparison . expression_a
-    (82) expression_a -> . AND expression
-    (83) expression_a -> . OR expression
-    (84) expression_a -> . empty
-    (119) empty -> .
-
-    AND             shift and go to state 159
-    OR              shift and go to state 160
-    LB              reduce using rule 119 (empty -> .)
-    SEMICOL         reduce using rule 119 (empty -> .)
-    RP              reduce using rule 119 (empty -> .)
-    COMMA           reduce using rule 119 (empty -> .)
-    RC              reduce using rule 119 (empty -> .)
-
-    expression_a                   shift and go to state 158
-    empty                          shift and go to state 161
+    block                          shift and go to state 159
 
 state 130
 
+    (81) expression -> comparison . expression_a
+    (82) expression_a -> . AND comparison expression_a
+    (83) expression_a -> . OR comparison
+    (84) expression_a -> . empty
+    (121) empty -> .
+
+    AND             shift and go to state 161
+    OR              shift and go to state 162
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
+
+    expression_a                   shift and go to state 160
+    empty                          shift and go to state 163
+
+state 131
+
     (85) comparison -> exp . comparison_a
-    (86) comparison_a -> . comparison_b exp
+    (86) comparison_a -> . comparison_b exp comparison_a
     (87) comparison_a -> . empty
     (88) comparison_b -> . GEQ
     (89) comparison_b -> . LEQ
@@ -1879,83 +1915,83 @@ state 130
     (91) comparison_b -> . LT
     (92) comparison_b -> . EQUAL
     (93) comparison_b -> . NEQ
-    (119) empty -> .
+    (121) empty -> .
 
-    GEQ             shift and go to state 165
-    LEQ             shift and go to state 166
-    GT              shift and go to state 167
-    LT              shift and go to state 168
-    EQUAL           shift and go to state 169
-    NEQ             shift and go to state 170
-    AND             reduce using rule 119 (empty -> .)
-    OR              reduce using rule 119 (empty -> .)
-    LB              reduce using rule 119 (empty -> .)
-    SEMICOL         reduce using rule 119 (empty -> .)
-    RP              reduce using rule 119 (empty -> .)
-    COMMA           reduce using rule 119 (empty -> .)
-    RC              reduce using rule 119 (empty -> .)
+    GEQ             shift and go to state 167
+    LEQ             shift and go to state 168
+    GT              shift and go to state 169
+    LT              shift and go to state 170
+    EQUAL           shift and go to state 171
+    NEQ             shift and go to state 172
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
-    comparison_a                   shift and go to state 162
-    comparison_b                   shift and go to state 163
-    empty                          shift and go to state 164
-
-state 131
-
-    (94) exp -> term . exp_a
-    (95) exp_a -> . PLUS exp
-    (96) exp_a -> . MINUS exp
-    (97) exp_a -> . empty
-    (119) empty -> .
-
-    PLUS            shift and go to state 172
-    MINUS           shift and go to state 173
-    GEQ             reduce using rule 119 (empty -> .)
-    LEQ             reduce using rule 119 (empty -> .)
-    GT              reduce using rule 119 (empty -> .)
-    LT              reduce using rule 119 (empty -> .)
-    EQUAL           reduce using rule 119 (empty -> .)
-    NEQ             reduce using rule 119 (empty -> .)
-    AND             reduce using rule 119 (empty -> .)
-    OR              reduce using rule 119 (empty -> .)
-    LB              reduce using rule 119 (empty -> .)
-    SEMICOL         reduce using rule 119 (empty -> .)
-    RP              reduce using rule 119 (empty -> .)
-    COMMA           reduce using rule 119 (empty -> .)
-    RC              reduce using rule 119 (empty -> .)
-
-    exp_a                          shift and go to state 171
-    empty                          shift and go to state 174
+    comparison_a                   shift and go to state 164
+    comparison_b                   shift and go to state 165
+    empty                          shift and go to state 166
 
 state 132
 
-    (98) term -> factor . term_a
-    (99) term_a -> . MUL term
-    (100) term_a -> . DIV term
-    (101) term_a -> . empty
-    (119) empty -> .
+    (94) exp -> term . exp_a
+    (95) exp_a -> . PLUS term exp_a
+    (96) exp_a -> . MINUS term exp_a
+    (97) exp_a -> . empty
+    (121) empty -> .
 
-    MUL             shift and go to state 176
-    DIV             shift and go to state 177
-    PLUS            reduce using rule 119 (empty -> .)
-    MINUS           reduce using rule 119 (empty -> .)
-    GEQ             reduce using rule 119 (empty -> .)
-    LEQ             reduce using rule 119 (empty -> .)
-    GT              reduce using rule 119 (empty -> .)
-    LT              reduce using rule 119 (empty -> .)
-    EQUAL           reduce using rule 119 (empty -> .)
-    NEQ             reduce using rule 119 (empty -> .)
-    AND             reduce using rule 119 (empty -> .)
-    OR              reduce using rule 119 (empty -> .)
-    LB              reduce using rule 119 (empty -> .)
-    SEMICOL         reduce using rule 119 (empty -> .)
-    RP              reduce using rule 119 (empty -> .)
-    COMMA           reduce using rule 119 (empty -> .)
-    RC              reduce using rule 119 (empty -> .)
+    PLUS            shift and go to state 174
+    MINUS           shift and go to state 175
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
-    term_a                         shift and go to state 175
-    empty                          shift and go to state 178
+    exp_a                          shift and go to state 173
+    empty                          shift and go to state 176
 
 state 133
+
+    (98) term -> factor . term_a
+    (99) term_a -> . MUL factor term_a
+    (100) term_a -> . DIV factor term_a
+    (101) term_a -> . empty
+    (121) empty -> .
+
+    MUL             shift and go to state 178
+    DIV             shift and go to state 179
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
+
+    term_a                         shift and go to state 177
+    empty                          shift and go to state 180
+
+state 134
 
     (102) factor -> LP . expression RP
     (81) expression -> . comparison expression_a
@@ -1968,26 +2004,26 @@ state 133
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 179
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    expression                     shift and go to state 181
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
-state 134
+state 135
 
     (103) factor -> factor_a . var_cte
     (108) var_cte -> . ID array attribute
@@ -1996,14 +2032,14 @@ state 134
     (111) var_cte -> . CTE_F
     (112) var_cte -> . CTE_B
 
-    ID              shift and go to state 181
-    CTE_I           shift and go to state 182
-    CTE_F           shift and go to state 183
-    CTE_B           shift and go to state 184
+    ID              shift and go to state 183
+    CTE_I           shift and go to state 184
+    CTE_F           shift and go to state 185
+    CTE_B           shift and go to state 186
 
-    var_cte                        shift and go to state 180
+    var_cte                        shift and go to state 182
 
-state 135
+state 136
 
     (104) factor_a -> PLUS .
 
@@ -2013,7 +2049,7 @@ state 135
     CTE_B           reduce using rule 104 (factor_a -> PLUS .)
 
 
-state 136
+state 137
 
     (105) factor_a -> MINUS .
 
@@ -2023,7 +2059,7 @@ state 136
     CTE_B           reduce using rule 105 (factor_a -> MINUS .)
 
 
-state 137
+state 138
 
     (106) factor_a -> NOT .
 
@@ -2033,7 +2069,7 @@ state 137
     CTE_B           reduce using rule 106 (factor_a -> NOT .)
 
 
-state 138
+state 139
 
     (107) factor_a -> empty .
 
@@ -2043,30 +2079,30 @@ state 138
     CTE_B           reduce using rule 107 (factor_a -> empty .)
 
 
-state 139
+state 140
 
     (68) loop -> WHILE expression . block
     (32) block -> . LB block_a RB
 
-    LB              shift and go to state 145
+    LB              shift and go to state 146
 
-    block                          shift and go to state 185
+    block                          shift and go to state 187
 
-state 140
+state 141
 
     (61) return -> RETURN expression . SEMICOL
 
-    SEMICOL         shift and go to state 186
+    SEMICOL         shift and go to state 188
 
 
-state 141
+state 142
 
     (30) params_a -> COMMA params .
 
     RP              reduce using rule 30 (params_a -> COMMA params .)
 
 
-state 142
+state 143
 
     (10) type -> LC CTE_I RC LC CTE_I RC atomic .
 
@@ -2077,14 +2113,14 @@ state 142
     LB              reduce using rule 10 (type -> LC CTE_I RC LC CTE_I RC atomic .)
 
 
-state 143
+state 144
 
     (51) class_d -> class_e function class_d .
 
     RB              reduce using rule 51 (class_d -> class_e function class_d .)
 
 
-state 144
+state 145
 
     (53) init -> INIT LP params RP block .
 
@@ -2094,7 +2130,7 @@ state 144
     FUNCTION        reduce using rule 53 (init -> INIT LP params RP block .)
 
 
-state 145
+state 146
 
     (32) block -> LB . block_a RB
     (33) block_a -> . statute block_a
@@ -2106,7 +2142,7 @@ state 145
     (58) statute -> . loop
     (59) statute -> . call_function
     (60) statute -> . return
-    (119) empty -> .
+    (121) empty -> .
     (63) print -> . PRINT LP print_a RP SEMICOL
     (67) input -> . INPUT LP ID array attribute RP SEMICOL
     (62) assignment -> . ID array attribute IS expression SEMICOL
@@ -2115,7 +2151,7 @@ state 145
     (69) call_function -> . ID LP call_params RP SEMICOL
     (61) return -> . RETURN expression SEMICOL
 
-    RB              reduce using rule 119 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
     PRINT           shift and go to state 105
     INPUT           shift and go to state 106
     ID              shift and go to state 107
@@ -2123,7 +2159,7 @@ state 145
     WHILE           shift and go to state 109
     RETURN          shift and go to state 110
 
-    block_a                        shift and go to state 187
+    block_a                        shift and go to state 189
     statute                        shift and go to state 96
     empty                          shift and go to state 97
     print                          shift and go to state 98
@@ -2134,28 +2170,28 @@ state 145
     call_function                  shift and go to state 103
     return                         shift and go to state 104
 
-state 146
+state 147
 
     (63) print -> PRINT LP print_a . RP SEMICOL
 
-    RP              shift and go to state 188
+    RP              shift and go to state 190
 
 
-state 147
+state 148
 
     (64) print_a -> expression .
 
     RP              reduce using rule 64 (print_a -> expression .)
 
 
-state 148
+state 149
 
     (65) print_a -> CTE_S .
 
     RP              reduce using rule 65 (print_a -> CTE_S .)
 
 
-state 149
+state 150
 
     (66) print_a -> empty .
     (107) factor_a -> empty .
@@ -2167,50 +2203,79 @@ state 149
     CTE_B           reduce using rule 107 (factor_a -> empty .)
 
 
-state 150
+state 151
 
     (67) input -> INPUT LP ID . array attribute RP SEMICOL
     (113) array -> . LC expression RC array_a
+    (114) array -> . empty
+    (121) empty -> .
 
     LC              shift and go to state 127
+    DOT             reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
 
-    array                          shift and go to state 189
-
-state 151
-
-    (62) assignment -> ID array attribute . IS expression SEMICOL
-
-    IS              shift and go to state 190
-
+    array                          shift and go to state 191
+    empty                          shift and go to state 128
 
 state 152
 
-    (116) attribute -> DOT . ID attribute_a
+    (62) assignment -> ID array attribute . IS expression SEMICOL
 
-    ID              shift and go to state 191
+    IS              shift and go to state 192
 
 
 state 153
 
-    (69) call_function -> ID LP call_params . RP SEMICOL
+    (117) attribute -> DOT . ID attribute_a
 
-    RP              shift and go to state 192
+    ID              shift and go to state 193
 
 
 state 154
 
+    (118) attribute -> empty .
+
+    IS              reduce using rule 118 (attribute -> empty .)
+    RP              reduce using rule 118 (attribute -> empty .)
+    MUL             reduce using rule 118 (attribute -> empty .)
+    DIV             reduce using rule 118 (attribute -> empty .)
+    PLUS            reduce using rule 118 (attribute -> empty .)
+    MINUS           reduce using rule 118 (attribute -> empty .)
+    GEQ             reduce using rule 118 (attribute -> empty .)
+    LEQ             reduce using rule 118 (attribute -> empty .)
+    GT              reduce using rule 118 (attribute -> empty .)
+    LT              reduce using rule 118 (attribute -> empty .)
+    EQUAL           reduce using rule 118 (attribute -> empty .)
+    NEQ             reduce using rule 118 (attribute -> empty .)
+    AND             reduce using rule 118 (attribute -> empty .)
+    OR              reduce using rule 118 (attribute -> empty .)
+    LB              reduce using rule 118 (attribute -> empty .)
+    SEMICOL         reduce using rule 118 (attribute -> empty .)
+    COMMA           reduce using rule 118 (attribute -> empty .)
+    RC              reduce using rule 118 (attribute -> empty .)
+
+
+state 155
+
+    (69) call_function -> ID LP call_params . RP SEMICOL
+
+    RP              shift and go to state 194
+
+
+state 156
+
     (70) call_params -> expression . call_params_a
     (72) call_params_a -> . COMMA expression call_params_a
     (73) call_params_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    COMMA           shift and go to state 194
-    RP              reduce using rule 119 (empty -> .)
+    COMMA           shift and go to state 196
+    RP              reduce using rule 121 (empty -> .)
 
-    call_params_a                  shift and go to state 193
-    empty                          shift and go to state 195
+    call_params_a                  shift and go to state 195
+    empty                          shift and go to state 197
 
-state 155
+state 157
 
     (71) call_params -> empty .
     (107) factor_a -> empty .
@@ -2222,36 +2287,36 @@ state 155
     CTE_B           reduce using rule 107 (factor_a -> empty .)
 
 
-state 156
+state 158
 
     (113) array -> LC expression . RC array_a
 
-    RC              shift and go to state 196
+    RC              shift and go to state 198
 
 
-state 157
+state 159
 
     (74) condition -> IF expression block . condition_a condition_b
     (75) condition_a -> . elseif condition_a
     (76) condition_a -> . empty
     (79) elseif -> . ELSEIF expression block
-    (119) empty -> .
+    (121) empty -> .
 
-    ELSEIF          shift and go to state 200
-    ELSE            reduce using rule 119 (empty -> .)
-    PRINT           reduce using rule 119 (empty -> .)
-    INPUT           reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    IF              reduce using rule 119 (empty -> .)
-    WHILE           reduce using rule 119 (empty -> .)
-    RETURN          reduce using rule 119 (empty -> .)
-    RB              reduce using rule 119 (empty -> .)
+    ELSEIF          shift and go to state 202
+    ELSE            reduce using rule 121 (empty -> .)
+    PRINT           reduce using rule 121 (empty -> .)
+    INPUT           reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    IF              reduce using rule 121 (empty -> .)
+    WHILE           reduce using rule 121 (empty -> .)
+    RETURN          reduce using rule 121 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
 
-    condition_a                    shift and go to state 197
-    elseif                         shift and go to state 198
-    empty                          shift and go to state 199
+    condition_a                    shift and go to state 199
+    elseif                         shift and go to state 200
+    empty                          shift and go to state 201
 
-state 158
+state 160
 
     (81) expression -> comparison expression_a .
 
@@ -2262,71 +2327,67 @@ state 158
     RC              reduce using rule 81 (expression -> comparison expression_a .)
 
 
-state 159
-
-    (82) expression_a -> AND . expression
-    (81) expression -> . comparison expression_a
-    (85) comparison -> . exp comparison_a
-    (94) exp -> . term exp_a
-    (98) term -> . factor term_a
-    (102) factor -> . LP expression RP
-    (103) factor -> . factor_a var_cte
-    (104) factor_a -> . PLUS
-    (105) factor_a -> . MINUS
-    (106) factor_a -> . NOT
-    (107) factor_a -> . empty
-    (119) empty -> .
-
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-
-    expression                     shift and go to state 201
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
-
-state 160
-
-    (83) expression_a -> OR . expression
-    (81) expression -> . comparison expression_a
-    (85) comparison -> . exp comparison_a
-    (94) exp -> . term exp_a
-    (98) term -> . factor term_a
-    (102) factor -> . LP expression RP
-    (103) factor -> . factor_a var_cte
-    (104) factor_a -> . PLUS
-    (105) factor_a -> . MINUS
-    (106) factor_a -> . NOT
-    (107) factor_a -> . empty
-    (119) empty -> .
-
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-
-    expression                     shift and go to state 202
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
-
 state 161
+
+    (82) expression_a -> AND . comparison expression_a
+    (85) comparison -> . exp comparison_a
+    (94) exp -> . term exp_a
+    (98) term -> . factor term_a
+    (102) factor -> . LP expression RP
+    (103) factor -> . factor_a var_cte
+    (104) factor_a -> . PLUS
+    (105) factor_a -> . MINUS
+    (106) factor_a -> . NOT
+    (107) factor_a -> . empty
+    (121) empty -> .
+
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+
+    comparison                     shift and go to state 203
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
+
+state 162
+
+    (83) expression_a -> OR . comparison
+    (85) comparison -> . exp comparison_a
+    (94) exp -> . term exp_a
+    (98) term -> . factor term_a
+    (102) factor -> . LP expression RP
+    (103) factor -> . factor_a var_cte
+    (104) factor_a -> . PLUS
+    (105) factor_a -> . MINUS
+    (106) factor_a -> . NOT
+    (107) factor_a -> . empty
+    (121) empty -> .
+
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+
+    comparison                     shift and go to state 204
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
+
+state 163
 
     (84) expression_a -> empty .
 
@@ -2337,7 +2398,7 @@ state 161
     RC              reduce using rule 84 (expression_a -> empty .)
 
 
-state 162
+state 164
 
     (85) comparison -> exp comparison_a .
 
@@ -2350,9 +2411,9 @@ state 162
     RC              reduce using rule 85 (comparison -> exp comparison_a .)
 
 
-state 163
+state 165
 
-    (86) comparison_a -> comparison_b . exp
+    (86) comparison_a -> comparison_b . exp comparison_a
     (94) exp -> . term exp_a
     (98) term -> . factor term_a
     (102) factor -> . LP expression RP
@@ -2361,24 +2422,24 @@ state 163
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    exp                            shift and go to state 203
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    exp                            shift and go to state 205
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
-state 164
+state 166
 
     (87) comparison_a -> empty .
 
@@ -2391,7 +2452,7 @@ state 164
     RC              reduce using rule 87 (comparison_a -> empty .)
 
 
-state 165
+state 167
 
     (88) comparison_b -> GEQ .
 
@@ -2405,7 +2466,7 @@ state 165
     CTE_B           reduce using rule 88 (comparison_b -> GEQ .)
 
 
-state 166
+state 168
 
     (89) comparison_b -> LEQ .
 
@@ -2419,7 +2480,7 @@ state 166
     CTE_B           reduce using rule 89 (comparison_b -> LEQ .)
 
 
-state 167
+state 169
 
     (90) comparison_b -> GT .
 
@@ -2433,7 +2494,7 @@ state 167
     CTE_B           reduce using rule 90 (comparison_b -> GT .)
 
 
-state 168
+state 170
 
     (91) comparison_b -> LT .
 
@@ -2447,7 +2508,7 @@ state 168
     CTE_B           reduce using rule 91 (comparison_b -> LT .)
 
 
-state 169
+state 171
 
     (92) comparison_b -> EQUAL .
 
@@ -2461,7 +2522,7 @@ state 169
     CTE_B           reduce using rule 92 (comparison_b -> EQUAL .)
 
 
-state 170
+state 172
 
     (93) comparison_b -> NEQ .
 
@@ -2475,7 +2536,7 @@ state 170
     CTE_B           reduce using rule 93 (comparison_b -> NEQ .)
 
 
-state 171
+state 173
 
     (94) exp -> term exp_a .
 
@@ -2494,63 +2555,59 @@ state 171
     RC              reduce using rule 94 (exp -> term exp_a .)
 
 
-state 172
-
-    (95) exp_a -> PLUS . exp
-    (94) exp -> . term exp_a
-    (98) term -> . factor term_a
-    (102) factor -> . LP expression RP
-    (103) factor -> . factor_a var_cte
-    (104) factor_a -> . PLUS
-    (105) factor_a -> . MINUS
-    (106) factor_a -> . NOT
-    (107) factor_a -> . empty
-    (119) empty -> .
-
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-
-    exp                            shift and go to state 204
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
-
-state 173
-
-    (96) exp_a -> MINUS . exp
-    (94) exp -> . term exp_a
-    (98) term -> . factor term_a
-    (102) factor -> . LP expression RP
-    (103) factor -> . factor_a var_cte
-    (104) factor_a -> . PLUS
-    (105) factor_a -> . MINUS
-    (106) factor_a -> . NOT
-    (107) factor_a -> . empty
-    (119) empty -> .
-
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-
-    exp                            shift and go to state 205
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
-
 state 174
+
+    (95) exp_a -> PLUS . term exp_a
+    (98) term -> . factor term_a
+    (102) factor -> . LP expression RP
+    (103) factor -> . factor_a var_cte
+    (104) factor_a -> . PLUS
+    (105) factor_a -> . MINUS
+    (106) factor_a -> . NOT
+    (107) factor_a -> . empty
+    (121) empty -> .
+
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+
+    term                           shift and go to state 206
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
+
+state 175
+
+    (96) exp_a -> MINUS . term exp_a
+    (98) term -> . factor term_a
+    (102) factor -> . LP expression RP
+    (103) factor -> . factor_a var_cte
+    (104) factor_a -> . PLUS
+    (105) factor_a -> . MINUS
+    (106) factor_a -> . NOT
+    (107) factor_a -> . empty
+    (121) empty -> .
+
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+
+    term                           shift and go to state 207
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
+
+state 176
 
     (97) exp_a -> empty .
 
@@ -2569,7 +2626,7 @@ state 174
     RC              reduce using rule 97 (exp_a -> empty .)
 
 
-state 175
+state 177
 
     (98) term -> factor term_a .
 
@@ -2590,59 +2647,55 @@ state 175
     RC              reduce using rule 98 (term -> factor term_a .)
 
 
-state 176
-
-    (99) term_a -> MUL . term
-    (98) term -> . factor term_a
-    (102) factor -> . LP expression RP
-    (103) factor -> . factor_a var_cte
-    (104) factor_a -> . PLUS
-    (105) factor_a -> . MINUS
-    (106) factor_a -> . NOT
-    (107) factor_a -> . empty
-    (119) empty -> .
-
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-
-    term                           shift and go to state 206
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
-
-state 177
-
-    (100) term_a -> DIV . term
-    (98) term -> . factor term_a
-    (102) factor -> . LP expression RP
-    (103) factor -> . factor_a var_cte
-    (104) factor_a -> . PLUS
-    (105) factor_a -> . MINUS
-    (106) factor_a -> . NOT
-    (107) factor_a -> . empty
-    (119) empty -> .
-
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-
-    term                           shift and go to state 207
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
-
 state 178
+
+    (99) term_a -> MUL . factor term_a
+    (102) factor -> . LP expression RP
+    (103) factor -> . factor_a var_cte
+    (104) factor_a -> . PLUS
+    (105) factor_a -> . MINUS
+    (106) factor_a -> . NOT
+    (107) factor_a -> . empty
+    (121) empty -> .
+
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+
+    factor                         shift and go to state 208
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
+
+state 179
+
+    (100) term_a -> DIV . factor term_a
+    (102) factor -> . LP expression RP
+    (103) factor -> . factor_a var_cte
+    (104) factor_a -> . PLUS
+    (105) factor_a -> . MINUS
+    (106) factor_a -> . NOT
+    (107) factor_a -> . empty
+    (121) empty -> .
+
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+
+    factor                         shift and go to state 209
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
+
+state 180
 
     (101) term_a -> empty .
 
@@ -2663,14 +2716,14 @@ state 178
     RC              reduce using rule 101 (term_a -> empty .)
 
 
-state 179
+state 181
 
     (102) factor -> LP expression . RP
 
-    RP              shift and go to state 208
+    RP              shift and go to state 210
 
 
-state 180
+state 182
 
     (103) factor -> factor_a var_cte .
 
@@ -2693,18 +2746,39 @@ state 180
     RC              reduce using rule 103 (factor -> factor_a var_cte .)
 
 
-state 181
+state 183
 
     (108) var_cte -> ID . array attribute
     (109) var_cte -> ID . LP call_params RP array attribute
     (113) array -> . LC expression RC array_a
+    (114) array -> . empty
+    (121) empty -> .
 
-    LP              shift and go to state 210
+    LP              shift and go to state 212
     LC              shift and go to state 127
+    DOT             reduce using rule 121 (empty -> .)
+    MUL             reduce using rule 121 (empty -> .)
+    DIV             reduce using rule 121 (empty -> .)
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
-    array                          shift and go to state 209
+    array                          shift and go to state 211
+    empty                          shift and go to state 128
 
-state 182
+state 184
 
     (110) var_cte -> CTE_I .
 
@@ -2727,7 +2801,7 @@ state 182
     RC              reduce using rule 110 (var_cte -> CTE_I .)
 
 
-state 183
+state 185
 
     (111) var_cte -> CTE_F .
 
@@ -2750,7 +2824,7 @@ state 183
     RC              reduce using rule 111 (var_cte -> CTE_F .)
 
 
-state 184
+state 186
 
     (112) var_cte -> CTE_B .
 
@@ -2773,7 +2847,7 @@ state 184
     RC              reduce using rule 112 (var_cte -> CTE_B .)
 
 
-state 185
+state 187
 
     (68) loop -> WHILE expression block .
 
@@ -2786,7 +2860,7 @@ state 185
     RB              reduce using rule 68 (loop -> WHILE expression block .)
 
 
-state 186
+state 188
 
     (61) return -> RETURN expression SEMICOL .
 
@@ -2799,30 +2873,34 @@ state 186
     RB              reduce using rule 61 (return -> RETURN expression SEMICOL .)
 
 
-state 187
+state 189
 
     (32) block -> LB block_a . RB
 
-    RB              shift and go to state 211
+    RB              shift and go to state 213
 
 
-state 188
+state 190
 
     (63) print -> PRINT LP print_a RP . SEMICOL
 
-    SEMICOL         shift and go to state 212
+    SEMICOL         shift and go to state 214
 
 
-state 189
+state 191
 
     (67) input -> INPUT LP ID array . attribute RP SEMICOL
-    (116) attribute -> . DOT ID attribute_a
+    (117) attribute -> . DOT ID attribute_a
+    (118) attribute -> . empty
+    (121) empty -> .
 
-    DOT             shift and go to state 152
+    DOT             shift and go to state 153
+    RP              reduce using rule 121 (empty -> .)
 
-    attribute                      shift and go to state 213
+    attribute                      shift and go to state 215
+    empty                          shift and go to state 154
 
-state 190
+state 192
 
     (62) assignment -> ID array attribute IS . expression SEMICOL
     (81) expression -> . comparison expression_a
@@ -2835,70 +2913,70 @@ state 190
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 214
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    expression                     shift and go to state 216
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
-state 191
+state 193
 
-    (116) attribute -> DOT ID . attribute_a
-    (117) attribute_a -> . LP call_params RP
-    (118) attribute_a -> . empty
-    (119) empty -> .
+    (117) attribute -> DOT ID . attribute_a
+    (119) attribute_a -> . LP call_params RP
+    (120) attribute_a -> . empty
+    (121) empty -> .
 
-    LP              shift and go to state 216
-    IS              reduce using rule 119 (empty -> .)
-    RP              reduce using rule 119 (empty -> .)
-    MUL             reduce using rule 119 (empty -> .)
-    DIV             reduce using rule 119 (empty -> .)
-    PLUS            reduce using rule 119 (empty -> .)
-    MINUS           reduce using rule 119 (empty -> .)
-    GEQ             reduce using rule 119 (empty -> .)
-    LEQ             reduce using rule 119 (empty -> .)
-    GT              reduce using rule 119 (empty -> .)
-    LT              reduce using rule 119 (empty -> .)
-    EQUAL           reduce using rule 119 (empty -> .)
-    NEQ             reduce using rule 119 (empty -> .)
-    AND             reduce using rule 119 (empty -> .)
-    OR              reduce using rule 119 (empty -> .)
-    LB              reduce using rule 119 (empty -> .)
-    SEMICOL         reduce using rule 119 (empty -> .)
-    COMMA           reduce using rule 119 (empty -> .)
-    RC              reduce using rule 119 (empty -> .)
+    LP              shift and go to state 218
+    IS              reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    MUL             reduce using rule 121 (empty -> .)
+    DIV             reduce using rule 121 (empty -> .)
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
-    attribute_a                    shift and go to state 215
-    empty                          shift and go to state 217
+    attribute_a                    shift and go to state 217
+    empty                          shift and go to state 219
 
-state 192
+state 194
 
     (69) call_function -> ID LP call_params RP . SEMICOL
 
-    SEMICOL         shift and go to state 218
+    SEMICOL         shift and go to state 220
 
 
-state 193
+state 195
 
     (70) call_params -> expression call_params_a .
 
     RP              reduce using rule 70 (call_params -> expression call_params_a .)
 
 
-state 194
+state 196
 
     (72) call_params_a -> COMMA . expression call_params_a
     (81) expression -> . comparison expression_a
@@ -2911,89 +2989,107 @@ state 194
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 219
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    expression                     shift and go to state 221
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
-state 195
+state 197
 
     (73) call_params_a -> empty .
 
     RP              reduce using rule 73 (call_params_a -> empty .)
 
 
-state 196
+state 198
 
     (113) array -> LC expression RC . array_a
-    (114) array_a -> . LC expression RC
-    (115) array_a -> . empty
-    (119) empty -> .
+    (115) array_a -> . LC expression RC
+    (116) array_a -> . empty
+    (121) empty -> .
 
-    LC              shift and go to state 220
-    DOT             reduce using rule 119 (empty -> .)
+    LC              shift and go to state 222
+    DOT             reduce using rule 121 (empty -> .)
+    IS              reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    MUL             reduce using rule 121 (empty -> .)
+    DIV             reduce using rule 121 (empty -> .)
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
-    array_a                        shift and go to state 221
-    empty                          shift and go to state 222
+    array_a                        shift and go to state 223
+    empty                          shift and go to state 224
 
-state 197
+state 199
 
     (74) condition -> IF expression block condition_a . condition_b
     (77) condition_b -> . else
     (78) condition_b -> . empty
     (80) else -> . ELSE block
-    (119) empty -> .
+    (121) empty -> .
 
-    ELSE            shift and go to state 226
-    PRINT           reduce using rule 119 (empty -> .)
-    INPUT           reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    IF              reduce using rule 119 (empty -> .)
-    WHILE           reduce using rule 119 (empty -> .)
-    RETURN          reduce using rule 119 (empty -> .)
-    RB              reduce using rule 119 (empty -> .)
+    ELSE            shift and go to state 228
+    PRINT           reduce using rule 121 (empty -> .)
+    INPUT           reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    IF              reduce using rule 121 (empty -> .)
+    WHILE           reduce using rule 121 (empty -> .)
+    RETURN          reduce using rule 121 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
 
-    condition_b                    shift and go to state 223
-    else                           shift and go to state 224
-    empty                          shift and go to state 225
+    condition_b                    shift and go to state 225
+    else                           shift and go to state 226
+    empty                          shift and go to state 227
 
-state 198
+state 200
 
     (75) condition_a -> elseif . condition_a
     (75) condition_a -> . elseif condition_a
     (76) condition_a -> . empty
     (79) elseif -> . ELSEIF expression block
-    (119) empty -> .
+    (121) empty -> .
 
-    ELSEIF          shift and go to state 200
-    ELSE            reduce using rule 119 (empty -> .)
-    PRINT           reduce using rule 119 (empty -> .)
-    INPUT           reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    IF              reduce using rule 119 (empty -> .)
-    WHILE           reduce using rule 119 (empty -> .)
-    RETURN          reduce using rule 119 (empty -> .)
-    RB              reduce using rule 119 (empty -> .)
+    ELSEIF          shift and go to state 202
+    ELSE            reduce using rule 121 (empty -> .)
+    PRINT           reduce using rule 121 (empty -> .)
+    INPUT           reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    IF              reduce using rule 121 (empty -> .)
+    WHILE           reduce using rule 121 (empty -> .)
+    RETURN          reduce using rule 121 (empty -> .)
+    RB              reduce using rule 121 (empty -> .)
 
-    elseif                         shift and go to state 198
-    condition_a                    shift and go to state 227
-    empty                          shift and go to state 199
+    elseif                         shift and go to state 200
+    condition_a                    shift and go to state 229
+    empty                          shift and go to state 201
 
-state 199
+state 201
 
     (76) condition_a -> empty .
 
@@ -3007,7 +3103,7 @@ state 199
     RB              reduce using rule 76 (condition_a -> empty .)
 
 
-state 200
+state 202
 
     (79) elseif -> ELSEIF . expression block
     (81) expression -> . comparison expression_a
@@ -3020,141 +3116,199 @@ state 200
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 228
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
-
-state 201
-
-    (82) expression_a -> AND expression .
-
-    LB              reduce using rule 82 (expression_a -> AND expression .)
-    SEMICOL         reduce using rule 82 (expression_a -> AND expression .)
-    RP              reduce using rule 82 (expression_a -> AND expression .)
-    COMMA           reduce using rule 82 (expression_a -> AND expression .)
-    RC              reduce using rule 82 (expression_a -> AND expression .)
-
-
-state 202
-
-    (83) expression_a -> OR expression .
-
-    LB              reduce using rule 83 (expression_a -> OR expression .)
-    SEMICOL         reduce using rule 83 (expression_a -> OR expression .)
-    RP              reduce using rule 83 (expression_a -> OR expression .)
-    COMMA           reduce using rule 83 (expression_a -> OR expression .)
-    RC              reduce using rule 83 (expression_a -> OR expression .)
-
+    expression                     shift and go to state 230
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
 state 203
 
-    (86) comparison_a -> comparison_b exp .
+    (82) expression_a -> AND comparison . expression_a
+    (82) expression_a -> . AND comparison expression_a
+    (83) expression_a -> . OR comparison
+    (84) expression_a -> . empty
+    (121) empty -> .
 
-    AND             reduce using rule 86 (comparison_a -> comparison_b exp .)
-    OR              reduce using rule 86 (comparison_a -> comparison_b exp .)
-    LB              reduce using rule 86 (comparison_a -> comparison_b exp .)
-    SEMICOL         reduce using rule 86 (comparison_a -> comparison_b exp .)
-    RP              reduce using rule 86 (comparison_a -> comparison_b exp .)
-    COMMA           reduce using rule 86 (comparison_a -> comparison_b exp .)
-    RC              reduce using rule 86 (comparison_a -> comparison_b exp .)
+    AND             shift and go to state 161
+    OR              shift and go to state 162
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
+    expression_a                   shift and go to state 231
+    empty                          shift and go to state 163
 
 state 204
 
-    (95) exp_a -> PLUS exp .
+    (83) expression_a -> OR comparison .
 
-    GEQ             reduce using rule 95 (exp_a -> PLUS exp .)
-    LEQ             reduce using rule 95 (exp_a -> PLUS exp .)
-    GT              reduce using rule 95 (exp_a -> PLUS exp .)
-    LT              reduce using rule 95 (exp_a -> PLUS exp .)
-    EQUAL           reduce using rule 95 (exp_a -> PLUS exp .)
-    NEQ             reduce using rule 95 (exp_a -> PLUS exp .)
-    AND             reduce using rule 95 (exp_a -> PLUS exp .)
-    OR              reduce using rule 95 (exp_a -> PLUS exp .)
-    LB              reduce using rule 95 (exp_a -> PLUS exp .)
-    SEMICOL         reduce using rule 95 (exp_a -> PLUS exp .)
-    RP              reduce using rule 95 (exp_a -> PLUS exp .)
-    COMMA           reduce using rule 95 (exp_a -> PLUS exp .)
-    RC              reduce using rule 95 (exp_a -> PLUS exp .)
+    LB              reduce using rule 83 (expression_a -> OR comparison .)
+    SEMICOL         reduce using rule 83 (expression_a -> OR comparison .)
+    RP              reduce using rule 83 (expression_a -> OR comparison .)
+    COMMA           reduce using rule 83 (expression_a -> OR comparison .)
+    RC              reduce using rule 83 (expression_a -> OR comparison .)
 
 
 state 205
 
-    (96) exp_a -> MINUS exp .
+    (86) comparison_a -> comparison_b exp . comparison_a
+    (86) comparison_a -> . comparison_b exp comparison_a
+    (87) comparison_a -> . empty
+    (88) comparison_b -> . GEQ
+    (89) comparison_b -> . LEQ
+    (90) comparison_b -> . GT
+    (91) comparison_b -> . LT
+    (92) comparison_b -> . EQUAL
+    (93) comparison_b -> . NEQ
+    (121) empty -> .
 
-    GEQ             reduce using rule 96 (exp_a -> MINUS exp .)
-    LEQ             reduce using rule 96 (exp_a -> MINUS exp .)
-    GT              reduce using rule 96 (exp_a -> MINUS exp .)
-    LT              reduce using rule 96 (exp_a -> MINUS exp .)
-    EQUAL           reduce using rule 96 (exp_a -> MINUS exp .)
-    NEQ             reduce using rule 96 (exp_a -> MINUS exp .)
-    AND             reduce using rule 96 (exp_a -> MINUS exp .)
-    OR              reduce using rule 96 (exp_a -> MINUS exp .)
-    LB              reduce using rule 96 (exp_a -> MINUS exp .)
-    SEMICOL         reduce using rule 96 (exp_a -> MINUS exp .)
-    RP              reduce using rule 96 (exp_a -> MINUS exp .)
-    COMMA           reduce using rule 96 (exp_a -> MINUS exp .)
-    RC              reduce using rule 96 (exp_a -> MINUS exp .)
+    GEQ             shift and go to state 167
+    LEQ             shift and go to state 168
+    GT              shift and go to state 169
+    LT              shift and go to state 170
+    EQUAL           shift and go to state 171
+    NEQ             shift and go to state 172
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
+    comparison_b                   shift and go to state 165
+    comparison_a                   shift and go to state 232
+    empty                          shift and go to state 166
 
 state 206
 
-    (99) term_a -> MUL term .
+    (95) exp_a -> PLUS term . exp_a
+    (95) exp_a -> . PLUS term exp_a
+    (96) exp_a -> . MINUS term exp_a
+    (97) exp_a -> . empty
+    (121) empty -> .
 
-    PLUS            reduce using rule 99 (term_a -> MUL term .)
-    MINUS           reduce using rule 99 (term_a -> MUL term .)
-    GEQ             reduce using rule 99 (term_a -> MUL term .)
-    LEQ             reduce using rule 99 (term_a -> MUL term .)
-    GT              reduce using rule 99 (term_a -> MUL term .)
-    LT              reduce using rule 99 (term_a -> MUL term .)
-    EQUAL           reduce using rule 99 (term_a -> MUL term .)
-    NEQ             reduce using rule 99 (term_a -> MUL term .)
-    AND             reduce using rule 99 (term_a -> MUL term .)
-    OR              reduce using rule 99 (term_a -> MUL term .)
-    LB              reduce using rule 99 (term_a -> MUL term .)
-    SEMICOL         reduce using rule 99 (term_a -> MUL term .)
-    RP              reduce using rule 99 (term_a -> MUL term .)
-    COMMA           reduce using rule 99 (term_a -> MUL term .)
-    RC              reduce using rule 99 (term_a -> MUL term .)
+    PLUS            shift and go to state 174
+    MINUS           shift and go to state 175
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
+    exp_a                          shift and go to state 233
+    empty                          shift and go to state 176
 
 state 207
 
-    (100) term_a -> DIV term .
+    (96) exp_a -> MINUS term . exp_a
+    (95) exp_a -> . PLUS term exp_a
+    (96) exp_a -> . MINUS term exp_a
+    (97) exp_a -> . empty
+    (121) empty -> .
 
-    PLUS            reduce using rule 100 (term_a -> DIV term .)
-    MINUS           reduce using rule 100 (term_a -> DIV term .)
-    GEQ             reduce using rule 100 (term_a -> DIV term .)
-    LEQ             reduce using rule 100 (term_a -> DIV term .)
-    GT              reduce using rule 100 (term_a -> DIV term .)
-    LT              reduce using rule 100 (term_a -> DIV term .)
-    EQUAL           reduce using rule 100 (term_a -> DIV term .)
-    NEQ             reduce using rule 100 (term_a -> DIV term .)
-    AND             reduce using rule 100 (term_a -> DIV term .)
-    OR              reduce using rule 100 (term_a -> DIV term .)
-    LB              reduce using rule 100 (term_a -> DIV term .)
-    SEMICOL         reduce using rule 100 (term_a -> DIV term .)
-    RP              reduce using rule 100 (term_a -> DIV term .)
-    COMMA           reduce using rule 100 (term_a -> DIV term .)
-    RC              reduce using rule 100 (term_a -> DIV term .)
+    PLUS            shift and go to state 174
+    MINUS           shift and go to state 175
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
+    exp_a                          shift and go to state 234
+    empty                          shift and go to state 176
 
 state 208
+
+    (99) term_a -> MUL factor . term_a
+    (99) term_a -> . MUL factor term_a
+    (100) term_a -> . DIV factor term_a
+    (101) term_a -> . empty
+    (121) empty -> .
+
+    MUL             shift and go to state 178
+    DIV             shift and go to state 179
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
+
+    term_a                         shift and go to state 235
+    empty                          shift and go to state 180
+
+state 209
+
+    (100) term_a -> DIV factor . term_a
+    (99) term_a -> . MUL factor term_a
+    (100) term_a -> . DIV factor term_a
+    (101) term_a -> . empty
+    (121) empty -> .
+
+    MUL             shift and go to state 178
+    DIV             shift and go to state 179
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
+
+    term_a                         shift and go to state 236
+    empty                          shift and go to state 180
+
+state 210
 
     (102) factor -> LP expression RP .
 
@@ -3177,22 +3331,42 @@ state 208
     RC              reduce using rule 102 (factor -> LP expression RP .)
 
 
-state 209
+state 211
 
     (108) var_cte -> ID array . attribute
-    (116) attribute -> . DOT ID attribute_a
+    (117) attribute -> . DOT ID attribute_a
+    (118) attribute -> . empty
+    (121) empty -> .
 
-    DOT             shift and go to state 152
+    DOT             shift and go to state 153
+    MUL             reduce using rule 121 (empty -> .)
+    DIV             reduce using rule 121 (empty -> .)
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
-    attribute                      shift and go to state 229
+    attribute                      shift and go to state 237
+    empty                          shift and go to state 154
 
-state 210
+state 212
 
     (109) var_cte -> ID LP . call_params RP array attribute
     (70) call_params -> . expression call_params_a
     (71) call_params -> . empty
     (81) expression -> . comparison expression_a
-    (119) empty -> .
+    (121) empty -> .
     (85) comparison -> . exp comparison_a
     (94) exp -> . term exp_a
     (98) term -> . factor term_a
@@ -3203,26 +3377,26 @@ state 210
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
 
-    RP              reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
+    RP              reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
 
-    call_params                    shift and go to state 230
-    expression                     shift and go to state 154
-    empty                          shift and go to state 155
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
+    call_params                    shift and go to state 238
+    expression                     shift and go to state 156
+    empty                          shift and go to state 157
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
 
-state 211
+state 213
 
     (32) block -> LB block_a RB .
 
@@ -3240,7 +3414,7 @@ state 211
     RETURN          reduce using rule 32 (block -> LB block_a RB .)
 
 
-state 212
+state 214
 
     (63) print -> PRINT LP print_a RP SEMICOL .
 
@@ -3253,51 +3427,51 @@ state 212
     RB              reduce using rule 63 (print -> PRINT LP print_a RP SEMICOL .)
 
 
-state 213
+state 215
 
     (67) input -> INPUT LP ID array attribute . RP SEMICOL
 
-    RP              shift and go to state 231
-
-
-state 214
-
-    (62) assignment -> ID array attribute IS expression . SEMICOL
-
-    SEMICOL         shift and go to state 232
-
-
-state 215
-
-    (116) attribute -> DOT ID attribute_a .
-
-    IS              reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    RP              reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    MUL             reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    DIV             reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    PLUS            reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    MINUS           reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    GEQ             reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    LEQ             reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    GT              reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    LT              reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    EQUAL           reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    NEQ             reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    AND             reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    OR              reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    LB              reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    SEMICOL         reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    COMMA           reduce using rule 116 (attribute -> DOT ID attribute_a .)
-    RC              reduce using rule 116 (attribute -> DOT ID attribute_a .)
+    RP              shift and go to state 239
 
 
 state 216
 
-    (117) attribute_a -> LP . call_params RP
+    (62) assignment -> ID array attribute IS expression . SEMICOL
+
+    SEMICOL         shift and go to state 240
+
+
+state 217
+
+    (117) attribute -> DOT ID attribute_a .
+
+    IS              reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    RP              reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    MUL             reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    DIV             reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    PLUS            reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    MINUS           reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    GEQ             reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    LEQ             reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    GT              reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    LT              reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    EQUAL           reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    NEQ             reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    AND             reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    OR              reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    LB              reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    SEMICOL         reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    COMMA           reduce using rule 117 (attribute -> DOT ID attribute_a .)
+    RC              reduce using rule 117 (attribute -> DOT ID attribute_a .)
+
+
+state 218
+
+    (119) attribute_a -> LP . call_params RP
     (70) call_params -> . expression call_params_a
     (71) call_params -> . empty
     (81) expression -> . comparison expression_a
-    (119) empty -> .
+    (121) empty -> .
     (85) comparison -> . exp comparison_a
     (94) exp -> . term exp_a
     (98) term -> . factor term_a
@@ -3308,50 +3482,50 @@ state 216
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
 
-    RP              reduce using rule 119 (empty -> .)
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
+    RP              reduce using rule 121 (empty -> .)
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
 
-    call_params                    shift and go to state 233
-    expression                     shift and go to state 154
-    empty                          shift and go to state 155
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
+    call_params                    shift and go to state 241
+    expression                     shift and go to state 156
+    empty                          shift and go to state 157
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
 
-state 217
+state 219
 
-    (118) attribute_a -> empty .
+    (120) attribute_a -> empty .
 
-    IS              reduce using rule 118 (attribute_a -> empty .)
-    RP              reduce using rule 118 (attribute_a -> empty .)
-    MUL             reduce using rule 118 (attribute_a -> empty .)
-    DIV             reduce using rule 118 (attribute_a -> empty .)
-    PLUS            reduce using rule 118 (attribute_a -> empty .)
-    MINUS           reduce using rule 118 (attribute_a -> empty .)
-    GEQ             reduce using rule 118 (attribute_a -> empty .)
-    LEQ             reduce using rule 118 (attribute_a -> empty .)
-    GT              reduce using rule 118 (attribute_a -> empty .)
-    LT              reduce using rule 118 (attribute_a -> empty .)
-    EQUAL           reduce using rule 118 (attribute_a -> empty .)
-    NEQ             reduce using rule 118 (attribute_a -> empty .)
-    AND             reduce using rule 118 (attribute_a -> empty .)
-    OR              reduce using rule 118 (attribute_a -> empty .)
-    LB              reduce using rule 118 (attribute_a -> empty .)
-    SEMICOL         reduce using rule 118 (attribute_a -> empty .)
-    COMMA           reduce using rule 118 (attribute_a -> empty .)
-    RC              reduce using rule 118 (attribute_a -> empty .)
+    IS              reduce using rule 120 (attribute_a -> empty .)
+    RP              reduce using rule 120 (attribute_a -> empty .)
+    MUL             reduce using rule 120 (attribute_a -> empty .)
+    DIV             reduce using rule 120 (attribute_a -> empty .)
+    PLUS            reduce using rule 120 (attribute_a -> empty .)
+    MINUS           reduce using rule 120 (attribute_a -> empty .)
+    GEQ             reduce using rule 120 (attribute_a -> empty .)
+    LEQ             reduce using rule 120 (attribute_a -> empty .)
+    GT              reduce using rule 120 (attribute_a -> empty .)
+    LT              reduce using rule 120 (attribute_a -> empty .)
+    EQUAL           reduce using rule 120 (attribute_a -> empty .)
+    NEQ             reduce using rule 120 (attribute_a -> empty .)
+    AND             reduce using rule 120 (attribute_a -> empty .)
+    OR              reduce using rule 120 (attribute_a -> empty .)
+    LB              reduce using rule 120 (attribute_a -> empty .)
+    SEMICOL         reduce using rule 120 (attribute_a -> empty .)
+    COMMA           reduce using rule 120 (attribute_a -> empty .)
+    RC              reduce using rule 120 (attribute_a -> empty .)
 
 
-state 218
+state 220
 
     (69) call_function -> ID LP call_params RP SEMICOL .
 
@@ -3364,22 +3538,22 @@ state 218
     RB              reduce using rule 69 (call_function -> ID LP call_params RP SEMICOL .)
 
 
-state 219
+state 221
 
     (72) call_params_a -> COMMA expression . call_params_a
     (72) call_params_a -> . COMMA expression call_params_a
     (73) call_params_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    COMMA           shift and go to state 194
-    RP              reduce using rule 119 (empty -> .)
+    COMMA           shift and go to state 196
+    RP              reduce using rule 121 (empty -> .)
 
-    call_params_a                  shift and go to state 234
-    empty                          shift and go to state 195
+    call_params_a                  shift and go to state 242
+    empty                          shift and go to state 197
 
-state 220
+state 222
 
-    (114) array_a -> LC . expression RC
+    (115) array_a -> LC . expression RC
     (81) expression -> . comparison expression_a
     (85) comparison -> . exp comparison_a
     (94) exp -> . term exp_a
@@ -3390,40 +3564,76 @@ state 220
     (105) factor_a -> . MINUS
     (106) factor_a -> . NOT
     (107) factor_a -> . empty
-    (119) empty -> .
+    (121) empty -> .
 
-    LP              shift and go to state 133
-    PLUS            shift and go to state 135
-    MINUS           shift and go to state 136
-    NOT             shift and go to state 137
-    ID              reduce using rule 119 (empty -> .)
-    CTE_I           reduce using rule 119 (empty -> .)
-    CTE_F           reduce using rule 119 (empty -> .)
-    CTE_B           reduce using rule 119 (empty -> .)
+    LP              shift and go to state 134
+    PLUS            shift and go to state 136
+    MINUS           shift and go to state 137
+    NOT             shift and go to state 138
+    ID              reduce using rule 121 (empty -> .)
+    CTE_I           reduce using rule 121 (empty -> .)
+    CTE_F           reduce using rule 121 (empty -> .)
+    CTE_B           reduce using rule 121 (empty -> .)
 
-    expression                     shift and go to state 235
-    comparison                     shift and go to state 129
-    exp                            shift and go to state 130
-    term                           shift and go to state 131
-    factor                         shift and go to state 132
-    factor_a                       shift and go to state 134
-    empty                          shift and go to state 138
+    expression                     shift and go to state 243
+    comparison                     shift and go to state 130
+    exp                            shift and go to state 131
+    term                           shift and go to state 132
+    factor                         shift and go to state 133
+    factor_a                       shift and go to state 135
+    empty                          shift and go to state 139
 
-state 221
+state 223
 
     (113) array -> LC expression RC array_a .
 
     DOT             reduce using rule 113 (array -> LC expression RC array_a .)
+    IS              reduce using rule 113 (array -> LC expression RC array_a .)
+    RP              reduce using rule 113 (array -> LC expression RC array_a .)
+    MUL             reduce using rule 113 (array -> LC expression RC array_a .)
+    DIV             reduce using rule 113 (array -> LC expression RC array_a .)
+    PLUS            reduce using rule 113 (array -> LC expression RC array_a .)
+    MINUS           reduce using rule 113 (array -> LC expression RC array_a .)
+    GEQ             reduce using rule 113 (array -> LC expression RC array_a .)
+    LEQ             reduce using rule 113 (array -> LC expression RC array_a .)
+    GT              reduce using rule 113 (array -> LC expression RC array_a .)
+    LT              reduce using rule 113 (array -> LC expression RC array_a .)
+    EQUAL           reduce using rule 113 (array -> LC expression RC array_a .)
+    NEQ             reduce using rule 113 (array -> LC expression RC array_a .)
+    AND             reduce using rule 113 (array -> LC expression RC array_a .)
+    OR              reduce using rule 113 (array -> LC expression RC array_a .)
+    LB              reduce using rule 113 (array -> LC expression RC array_a .)
+    SEMICOL         reduce using rule 113 (array -> LC expression RC array_a .)
+    COMMA           reduce using rule 113 (array -> LC expression RC array_a .)
+    RC              reduce using rule 113 (array -> LC expression RC array_a .)
 
 
-state 222
+state 224
 
-    (115) array_a -> empty .
+    (116) array_a -> empty .
 
-    DOT             reduce using rule 115 (array_a -> empty .)
+    DOT             reduce using rule 116 (array_a -> empty .)
+    IS              reduce using rule 116 (array_a -> empty .)
+    RP              reduce using rule 116 (array_a -> empty .)
+    MUL             reduce using rule 116 (array_a -> empty .)
+    DIV             reduce using rule 116 (array_a -> empty .)
+    PLUS            reduce using rule 116 (array_a -> empty .)
+    MINUS           reduce using rule 116 (array_a -> empty .)
+    GEQ             reduce using rule 116 (array_a -> empty .)
+    LEQ             reduce using rule 116 (array_a -> empty .)
+    GT              reduce using rule 116 (array_a -> empty .)
+    LT              reduce using rule 116 (array_a -> empty .)
+    EQUAL           reduce using rule 116 (array_a -> empty .)
+    NEQ             reduce using rule 116 (array_a -> empty .)
+    AND             reduce using rule 116 (array_a -> empty .)
+    OR              reduce using rule 116 (array_a -> empty .)
+    LB              reduce using rule 116 (array_a -> empty .)
+    SEMICOL         reduce using rule 116 (array_a -> empty .)
+    COMMA           reduce using rule 116 (array_a -> empty .)
+    RC              reduce using rule 116 (array_a -> empty .)
 
 
-state 223
+state 225
 
     (74) condition -> IF expression block condition_a condition_b .
 
@@ -3436,7 +3646,7 @@ state 223
     RB              reduce using rule 74 (condition -> IF expression block condition_a condition_b .)
 
 
-state 224
+state 226
 
     (77) condition_b -> else .
 
@@ -3449,7 +3659,7 @@ state 224
     RB              reduce using rule 77 (condition_b -> else .)
 
 
-state 225
+state 227
 
     (78) condition_b -> empty .
 
@@ -3462,16 +3672,16 @@ state 225
     RB              reduce using rule 78 (condition_b -> empty .)
 
 
-state 226
+state 228
 
     (80) else -> ELSE . block
     (32) block -> . LB block_a RB
 
-    LB              shift and go to state 145
+    LB              shift and go to state 146
 
-    block                          shift and go to state 236
+    block                          shift and go to state 244
 
-state 227
+state 229
 
     (75) condition_a -> elseif condition_a .
 
@@ -3485,16 +3695,120 @@ state 227
     RB              reduce using rule 75 (condition_a -> elseif condition_a .)
 
 
-state 228
+state 230
 
     (79) elseif -> ELSEIF expression . block
     (32) block -> . LB block_a RB
 
-    LB              shift and go to state 145
+    LB              shift and go to state 146
 
-    block                          shift and go to state 237
+    block                          shift and go to state 245
 
-state 229
+state 231
+
+    (82) expression_a -> AND comparison expression_a .
+
+    LB              reduce using rule 82 (expression_a -> AND comparison expression_a .)
+    SEMICOL         reduce using rule 82 (expression_a -> AND comparison expression_a .)
+    RP              reduce using rule 82 (expression_a -> AND comparison expression_a .)
+    COMMA           reduce using rule 82 (expression_a -> AND comparison expression_a .)
+    RC              reduce using rule 82 (expression_a -> AND comparison expression_a .)
+
+
+state 232
+
+    (86) comparison_a -> comparison_b exp comparison_a .
+
+    AND             reduce using rule 86 (comparison_a -> comparison_b exp comparison_a .)
+    OR              reduce using rule 86 (comparison_a -> comparison_b exp comparison_a .)
+    LB              reduce using rule 86 (comparison_a -> comparison_b exp comparison_a .)
+    SEMICOL         reduce using rule 86 (comparison_a -> comparison_b exp comparison_a .)
+    RP              reduce using rule 86 (comparison_a -> comparison_b exp comparison_a .)
+    COMMA           reduce using rule 86 (comparison_a -> comparison_b exp comparison_a .)
+    RC              reduce using rule 86 (comparison_a -> comparison_b exp comparison_a .)
+
+
+state 233
+
+    (95) exp_a -> PLUS term exp_a .
+
+    GEQ             reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    LEQ             reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    GT              reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    LT              reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    EQUAL           reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    NEQ             reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    AND             reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    OR              reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    LB              reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    SEMICOL         reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    RP              reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    COMMA           reduce using rule 95 (exp_a -> PLUS term exp_a .)
+    RC              reduce using rule 95 (exp_a -> PLUS term exp_a .)
+
+
+state 234
+
+    (96) exp_a -> MINUS term exp_a .
+
+    GEQ             reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    LEQ             reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    GT              reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    LT              reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    EQUAL           reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    NEQ             reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    AND             reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    OR              reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    LB              reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    SEMICOL         reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    RP              reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    COMMA           reduce using rule 96 (exp_a -> MINUS term exp_a .)
+    RC              reduce using rule 96 (exp_a -> MINUS term exp_a .)
+
+
+state 235
+
+    (99) term_a -> MUL factor term_a .
+
+    PLUS            reduce using rule 99 (term_a -> MUL factor term_a .)
+    MINUS           reduce using rule 99 (term_a -> MUL factor term_a .)
+    GEQ             reduce using rule 99 (term_a -> MUL factor term_a .)
+    LEQ             reduce using rule 99 (term_a -> MUL factor term_a .)
+    GT              reduce using rule 99 (term_a -> MUL factor term_a .)
+    LT              reduce using rule 99 (term_a -> MUL factor term_a .)
+    EQUAL           reduce using rule 99 (term_a -> MUL factor term_a .)
+    NEQ             reduce using rule 99 (term_a -> MUL factor term_a .)
+    AND             reduce using rule 99 (term_a -> MUL factor term_a .)
+    OR              reduce using rule 99 (term_a -> MUL factor term_a .)
+    LB              reduce using rule 99 (term_a -> MUL factor term_a .)
+    SEMICOL         reduce using rule 99 (term_a -> MUL factor term_a .)
+    RP              reduce using rule 99 (term_a -> MUL factor term_a .)
+    COMMA           reduce using rule 99 (term_a -> MUL factor term_a .)
+    RC              reduce using rule 99 (term_a -> MUL factor term_a .)
+
+
+state 236
+
+    (100) term_a -> DIV factor term_a .
+
+    PLUS            reduce using rule 100 (term_a -> DIV factor term_a .)
+    MINUS           reduce using rule 100 (term_a -> DIV factor term_a .)
+    GEQ             reduce using rule 100 (term_a -> DIV factor term_a .)
+    LEQ             reduce using rule 100 (term_a -> DIV factor term_a .)
+    GT              reduce using rule 100 (term_a -> DIV factor term_a .)
+    LT              reduce using rule 100 (term_a -> DIV factor term_a .)
+    EQUAL           reduce using rule 100 (term_a -> DIV factor term_a .)
+    NEQ             reduce using rule 100 (term_a -> DIV factor term_a .)
+    AND             reduce using rule 100 (term_a -> DIV factor term_a .)
+    OR              reduce using rule 100 (term_a -> DIV factor term_a .)
+    LB              reduce using rule 100 (term_a -> DIV factor term_a .)
+    SEMICOL         reduce using rule 100 (term_a -> DIV factor term_a .)
+    RP              reduce using rule 100 (term_a -> DIV factor term_a .)
+    COMMA           reduce using rule 100 (term_a -> DIV factor term_a .)
+    RC              reduce using rule 100 (term_a -> DIV factor term_a .)
+
+
+state 237
 
     (108) var_cte -> ID array attribute .
 
@@ -3517,21 +3831,21 @@ state 229
     RC              reduce using rule 108 (var_cte -> ID array attribute .)
 
 
-state 230
+state 238
 
     (109) var_cte -> ID LP call_params . RP array attribute
 
-    RP              shift and go to state 238
+    RP              shift and go to state 246
 
 
-state 231
+state 239
 
     (67) input -> INPUT LP ID array attribute RP . SEMICOL
 
-    SEMICOL         shift and go to state 239
+    SEMICOL         shift and go to state 247
 
 
-state 232
+state 240
 
     (62) assignment -> ID array attribute IS expression SEMICOL .
 
@@ -3544,28 +3858,28 @@ state 232
     RB              reduce using rule 62 (assignment -> ID array attribute IS expression SEMICOL .)
 
 
-state 233
+state 241
 
-    (117) attribute_a -> LP call_params . RP
+    (119) attribute_a -> LP call_params . RP
 
-    RP              shift and go to state 240
+    RP              shift and go to state 248
 
 
-state 234
+state 242
 
     (72) call_params_a -> COMMA expression call_params_a .
 
     RP              reduce using rule 72 (call_params_a -> COMMA expression call_params_a .)
 
 
-state 235
+state 243
 
-    (114) array_a -> LC expression . RC
+    (115) array_a -> LC expression . RC
 
-    RC              shift and go to state 241
+    RC              shift and go to state 249
 
 
-state 236
+state 244
 
     (80) else -> ELSE block .
 
@@ -3578,7 +3892,7 @@ state 236
     RB              reduce using rule 80 (else -> ELSE block .)
 
 
-state 237
+state 245
 
     (79) elseif -> ELSEIF expression block .
 
@@ -3593,16 +3907,37 @@ state 237
     RB              reduce using rule 79 (elseif -> ELSEIF expression block .)
 
 
-state 238
+state 246
 
     (109) var_cte -> ID LP call_params RP . array attribute
     (113) array -> . LC expression RC array_a
+    (114) array -> . empty
+    (121) empty -> .
 
     LC              shift and go to state 127
+    DOT             reduce using rule 121 (empty -> .)
+    MUL             reduce using rule 121 (empty -> .)
+    DIV             reduce using rule 121 (empty -> .)
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
-    array                          shift and go to state 242
+    array                          shift and go to state 250
+    empty                          shift and go to state 128
 
-state 239
+state 247
 
     (67) input -> INPUT LP ID array attribute RP SEMICOL .
 
@@ -3615,47 +3950,85 @@ state 239
     RB              reduce using rule 67 (input -> INPUT LP ID array attribute RP SEMICOL .)
 
 
-state 240
+state 248
 
-    (117) attribute_a -> LP call_params RP .
+    (119) attribute_a -> LP call_params RP .
 
-    IS              reduce using rule 117 (attribute_a -> LP call_params RP .)
-    RP              reduce using rule 117 (attribute_a -> LP call_params RP .)
-    MUL             reduce using rule 117 (attribute_a -> LP call_params RP .)
-    DIV             reduce using rule 117 (attribute_a -> LP call_params RP .)
-    PLUS            reduce using rule 117 (attribute_a -> LP call_params RP .)
-    MINUS           reduce using rule 117 (attribute_a -> LP call_params RP .)
-    GEQ             reduce using rule 117 (attribute_a -> LP call_params RP .)
-    LEQ             reduce using rule 117 (attribute_a -> LP call_params RP .)
-    GT              reduce using rule 117 (attribute_a -> LP call_params RP .)
-    LT              reduce using rule 117 (attribute_a -> LP call_params RP .)
-    EQUAL           reduce using rule 117 (attribute_a -> LP call_params RP .)
-    NEQ             reduce using rule 117 (attribute_a -> LP call_params RP .)
-    AND             reduce using rule 117 (attribute_a -> LP call_params RP .)
-    OR              reduce using rule 117 (attribute_a -> LP call_params RP .)
-    LB              reduce using rule 117 (attribute_a -> LP call_params RP .)
-    SEMICOL         reduce using rule 117 (attribute_a -> LP call_params RP .)
-    COMMA           reduce using rule 117 (attribute_a -> LP call_params RP .)
-    RC              reduce using rule 117 (attribute_a -> LP call_params RP .)
-
-
-state 241
-
-    (114) array_a -> LC expression RC .
-
-    DOT             reduce using rule 114 (array_a -> LC expression RC .)
+    IS              reduce using rule 119 (attribute_a -> LP call_params RP .)
+    RP              reduce using rule 119 (attribute_a -> LP call_params RP .)
+    MUL             reduce using rule 119 (attribute_a -> LP call_params RP .)
+    DIV             reduce using rule 119 (attribute_a -> LP call_params RP .)
+    PLUS            reduce using rule 119 (attribute_a -> LP call_params RP .)
+    MINUS           reduce using rule 119 (attribute_a -> LP call_params RP .)
+    GEQ             reduce using rule 119 (attribute_a -> LP call_params RP .)
+    LEQ             reduce using rule 119 (attribute_a -> LP call_params RP .)
+    GT              reduce using rule 119 (attribute_a -> LP call_params RP .)
+    LT              reduce using rule 119 (attribute_a -> LP call_params RP .)
+    EQUAL           reduce using rule 119 (attribute_a -> LP call_params RP .)
+    NEQ             reduce using rule 119 (attribute_a -> LP call_params RP .)
+    AND             reduce using rule 119 (attribute_a -> LP call_params RP .)
+    OR              reduce using rule 119 (attribute_a -> LP call_params RP .)
+    LB              reduce using rule 119 (attribute_a -> LP call_params RP .)
+    SEMICOL         reduce using rule 119 (attribute_a -> LP call_params RP .)
+    COMMA           reduce using rule 119 (attribute_a -> LP call_params RP .)
+    RC              reduce using rule 119 (attribute_a -> LP call_params RP .)
 
 
-state 242
+state 249
+
+    (115) array_a -> LC expression RC .
+
+    DOT             reduce using rule 115 (array_a -> LC expression RC .)
+    IS              reduce using rule 115 (array_a -> LC expression RC .)
+    RP              reduce using rule 115 (array_a -> LC expression RC .)
+    MUL             reduce using rule 115 (array_a -> LC expression RC .)
+    DIV             reduce using rule 115 (array_a -> LC expression RC .)
+    PLUS            reduce using rule 115 (array_a -> LC expression RC .)
+    MINUS           reduce using rule 115 (array_a -> LC expression RC .)
+    GEQ             reduce using rule 115 (array_a -> LC expression RC .)
+    LEQ             reduce using rule 115 (array_a -> LC expression RC .)
+    GT              reduce using rule 115 (array_a -> LC expression RC .)
+    LT              reduce using rule 115 (array_a -> LC expression RC .)
+    EQUAL           reduce using rule 115 (array_a -> LC expression RC .)
+    NEQ             reduce using rule 115 (array_a -> LC expression RC .)
+    AND             reduce using rule 115 (array_a -> LC expression RC .)
+    OR              reduce using rule 115 (array_a -> LC expression RC .)
+    LB              reduce using rule 115 (array_a -> LC expression RC .)
+    SEMICOL         reduce using rule 115 (array_a -> LC expression RC .)
+    COMMA           reduce using rule 115 (array_a -> LC expression RC .)
+    RC              reduce using rule 115 (array_a -> LC expression RC .)
+
+
+state 250
 
     (109) var_cte -> ID LP call_params RP array . attribute
-    (116) attribute -> . DOT ID attribute_a
+    (117) attribute -> . DOT ID attribute_a
+    (118) attribute -> . empty
+    (121) empty -> .
 
-    DOT             shift and go to state 152
+    DOT             shift and go to state 153
+    MUL             reduce using rule 121 (empty -> .)
+    DIV             reduce using rule 121 (empty -> .)
+    PLUS            reduce using rule 121 (empty -> .)
+    MINUS           reduce using rule 121 (empty -> .)
+    GEQ             reduce using rule 121 (empty -> .)
+    LEQ             reduce using rule 121 (empty -> .)
+    GT              reduce using rule 121 (empty -> .)
+    LT              reduce using rule 121 (empty -> .)
+    EQUAL           reduce using rule 121 (empty -> .)
+    NEQ             reduce using rule 121 (empty -> .)
+    AND             reduce using rule 121 (empty -> .)
+    OR              reduce using rule 121 (empty -> .)
+    LB              reduce using rule 121 (empty -> .)
+    SEMICOL         reduce using rule 121 (empty -> .)
+    RP              reduce using rule 121 (empty -> .)
+    COMMA           reduce using rule 121 (empty -> .)
+    RC              reduce using rule 121 (empty -> .)
 
-    attribute                      shift and go to state 243
+    attribute                      shift and go to state 251
+    empty                          shift and go to state 154
 
-state 243
+state 251
 
     (109) var_cte -> ID LP call_params RP array attribute .
 
