@@ -1,30 +1,33 @@
+import ply.yacc as yacc
+from lexer import tokens
 
 def p_program(p):
     'program   : program_a program_c program_d main'
 
 def p_program_a(p):
     '''
-    program_a  : proram_b program_a
+    program_a  : program_b program_a
     | empty
     '''
+
 def p_program_b(p):
     '''
     program_b  : let
     | class
-    | emtpy
     '''
+
 def p_program_c(p):
     '''
     program_c  : var program_c
-    | emtpy
+    | empty
     '''
+
 def p_program_d(p):
     '''
     program_d  : function program_d
-    | emtpy
+    | empty
     '''
-# No definition for cte variables.
-# TODO: Please update cte variables
+
 def p_type(p):
     '''
     type    : LC CTE_I RC LC CTE_I RC atomic
@@ -42,6 +45,7 @@ def p_atomic(p):
 
 def p_var(p):
     'var    : VAR ID COL type var_a SEMICOL'
+
 def p_var_a(p):
     '''
     var_a   : IS var_b
@@ -58,16 +62,24 @@ def p_var_b(p):
 def p_let(p):
     'let    : LET ID COL type IS var_b SEMICOL'
 
+def p_main(p):
+    'main   : MAIN LP RP function_block'
+
 def p_function(p):
-    'function   : FUNCTION id LP params RP function_a function_block'
+    'function   : FUNCTION ID LP params RP function_a function_block'
+
 def p_function_a(p):
     '''
-    function_a   : RARROW type
+    function_a   : ARROW type
     | empty
     '''
 
 def p_params(p):
-    'params   : ID COL type params_a'
+    '''
+    params   : ID COL type params_a
+    | empty
+    '''
+
 def p_params_a(p):
     '''
     params_a   : COMMA params
@@ -94,13 +106,9 @@ def p_function_block_a(p):
 # Possible change of name to neutral declaration
 def p_function_block_b(p):
     '''
-    p_function_block_b : var
+    function_block_b : var
     | let
-    | empty
     '''
-
-def p_main(p):
-    'main   : FUNCTION MAIN LP RP function_block'
 
 # class_a = optional ->  : id
 # class_b = optional ->  recursive(optional(private) var|let )
@@ -122,7 +130,7 @@ def p_class_b(p):
     class_b : class_e class_f class_b
     | empty
     '''
-# TODO: No PRIVATE in Lexer!!!
+
 def p_class_e(p):
     '''
     class_e : PRIVATE
@@ -143,7 +151,7 @@ def p_class_c(p):
 # class_d = optional ->  recursive(optional(private)function)
 def p_class_d(p):
     '''
-    class_d : class_e function p_class_d
+    class_d : class_e function class_d
     | empty
     '''
 def p_init(p):
@@ -168,11 +176,12 @@ def p_assignement(p):
 
 def p_print(p):
     'print : PRINT LP print_a RP SEMICOL'
+
 def p_print_a(p):
     '''
     print_a : expression
     | CTE_S
-    | emtpy
+    | empty
     '''
 def p_input(p):
     'input  : INPUT LP ID array attribute RP SEMICOL'
@@ -191,52 +200,50 @@ def p_call_params(p):
 def p_call_params_a(p):
     '''
     call_params_a  : COMMA expression call_params_a
-    | emtpy
+    | empty
     '''
 def p_condition(p):
     'condition  : IF expression block condition_a condition_b'
+
+def p_condition_a(p):
+    '''
+    condition_a  : elseif condition_a
+    | empty
+    '''
 
 def p_condition_b(p):
     '''
     condition_b : else
     | empty
     '''
-def p_condition_a(p):
-    '''
-    condition_a  : elseif condition_c
-    | empty
-    '''
-def p_condition_c(p):
-    '''
-    condition_a  : elseif condition_c
-    | empty
-    '''
-
-def p_else(p):
-    'else   : ELSE block'
 
 def p_elseif(p):
     'elseif : ELSE IF expression block'
 
+def p_else(p):
+    'else   : ELSE block'
 
 def p_expression(p):
-    'expression : comparasion expression_a'
+    'expression : comparison expression_a'
+
 def p_expression_a(p):
     '''
     expression_a    : AND expression
     | OR expression
     | empty
     '''
-def p_comparasion(p):
-    'comparasion    : exp comparasion_a'
-def p_comparasion_a(p):
+
+def p_comparison(p):
+    'comparison    : exp comparison_a'
+
+def p_comparison_a(p):
     '''
-    comparasion_a  : comparasion_b exp
+    comparison_a  : comparison_b exp
     | empty
     '''
-def p_comparasion_b(p):
+def p_comparison_b(p):
     '''
-    comparasion_b  : GEQ
+    comparison_b  : GEQ
     | LEQ
     | GT
     | LT
@@ -246,6 +253,7 @@ def p_comparasion_b(p):
 
 def p_exp(p):
     'exp    : term exp_a'
+
 def p_exp_a(p):
     '''
     exp_a   : PLUS exp
@@ -254,18 +262,18 @@ def p_exp_a(p):
     '''
 
 def p_term(p):
-    'exp    : factor term_a'
+    'term    : factor term_a'
 def p_term_a(p):
     '''
     term_a   : MUL term
-    | div term
+    | DIV term
     | empty
     '''
 
 def p_factor(p):
     '''
     factor  : LP expression RP
-    | factor_b var_cte
+    | factor_a var_cte
     '''
 def p_factor_a(p):
     '''
@@ -286,7 +294,7 @@ def p_array(p):
     'array   : LC expression RC array_a'
 def p_array_a(p):
     '''
-    array_a :  LC expression RC
+    array_a  : LC expression RC
     | empty
     '''
 
@@ -303,3 +311,32 @@ def p_attribute_a(p):
 
 def p_empty(p):
     'empty :'
+
+# Error rule for syntax errors
+def p_error(p):
+    if p != None:
+        print("Syntax error in input!")
+        print(p)    
+
+
+# Build the parser
+parser = yacc.yacc(start='program')
+
+
+with open("program.txt", "r") as inputFile:
+    data = inputFile.read()
+
+result = 0;
+
+while result != None:
+    try:
+        s = data
+    except EOFError:
+        break
+    if not s: 
+        continue
+    result = parser.parse(s)
+    if result != None:
+        print(result)
+
+
