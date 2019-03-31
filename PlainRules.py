@@ -314,9 +314,8 @@ def p_empty(p):
 
 # Error rule for syntax errors
 def p_error(p):
-    if p != None:
-        print("Syntax error in input!")
-        print(p)    
+    print("Syntax error in input!")
+    print(p)    
 
 
 # Build the parser
