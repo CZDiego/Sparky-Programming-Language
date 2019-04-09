@@ -1,10 +1,8 @@
 # ------------------------------------------------------------
 # lex.py
 #
-# Luis Salomon Flores Ugalde
-# A00817435
-# Diego Contreras
-# A00817441
+# Luis Salomon Flores Ugalde | A00817435
+# Diego Contreras            | A00817441
 # ------------------------------------------------------------
 import ply.lex as lex
 
@@ -17,7 +15,7 @@ reservedWords = {
     'print'     : 'PRINT',
     'var'       : 'VAR',
     'let'       : 'LET',
-    'function'      : 'FUNCTION',
+    'function'  : 'FUNCTION',
     'class'     : 'CLASS',
     'return'    : 'RETURN',
     'init'      : 'INIT',

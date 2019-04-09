@@ -1,10 +1,8 @@
 # ------------------------------------------------------------
 # yacc.py
 #
-# Luis Salomon Flores Ugalde
-# A00817435
-# Diego Contreras
-# A00817441
+# Luis Salomon Flores Ugalde | A00817435
+# Diego Contreras            | A00817441
 # ------------------------------------------------------------
 import ply.yacc as yacc
 from lex import tokens
@@ -96,10 +94,11 @@ def p_params_a(p):
 
 def p_block(p):
     'block  : LB block_a RB'
-# recursive statutes
+
+# recursive statement
 def p_block_a(p):
     '''
-    block_a : statute block_a
+    block_a : statement block_a
     | empty
     '''
 
@@ -165,9 +164,9 @@ def p_class_d(p):
 def p_init(p):
     'init   : INIT LP params RP block'
 
-def p_statute(p):
+def p_statement(p):
     '''
-    statute : print
+    statement : print
     | input
     | assignment
     | condition
@@ -179,8 +178,11 @@ def p_statute(p):
 def p_return(p):
     'return : RETURN expression SEMICOL'
 
+def p_obj(p):
+    'obj : ID array attribute'
+
 def p_assignement(p):
-    'assignment : ID array attribute IS expression SEMICOL'
+    'assignment : obj IS expression SEMICOL'
 
 def p_print(p):
     'print : PRINT LP print_a RP SEMICOL'
@@ -192,13 +194,13 @@ def p_print_a(p):
     | empty
     '''
 def p_input(p):
-    'input  : INPUT LP ID array attribute RP SEMICOL'
+    'input  : INPUT LP obj RP SEMICOL'
 
 def p_loop(p):
     'loop   : WHILE expression block'
 
 def p_call_function(p):
-    'call_function  : ID LP call_params RP SEMICOL'
+    'call_function  : obj call_func SEMICOL'
 
 def p_call_params(p):
     '''
@@ -285,15 +287,13 @@ def p_factor(p):
     '''
 def p_factor_a(p):
     '''
-    factor_a    : PLUS
-    | MINUS
+    factor_a    : MINUS
     | NOT
     | empty
     '''
 def p_var_cte(p):
     '''
-    var_cte : ID array attribute
-    | ID LP call_params RP array attribute
+    var_cte : obj call_func_optional
     | CTE_I
     | CTE_F
     | CTE_B
@@ -311,12 +311,16 @@ def p_array_a(p):
 
 def p_attribute(p):
     '''
-    attribute   : DOT ID attribute_a
+    attribute   : DOT ID
     | empty
     '''
-def p_attribute_a(p):
+
+def p_call_func(p):
+    'call_func : LP call_params RP'
+
+def p_call_func_optional(p):
     '''
-    attribute_a   : LP call_params RP
+    call_func_optional : call_func
     | empty
     '''
 
@@ -328,8 +332,11 @@ def p_empty(p):
 
 # Error rule for syntax errors
 def p_error(p):
-    print("Syntax error in input!")
-    print(p)    
+    if p:
+        print("Unexpected token '" + str(p.value) + "' at line " + str(p.lexer.lineno) + ".")
+        #print(p.type)
+    else:
+        print("Syntax error at EOF")
 
 
 # Build the parser
@@ -339,17 +346,7 @@ parser = yacc.yacc(start='program')
 with open("program.sdfm", "r") as inputFile:
     data = inputFile.read()
 
-result = 0;
+result = parser.parse(data)
 
-while result != None:
-    try:
-        s = data
-    except EOFError:
-        break
-    if not s: 
-        continue
-    result = parser.parse(s)
-    if result != None:
-        print(result)
-
-
+if result != None:
+    print(result)

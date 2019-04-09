@@ -20,7 +20,11 @@ var diego : Float;
 var diego2 : Bool;
 
 function factorial(number : Int) -> Int{
-	return 1;
+	if true{
+		return 1;
+	}else{
+		return 2;
+	}
 }
 
 main(){
@@ -38,15 +42,29 @@ main(){
 
 		a = variable;
 
+	}elseif empty{
+		c = a;
 	}else{
 		diego = variable + true;
 	}
 
-	a = factorial(4);
+	a = b;
+	a.b = x;
+	//a.b() = x; perfecto porque es error
+	a[0] = x;
+	a[0].b = x;
+	//a[0].b() = x; perfecto porque es error
 
-	a = person.getAge();
+	a();
+	a.b();
+	a[0].b();
 
-	getAge();
-
-	return 0;
+	a = b.b;
+	a = b();
+	//a = b()[0]; NO
+	//a = b()[0].b; NO
+	//a = b().b; NO
+	a = b();
+	a = b.b(); 
+	a = b[0].b(); 
 }
