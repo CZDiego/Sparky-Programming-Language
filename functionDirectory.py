@@ -1,8 +1,9 @@
-# name
-# 
+# ------------------------------------------------------------
+# functionDirectory.py
 #
-#
-from varTable import Var
+# Luis Salomon Flores Ugalde | A00817435
+# Diego Contreras            | A00817441
+# ------------------------------------------------------------
 from varTable import VarTable
 
 class Function:
