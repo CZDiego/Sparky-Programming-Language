@@ -15,7 +15,6 @@ def p_program_a(p):
     program_a  : program_b program_a
     | empty
     '''
-
 def p_program_b(p):
     '''
     program_b  : let prog1
@@ -38,11 +37,12 @@ def p_program_d(p):
 
 def p_prog1(p):
     'prog1  :'
-    # Modify variable for let type
-    # Add  to var dictionary of program
+    # new variable object!
+    #
 
 def p_prog2(p):
     'prog2  :'
+    # new class object!
     # current_class_name is set at class rules
     # current_class is an object class created in class rules
     # program.classesDir.Add(current_class_name,current_class)
@@ -66,9 +66,10 @@ def p_type(p):
     type    : atomic type3
     '''
 
+# typeM is a fix.
 def p_typeM(p):
     '''
-    type    : LC CTE_I RC LC CTE_I RC atomic type1
+    typeM    : LC CTE_I RC LC CTE_I RC atomic type1
     | LC CTE_I RC atomic type2
     | ID type4
     '''
@@ -76,39 +77,32 @@ def p_typeM(p):
 # Neuro points type stage
 #################
 
+# A type variable object for easier management!!!!
+# Also a type.Directory for space
+
 def p_type1(p):
     'type1  :'
-    # current_var.type = p[-1]
-    # program.varTable.Add(current_var_name)
-    # current_var.Dim = true // so its dimensional
-    # current_var.Mat = true // so its a matrix
-    # spaceDir is a directory -> for * total memory space * needed for a variable
-    # current_var_col = p[-6] (transform to int)
-    # current_var_row = p[-3] (transform to int)
+    # current_type.type = p[-1]
+    # current_type.Arr = true // so its dimensional
+    # current_type.Mat = true // so its a matrix
+    # current_type.col = p[-6] (transform to int)
+    # current_type.row = p[-3] (transform to int)
     # //total space needed
-    # current_var_space = current_var_col*current_var_row *spaceDir[current_var.type]
-
 def p_type2(p):
     'type2  :'
-    # current_var.type = p[-1]
-    # program.varTable.Add(current_var_name)
-    # current_var.Dim = true // so its dimensional
-    # spaceDir is a directory -> for * total memory space * needed for a variable
-    # current_var_col = p[-3] (transform to int)
+    # current_type.type = p[-1]
+    # current_type.Arr = true // so its dimensional
+    # current_type.col = p[-3] (transform to int)
     # //total space needed
-    # current_var_space = current_var_col*spaceDir[current_var.type]
 def p_type3(p):
     'type3  :'
-    # current_var.type = p[-1]
-    # program.varTable.Add(current_var_name)
-    #
+    # current_type.type = p[-1]
 
 def p_type4(p):
     'type4  :'
     # if(program.classesDir.search(p[-1]))
-    #   current_var.type = p[-1]
-    #   program.varTable.Add(current_var_name)
-    #
+    #   current_type.type = p[-1]
+    # else is error
 
 #################
 #-----------------------------------------------------------------------
@@ -133,22 +127,45 @@ def p_atomic_type(p):
 
 def p_var(p):
     '''
-    var    : VAR ID COL type var_a SEMICOL
-    |  VAR ID COL typeM SEMICOL
+    var    : VAR ID var1 COL type var2 var_a SEMICOL
+    |  VAR ID var1 COL typeM SEMICOL var2
     '''
 
+#assignment in declaration
 def p_var_a(p):
     '''
-    var_a   : IS var_b
+    var_a   : IS var_b var3
     | empty
     '''
 # Possible name change to cte_vars
 def p_var_b(p):
+    'var_b   : var_c type3'
+
+def p_var_c(p):
     '''
-    var_b   : CTE_I
+    var_c   : CTE_I
     | CTE_F
     | CTE_B
     '''
+#-----------------------------------------------------------------------
+# Neuro points var stage
+#################
+
+def p_var1(p):
+    'var1    :'
+    # current_var = new var(_,_,_,_,_,)
+    # current_var_name = p[-1]
+
+def p_var2(p):
+    'var2    :'
+    # current_var.type = current_type
+    # current_var_name = p[-1]
+def p_var3(p):
+    'var3    :'
+    #create assignment quad
+
+#################
+#-----------------------------------------------------------------------
 
 def p_let(p):
     'let    : LET ID COL type IS var_b SEMICOL'
