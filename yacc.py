@@ -6,7 +6,9 @@
 # ------------------------------------------------------------
 import ply.yacc as yacc
 from lex import tokens
-
+# current_var_name
+# current_type
+#
 def p_program(p):
     'program   : program_a program_c program_d main'
 
@@ -37,6 +39,7 @@ def p_program_d(p):
 
 def p_prog1(p):
     'prog1  :'
+    # Tabla metes
     # new variable object!
     #
 
