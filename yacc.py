@@ -157,8 +157,19 @@ def p_var_b(p):
 
 def p_var1(p):
     'var1    :'
-    # current_var = new var(_,_,_,_,_,)
+    # current_var = new var()
+    # current_stage -> global true, local false
     # current_var_name = p[-1]
+    # if(program.current_stage){
+    #   if(program.VarTable.Search(p[-1])) then error
+    #  }else {
+    #   if(program.class_stage){
+    #    if(program.VarTable.Objects[].Search(p[-1])) then error
+    #   }else{
+    # if(program.functionTable.VarTable.Search(p[-1])) then error
+    #   }
+    #}
+    #}
 
 def p_var2(p):
     'var2    :'
@@ -211,12 +222,27 @@ def p_let(p):
 #################
 def p_let1(p):
     'let1   :'
+    # current_var = new var()
+    # current_stage -> global true, local false
     # current_var_name = p[-1]
-    # current_var.let = true;
+    # if(program.current_stage){
+    #   if(program.VarTable.Search(p[-1])) then error
+    #  }else {
+    #   if(program.class_stage){
+    #    if(program.VarTable.Objects[].Search(p[-1])) then error
+    #   }else{
+    # if(program.functionTable.VarTable.Search(p[-1])) then error
+    #   }
+    #}
+    #}
+
+    #
+    #
 def p_let2(p):
     'let2   :'
     # current_var_name = ""
     # current_var
+    # Make assignment quad for variable
 
 #################
 #-------------------------------
