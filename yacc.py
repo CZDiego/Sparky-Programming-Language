@@ -10,7 +10,7 @@ from lex import tokens
 # current_type
 #
 def p_program(p):
-    'program   : program_a program_c program_d main'
+    'program   : prog0 program_a program_c program_d main'
 
 def p_program_a(p):
     '''
@@ -36,7 +36,14 @@ def p_program_d(p):
 #-----------------------------------------------------------------------
 # Neuro points program stage
 #################
-
+def p_prog0(p):
+    'prog0    :'
+    # Create initial goto for MAIN
+    # Quad = new Quad(goto,_,_,_)
+    # program.QuadStack.Add(Quad)
+    # // BASE -> Quadruples position in stack
+    # program.QuadStack.PendingOp(program.BASE)
+    # program.BASE+=1
 def p_prog1(p):
     'prog1  :'
     # Tabla metes
@@ -93,7 +100,7 @@ def p_type1(p):
     # //total space needed
 def p_type2(p):
     'type2  :'
-    # current_type.type = p[-1]
+    # program.current_type.type = p[-1]
     # current_type.Arr = true // so its dimensional
     # current_type.col = p[-3] (transform to int)
     # //total space needed
@@ -112,18 +119,15 @@ def p_type4(p):
 
 def p_atomic(p):
     '''
-    atomic  : INT atomic_type
-    | FLOAT atomic_type
-    | BOOL atomic_type
+    atomic  : INT
+    | FLOAT
+    | BOOL
     '''
 
 #-----------------------------------------------------------------------
 # Neuro points atomic stage
 #################
 
-def p_atomic_type(p):
-    'atomic_type    :'
-    #current_atomic = p[-1]
 
 #################
 #-----------------------------------------------------------------------
@@ -142,13 +146,10 @@ def p_var_a(p):
     '''
 # Possible name change to cte_vars
 def p_var_b(p):
-    'var_b   : var_c type3'
-
-def p_var_c(p):
     '''
-    var_c   : CTE_I
-    | CTE_F
-    | CTE_B
+    var_b   : CTE_I var4
+    | CTE_F var5
+    | CTE_B var6
     '''
 #-----------------------------------------------------------------------
 # Neuro points var stage
@@ -163,16 +164,62 @@ def p_var2(p):
     'var2    :'
     # current_var.type = current_type
     # current_var_name = p[-1]
+    # add (current_var_name, current_var)
+    # current_var = new var
 def p_var3(p):
     'var3    :'
     #create assignment quad
+def p_var4(p):
+    'var4   :'
+    # current_assignation_right = "Int"
+    #  memory manager?
+    # if(!ConstantDir.Search(p[-1])){
+    #      var location = program.Memory.INT_CONST_MEMORY_LOC
+    #      program.Memory.Increase("Int")
+    #       if(!program.Memory.CheckInt()){error stackoverflow}
+    #        // this if would be something like ->
+    #           if( program.Memory.INT_CONST_MEMORY_LOC > program.Memory.MAX_INT_MEMORY)
+    #
+    # }
+    #
+    # Add constant memory direction to stack
+    #
+def p_var5(p):
+    'var5   :'
+    #current_assignation_right = "Float"
+    # if(!ConstantDir.Search(p[-1])){
+    #      var location = program.Memory.INT_CONST_MEMORY_LOC
+    #      program.Memory.Increase("Int")
+    #       if(!program.Memory.CheckInt()){error stackoverflow}
+    #        // this if would be something like ->
+    #           if( program.Memory.INT_CONST_MEMORY_LOC > program.Memory.MAX_INT_MEMORY)
+    # }
+    #
+def p_var6(p):
+    'var6   :'
+    #current_assignation_right = "Bool"
+    #  Same as 5 and 4 but could be
+    #  initialized in memory from start
 
 #################
 #-----------------------------------------------------------------------
 
 def p_let(p):
-    'let    : LET ID COL type IS var_b SEMICOL'
+    'let    : LET ID let1 COL type IS var_b SEMICOL let2'
+#-----------------------------------------------------------------------
+# Neuro points let stage
+#################
+def p_let1(p):
+    'let1   :'
+    # current_var_name = p[-1]
+    # current_var.let = true;
+def p_let2(p):
+    'let2   :'
+    # current_var_name = ""
+    # current_var
 
+#################
+#-------------------------------
 def p_main(p):
     'main   : MAIN LP RP function_block'
 
