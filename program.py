@@ -16,7 +16,7 @@ class Program:
         self.current_function_name  = ""
         self.current_stage          = True   # Working inside the global program
         self.class_stage            = False  # Working either in a class or a function
-
+        
 
 # IF current_stage == True then Program
 # ELSE IF class_stage == True then Class

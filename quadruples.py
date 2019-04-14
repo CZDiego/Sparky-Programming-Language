@@ -1,3 +1,10 @@
+# ------------------------------------------------------------
+# quadruples.py
+# Not usable
+# Luis Salomon Flores Ugalde | A00817435
+# Diego Contreras            | A00817441
+# ------------------------------------------------------------
+
 
 class QuadList:
     def __init__(self):

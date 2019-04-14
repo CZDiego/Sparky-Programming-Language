@@ -1,9 +1,14 @@
+# ------------------------------------------------------------
+# memory.py
+#
+# Luis Salomon Flores Ugalde | A00817435
+# Diego Contreras            | A00817441
+# ------------------------------------------------------------
+
+
 class Memory:
 
     def __init__(self, stage):
-        self.INT_SIZE = int.bit_length()
-        self.FLOAT_SIZE = float.bit_length()
-        self.BOOL_SIZE = bool.bit_length()
         if stage == "program":
             self.INT_LOC = 5001
             self.MAX_INT_LOC = 10000
@@ -18,3 +23,10 @@ class Memory:
             self.MAX_FLOAT_LOC = 30000
             self.BOOL_LOC = 30001
             self.MAX_BOOL_LOC = 35000
+        if stage == "constant":
+            self.INT_LOC = 35001
+            self.MAX_INT_LOC = 40000
+            self.FLOAT_LOC = 45001
+            self.MAX_FLOAT_LOC = 50000
+            self.BOOL_LOC = 50001
+            self.MAX_BOOL_LOC = 55000
