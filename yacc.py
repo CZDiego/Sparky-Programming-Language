@@ -9,6 +9,10 @@ from lex import tokens
 # current_var_name
 # current_type
 #
+from program import Program
+
+program = Program()
+
 def p_program(p):
     'program   : prog0 program_a program_c program_d main'
 
@@ -38,12 +42,11 @@ def p_program_d(p):
 #################
 def p_prog0(p):
     'prog0    :'
-    # Create initial goto for MAIN
-    # Quad = new Quad(goto,_,_,_)
-    # program.QuadStack.Add(Quad)
-    # // BASE -> Quadruples position in stack
-    # program.QuadStack.PendingOp(program.BASE)
-    # program.BASE+=1
+    program.current_quad = ("goto", None, None, None)
+    program.add_quad()
+    program.add_pop()
+    # Goto is missing the operator add to pending operators List
+    # increment program.BASE +1
 def p_prog1(p):
     'prog1  :'
     # Tabla metes
@@ -73,15 +76,15 @@ def p_prog4(p):
 
 def p_type(p):
     '''
-    type    : atomic type3
+    type    : type0 atomic type3
     '''
 
 # typeM is a fix.
 def p_typeM(p):
     '''
-    typeM    : LC CTE_I RC LC CTE_I RC atomic type1
-    | LC CTE_I RC atomic type2
-    | ID type4
+    typeM    : type0 LC CTE_I RC LC CTE_I RC atomic type1
+    | type0 LC CTE_I RC atomic type2
+    | type0 ID type4
     '''
 #-----------------------------------------------------------------------
 # Neuro points type stage
@@ -89,30 +92,36 @@ def p_typeM(p):
 
 # A type variable object for easier management!!!!
 # Also a type.Directory for space
+def p_type0(p):
+    'type0  :'
+    program.new_type()
+    # current_type = new SparkyType()
 
 def p_type1(p):
     'type1  :'
-    # current_type.type = p[-1]
-    # current_type.Arr = true // so its dimensional
-    # current_type.Mat = true // so its a matrix
-    # current_type.col = p[-6] (transform to int)
-    # current_type.row = p[-3] (transform to int)
+    program.current_type.spark_type = p[-1]
+    program.current_type.col = p[-3]
+    program.current_type.row = p[-6]
     # //total space needed
+
 def p_type2(p):
     'type2  :'
-    # program.current_type.type = p[-1]
-    # current_type.Arr = true // so its dimensional
-    # current_type.col = p[-3] (transform to int)
+    program.current_type.spark_type = p[-1]
+    program.current_type.col = p[-3]
+    program.current_type.row = 1
     # //total space needed
+
 def p_type3(p):
     'type3  :'
-    # current_type.type = p[-1]
+    program.current_type.spark_type = p[-1]
+    program.current_type.col = 1
+    program.current_type.row = 1
 
 def p_type4(p):
     'type4  :'
-    # if(program.classesDir.search(p[-1]))
-    #   current_type.type = p[-1]
-    # else is error
+    if p[-1] not in program.varDir.objects:
+        print("Error")
+    program.current_type.spark_type = p[-1]
 
 #################
 #-----------------------------------------------------------------------

@@ -30,3 +30,13 @@ class Memory:
             self.MAX_FLOAT_LOC = 50000
             self.BOOL_LOC = 50001
             self.MAX_BOOL_LOC = 55000
+
+    def int_check(self):
+        return self.INT_LOC <= self.MAX_INT_LOC
+
+    def float_check(self):
+        return self.FLOAT_LOC <= self.MAX_FLOAT_LOC
+
+    def bool_check(self):
+        return self.BOOL_LOC <= self.MAX_BOOL_LOC
+

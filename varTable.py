@@ -6,15 +6,17 @@
 # ------------------------------------------------------------
 from copy import deepcopy
 from objects import ObjectTable
-
+from memory import Memory
+from sparky_type import SparkyType
 
 class Var:
-	def __init__(self, type, scope, private, value, address):
-		self.type    = type
-		self.scope   = scope
-		self.private = private
-		self.value   = value
-		self.address = address
+
+	def __init__(self):
+		self.s_type    = SparkyType()
+		self.scope   = "Global"
+		self.private = "Public"
+		self.value   = ""
+		self.address = 0
 
 	def deepcopy(self):
 		return deepcopy(self)
@@ -22,8 +24,8 @@ class Var:
 
 class VarTable:
 	def __init__(self):
-		self.directory = dict()
-		self.objects = ObjectTable()
+		self.directory 	= dict()
+		self.objects	= ObjectTable()
 
 	# it will be program.Objects[key] = object
 	def __set__(self, key, var):

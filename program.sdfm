@@ -4,13 +4,14 @@ class Person{
 
 	var age : Int;
 	var name : Float;
+	var age : Int;
 
 	init(){
 
 	}
 
 	function getAge() -> Int{
-
+       // debería ser error
 	}
 
 }

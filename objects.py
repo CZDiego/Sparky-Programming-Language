@@ -10,8 +10,9 @@ from copy import deepcopy
 
 
 class Object:
-    def __init__(self, private):
-        self.private = private
+    def __init__(self):
+        self.private = "Public"
+        self.scope   = "Global"
         self.varTable = VarTable()
         self.funDir = FunctionDirectory()
 
