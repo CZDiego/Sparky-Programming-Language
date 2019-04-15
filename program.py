@@ -1,10 +1,10 @@
 from varTable import Var
 from varTable import VarTable
 from functionDirectory import FunctionDirectory
-from objects import ObjectTable
+from objects import ClassTable
+from objects import Class
 from objects import Object
 from memory import Memory
-from quadruples import QuadList
 from copy import deepcopy
 from sparky_type import SparkyType
 
@@ -16,13 +16,13 @@ class Program:
         self.funMemory              = Memory("function")
         self.ConsMemory             = Memory("Constant")
         self.varDir                 = VarTable()
-        self.objectsDir             = ObjectTable()
         self.funDir                 = FunctionDirectory()
-        self.ClassDir               = ObjectTable()
+        self.ClassDir               = ClassTable()
         self.pOpList                = []  # Operator pending list
         self.Polish                 = []  # Polish vector list
         self.current_quad           = ()
-        self.current_class          = Object()
+        self.current_class          = Class()
+        self.current_object         = Object()
         self.current_var            = Var()
         self.current_type           = SparkyType()
         self.current_class_name     = ""
@@ -46,7 +46,10 @@ class Program:
         self.current_type = SparkyType()
 
     def new_object(self):
-        self.current_type = Object()
+        self.current_object = Object()
+
+    def new_class(self):
+        self.current_typ = Object()
 
 # Working with touples (quads)
 # Almost like slice deletion

@@ -24,6 +24,7 @@ class Var:
 class VarTable:
 	def __init__(self):
 		self.directory 	= dict()
+		self.objects	= dict()
 
 	# it will be program.Objects[key] = object
 	def __set__(self, key, var):

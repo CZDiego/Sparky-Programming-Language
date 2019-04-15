@@ -116,8 +116,8 @@ def p_type3(p):
 
 def p_type4(p):
     'type4  :'
-    if p[-1] not in program.objectsDir:
-        print("Error")
+    if p[-1] not in program.varDir.objects:
+        print("Object Class has not been declared")
     program.current_type.spark_type = p[-1]
 
 #################
@@ -353,10 +353,10 @@ def p_class_d(p):
 def p_class1(p):
     'class1 :'
     if p[-1] in program.ClassDir:
-        print("error")
+        print("ERROR : Class Already declared")
     else:
         program.current_class_name = p[-1]
-        program.new_object()
+        program.new_class()
         print(p[-1])
 #################
 #-----------------------------------------------------------------------

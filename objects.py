@@ -11,18 +11,35 @@ from copy import deepcopy
 
 class Object:
     def __init__(self):
-        self.private = "Public"
-        self.scope   = "Global"
         self.varTable = VarTable()
-        self.funDir = FunctionDirectory()
+
+    # it will be program.Objects[key] = object
+    def __set__(self, key, var):
+        self.varTable[key] = var
+
+    def __getitem__(self, key):  # it will be program.funDir[funKey][varKey] and not program.funDir.get(key).varTable[key]
+        return self.varTable[key]
+
+    # overload ->  key in program.varDir
+    def __contains__(self, key):
+        return key in self.varTable
 
     def deepcopy(self):
         return deepcopy(self)
 
-# program.Objects[Objectkey]
-class ObjectTable:
+
+class Class:
     def __init__(self):
-        self.directory = dict()
+        self.funDir = FunctionDirectory()
+        self.varTable = VarTable()
+
+    def deepcopy(self):
+        return deepcopy(self)
+
+
+class ClassTable:
+    def __init__(self):
+        self.directory  = dict()
 
     # it will be program.varDir.objects[key] = object
     def __set__(self, key, object):
