@@ -6,9 +6,6 @@
 # ------------------------------------------------------------
 import ply.yacc as yacc
 from lex import tokens
-# current_var_name
-# current_type
-#
 from program import Program
 
 program = Program()
@@ -119,7 +116,7 @@ def p_type3(p):
 
 def p_type4(p):
     'type4  :'
-    if p[-1] not in program.varDir.objects:
+    if p[-1] not in program.objectsDir:
         print("Error")
     program.current_type.spark_type = p[-1]
 
@@ -311,7 +308,7 @@ def p_function_block_b(p):
 # class_e = optional -> private
 # class_f = mandatory -> var|let
 def p_class(p):
-    'class     : CLASS ID class_a LB class_b init class_c class_d RB'
+    'class     : CLASS ID class1 class_a LB class_b init class_c class_d RB'
 
 def p_class_a(p):
     '''
@@ -348,6 +345,22 @@ def p_class_d(p):
     class_d : class_e function class_d
     | empty
     '''
+
+#-----------------------------------------------------------------------
+# Neuro points atomic stage
+#################
+
+def p_class1(p):
+    'class1 :'
+    if p[-1] in program.ClassDir:
+        print("error")
+    else:
+        program.current_class_name = p[-1]
+        program.new_object()
+        print(p[-1])
+#################
+#-----------------------------------------------------------------------
+
 def p_init(p):
     'init   : INIT LP params RP block'
 

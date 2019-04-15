@@ -5,7 +5,6 @@
 # Diego Contreras            | A00817441
 # ------------------------------------------------------------
 from copy import deepcopy
-from objects import ObjectTable
 from memory import Memory
 from sparky_type import SparkyType
 
@@ -25,7 +24,6 @@ class Var:
 class VarTable:
 	def __init__(self):
 		self.directory 	= dict()
-		self.objects	= ObjectTable()
 
 	# it will be program.Objects[key] = object
 	def __set__(self, key, var):
