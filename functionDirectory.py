@@ -10,14 +10,16 @@ from copy import deepcopy
 
 class Function:
 	def __init__(self, private):
-		self.private = private
-		self.varTable = VarTable()
+		self.private 	= private
+		self.parameters = VarTable()
+		self.varTable 	= VarTable()
 
 	def __getitem__(self, key):  # it will be program.funDir[funKey][varKey] and not program.funDir.get(key).varTable[key]
 		return self.varTable[key]
 
 	def add_params(self,params):
-		self.varTable.update(params)
+		self.parameters.update(params) # this will not increase
+		self.varTable.update(params)  # this will increase
 
 	def deepcopy(self):
 		return deepcopy(self)

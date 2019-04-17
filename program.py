@@ -1,6 +1,7 @@
 from varTable import Var
 from varTable import VarTable
 from functionDirectory import FunctionDirectory
+from functionDirectory import Function
 from objects import ClassTable
 from objects import Class
 from objects import Object
@@ -20,14 +21,15 @@ class Program:
         self.funDir                 = FunctionDirectory()
         self.ClassDir               = ClassTable()
         self.semanticCube           = SemanticCube()
-        self.pJumps                 = []  # 
-        self.VP                     = []  # Polish vector 
+        self.pJumps                 = []  #
+        self.VP                     = []  # Polish vector
         self.pOper                  = []
         self.pType                  = []
         self.current_quad           = ()
         self.current_class          = Class()
         self.current_object         = Object()
         self.current_var            = Var()
+        self.current_function       = Function()
         self.current_type           = SparkyType()
         self.current_value          = 0
         self.current_class_name     = ""
@@ -55,6 +57,9 @@ class Program:
 
     def new_class(self):
         self.current_typ = Object()
+
+    def new_function(self):
+        self.current_function = Function()
 
     def print_quads(self):
         for quad in self.Quads:

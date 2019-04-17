@@ -434,7 +434,7 @@ def p_class6(p):
 def p_class7(p):
     'class7 :'
     program.current_function_name = program.current_class_name
-        
+
 def p_class8(p):
     'class8 :'
     program.current_function.add_params(program.current_params)
@@ -446,6 +446,7 @@ def p_class9(p):
         program.fundir[current_class_name].append(program.current_function)
     else:
         program.fundir[current_class_name] = [program.current_function]
+        #IS A LIST!!!!!!
     program.new_function()
 #################
 #-----------------------------------------------------------------------
