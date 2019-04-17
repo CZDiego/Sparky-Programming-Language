@@ -12,10 +12,10 @@ class Var:
 
 	def __init__(self):
 		self.s_type    = SparkyType()
-		self.scope   = "Global"
-		self.private = "Public"
-		self.value   = ""
-		self.address = 0
+		self.scope     = "Global"
+		self.private   = "Public"
+		self.address   = 0
+		self.constant  = False
 
 	def deepcopy(self):
 		return deepcopy(self)
@@ -33,9 +33,15 @@ class VarTable:
 	def __getitem__(self, key):  # it will be program.funDir[funKey][varKey] and not program.funDir.get(key).varTable[key]
 		return self.directory[key]
 
-	# overload ->  key in program.varDir
+	# overload ->  key in program.varTable
 	def __contains__(self, key):
 		return key in self.directory
+
+	def contains(self, key):
+		return key in self.directory
+
+	def set(self, key, var):
+		self.directory[key] = var
 
 	def deepcopy(self):
 		return deepcopy(self)

@@ -1,4 +1,5 @@
-let diego : Int = 5;
+let diego : Float = 5;
+let diego2 : Int = 5;
 
 class Person{
 

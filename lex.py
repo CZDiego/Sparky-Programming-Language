@@ -37,10 +37,10 @@ reservedWords = {
 # List of token names.   This is always required
 tokens = [
     'ID',
-    'CTE_F', # constante Float
-    'CTE_I', # constante Int
-    'CTE_B', # constante Bool
-    'CTE_S', # constante String
+    'CTE_F',   # constante Float
+    'CTE_I',   # constante Int
+    'CTE_B',   # constante Bool
+    'CTE_S',   # constante String
     'COL',     # :
     'DOT',     # .
     'COMMA',   # ,

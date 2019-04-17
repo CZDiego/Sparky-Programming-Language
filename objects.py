@@ -20,7 +20,7 @@ class Object:
     def __getitem__(self, key):  # it will be program.funDir[funKey][varKey] and not program.funDir.get(key).varTable[key]
         return self.varTable[key]
 
-    # overload ->  key in program.varDir
+    # overload ->  key in program.varTable
     def __contains__(self, key):
         return key in self.varTable
 
@@ -41,7 +41,7 @@ class ClassTable:
     def __init__(self):
         self.directory  = dict()
 
-    # it will be program.varDir.objects[key] = object
+    # it will be program.varTable.objects[key] = object
     def __set__(self, key, object):
         self.directory[key] = object
 

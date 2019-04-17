@@ -4,6 +4,7 @@ from functionDirectory import FunctionDirectory
 from objects import ClassTable
 from objects import Class
 from objects import Object
+from semanticCube import SemanticCube
 from memory import Memory
 from copy import deepcopy
 from sparky_type import SparkyType
@@ -13,18 +14,22 @@ class Program:
         self.BASE                   = 0  # Starting location for Quadruples //list starts with empty so its -1
         self.Quads                  = []
         self.globalMemory           = Memory("program")
-        self.funMemory              = Memory("function")
+        #self.funMemory              = Memory("function")
         self.ConsMemory             = Memory("Constant")
-        self.varDir                 = VarTable()
+        self.varTable               = VarTable()
         self.funDir                 = FunctionDirectory()
         self.ClassDir               = ClassTable()
-        self.pOpList                = []  # Operator pending list
-        self.Polish                 = []  # Polish vector list
+        self.semanticCube           = SemanticCube()
+        self.pJumps                 = []  # 
+        self.VP                     = []  # Polish vector 
+        self.pOper                  = []
+        self.pType                  = []
         self.current_quad           = ()
         self.current_class          = Class()
         self.current_object         = Object()
         self.current_var            = Var()
         self.current_type           = SparkyType()
+        self.current_value          = 0
         self.current_class_name     = ""
         self.current_var_name       = ""
         self.current_function_name  = ""
@@ -38,8 +43,8 @@ class Program:
         self.Quads.append(deepcopy(self.current_quad))
         self.current_quad = ()
 
-    def add_pop(self):
-        self.pOpList.append(self.BASE)
+    def add_pJump(self):
+        self.pJumps.append(self.BASE)
         self.BASE += 1
 
     def new_type(self):
@@ -51,14 +56,10 @@ class Program:
     def new_class(self):
         self.current_typ = Object()
 
-# Working with touples (quads)
-# Almost like slice deletion
-#>>> tup = tup[0:2]
-#>>> tup
-#('one', 'two')
-#>>> tup2 += tup
-#>>> tup2
-# almost like index assignment
-#>>> tup2 = tup2[0:1] + (1,) + tup2[2:]
-#>>> tup2
-#(0, 1, 'two')
+    def print_quads(self):
+        for quad in self.Quads:
+            print(quad)
+
+    def print_jumps(self):
+        for jump in self.pJumps:
+            print(jump)

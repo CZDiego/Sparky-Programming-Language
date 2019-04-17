@@ -7,6 +7,8 @@
 import ply.yacc as yacc
 from lex import tokens
 from program import Program
+from varTable import Var
+import math
 
 program = Program()
 
@@ -41,7 +43,8 @@ def p_prog0(p):
     'prog0    :'
     program.current_quad = ("goto", None, None, None)
     program.add_quad()
-    program.add_pop()
+    program.add_pJump()
+    program.print_quads()
     # Goto is missing the operator add to pending operators List
     # increment program.BASE +1
 def p_prog1(p):
@@ -73,7 +76,7 @@ def p_prog4(p):
 
 def p_type(p):
     '''
-    type    : type0 atomic type3
+    type    : type0 atomic
     '''
 
 # typeM is a fix.
@@ -105,19 +108,20 @@ def p_type2(p):
     'type2  :'
     program.current_type.spark_type = p[-1]
     program.current_type.col = p[-3]
-    program.current_type.row = 1
+    program.current_type.row = -1
     # //total space needed
 
 def p_type3(p):
     'type3  :'
     program.current_type.spark_type = p[-1]
-    program.current_type.col = 1
-    program.current_type.row = 1
+    program.current_type.col = -1 #atomic not array
+    program.current_type.row = -1 #atomic not matrix
+
 
 def p_type4(p):
     'type4  :'
-    if p[-1] not in program.varDir.objects:
-        print("Object Class has not been declared")
+    if p[-1] not in program.varTable.objects:
+        print('\033[91m' + "ERROR:" + '\033[0m' + " Object Class has not been declared at line " + str(p.lexer.lineno) + ".")
     program.current_type.spark_type = p[-1]
 
 #################
@@ -125,9 +129,9 @@ def p_type4(p):
 
 def p_atomic(p):
     '''
-    atomic  : INT
-    | FLOAT
-    | BOOL
+    atomic  : INT type3
+    | FLOAT type3
+    | BOOL type3
     '''
 
 #-----------------------------------------------------------------------
@@ -188,6 +192,8 @@ def p_var3(p):
     #create assignment quad
 def p_var4(p):
     'var4   :'
+    program.current_value = p[-1]
+    program.current_type.spark_type = "Int"
     # current_assignation_right = "Int"
     #  memory manager?
     # if(!ConstantDir.Search(p[-1])){
@@ -203,6 +209,8 @@ def p_var4(p):
     #
 def p_var5(p):
     'var5   :'
+    program.current_value = p[-1]
+    program.current_type.spark_type = "Float"
     #current_assignation_right = "Float"
     # if(!ConstantDir.Search(p[-1])){
     #      var location = program.Memory.INT_CONST_MEMORY_LOC
@@ -214,6 +222,8 @@ def p_var5(p):
     #
 def p_var6(p):
     'var6   :'
+    program.current_value = p[-1]
+    program.current_type.spark_type = "Bool"
     #current_assignation_right = "Bool"
     #  Same as 5 and 4 but could be
     #  initialized in memory from start
@@ -222,15 +232,24 @@ def p_var6(p):
 #-----------------------------------------------------------------------
 
 def p_let(p):
-    'let    : LET ID let1 COL type IS var_b SEMICOL let2'
+    'let    : LET ID let1 COL type let2 IS var_b SEMICOL let3'
 #-----------------------------------------------------------------------
 # Neuro points let stage
 #################
 def p_let1(p):
     'let1   :'
-    # current_var = new var()
+    program.current_var = Var()
+    program.current_var.constant = True
     # current_stage -> global true, local false
-    # current_var_name = p[-1]
+    program.current_var_name = p[-1]
+
+
+    if program.current_stage:#global constant
+        if p[-1] in program.varTable:
+            print('\033[91m' + "ERROR:" + '\033[0m' + " Variable already declared at line " + str(p.lexer.lineno) + ".")
+            
+
+
     # if(program.current_stage){
     #   if(program.VarTable.Search(p[-1])) then error
     #  }else {
@@ -242,13 +261,41 @@ def p_let1(p):
     #}
     #}
 
-    #
-    #
 def p_let2(p):
     'let2   :'
+    program.current_var.s_type = program.current_type
+    program.current_var.address = program.globalMemory.get_next_address(program.current_type.spark_type)
+    program.varTable.set(program.current_var_name, program.current_var)
+    if program.current_stage:
+        if program.current_type.spark_type == "Int":
+            program.globalMemory.memory[program.current_var.address] = 0
+        elif program.current_type.spark_type == "Float":
+            program.globalMemory.memory[program.current_var.address] = 0.0
+        else:
+            program.globalMemory.memory[program.current_var.address] = False
+    # ONLY WORKS FOR GLOBAL MEMORY
+    # reset 
+    # current_var_name , value, type, etc?
+    program.new_type()
+
+def p_let3(p):
+    'let3   :'
+    #check semantic cube
+    #CHECK MAYBE FAILS ON GLOBAL MEMORY
+    result = program.semanticCube.checkResult("=", program.current_var.s_type.spark_type, program.current_type.spark_type)
+    if result == "Error":
+        print('\033[91m' + "ERROR:" + '\033[0m' + " Type Mismatch at line " + str(p.lexer.lineno) + ".")
+    else:
+        if result == "Int":
+            program.globalMemory.memory[program.current_var.address] = math.floor(int(program.current_value))
+        elif result == "Float":
+            program.globalMemory.memory[program.current_var.address] = float(program.current_value)
+        else:
+            program.globalMemory.memory[program.current_var.address] = program.current_value
+        
     # current_var_name = ""
     # current_var
-    # Make assignment quad for variable
+    # Make assignment quad for variable 
 
 #################
 #-------------------------------
