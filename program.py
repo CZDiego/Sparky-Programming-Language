@@ -30,6 +30,7 @@ class Program:
         self.current_object         = Object()
         self.current_var            = Var()
         self.current_function       = Function()
+        self.current_params         = VarTable()
         self.current_type           = SparkyType()
         self.current_value          = 0
         self.current_class_name     = ""
@@ -60,6 +61,9 @@ class Program:
 
     def new_function(self):
         self.current_function = Function()
+
+    def new_params(self):
+        self.current_params = VarTable()
 
     def print_quads(self):
         for quad in self.Quads:

@@ -40,6 +40,9 @@ class VarTable:
 	def contains(self, key):
 		return key in self.directory
 
+	def update(self, dir):
+		self.directory.update(dir)
+
 	def set(self, key, var):
 		self.directory[key] = var
 

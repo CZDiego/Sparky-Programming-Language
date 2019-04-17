@@ -53,5 +53,8 @@ class ClassTable:
     def __contains__(self, key):
         return key in self.directory
 
+    def set(self,key,c):
+    	self.directory[key] = c
+
     def deepcopy(self):
         return deepcopy(self)

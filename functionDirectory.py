@@ -9,8 +9,8 @@ from copy import deepcopy
 
 
 class Function:
-	def __init__(self, private):
-		self.private 	= private
+	def __init__(self):
+		self.private 	= "public"
 		self.parameters = VarTable()
 		self.varTable 	= VarTable()
 
@@ -34,7 +34,9 @@ class FunctionDirectory:
 
 	def __getitem__(self, key):  # it will be program.funDir[key] and not program.funDir.get(key)
 		return self.directory[key]
-
+		
+	def set(self,key,function):
+		self.directory[key] = function
 	# overload ->  key in program.funDir returns true or false if key exists in dir
 	def __contains__(self, key):
 		return key in self.directory

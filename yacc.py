@@ -120,10 +120,10 @@ def p_type3(p):
 
 def p_type4(p):
     'type4  :'
-    if p[-1] not in program.varTable.objects:
+    if p[-1] not in program.ClassDir:
         print('\033[91m' + "ERROR:" + '\033[0m' + " Object Class has not been declared at line " + str(p.lexer.lineno) + ".")
     program.current_type.spark_type = p[-1]
-
+    
 #################
 #-----------------------------------------------------------------------
 
@@ -415,19 +415,21 @@ def p_class2(p):
 def p_class3(p):
     'class3 :'
     program.current_security = True
+    program.current_function.private = "private"
 
 def p_class4(p):
     'class4 :'
     program.current_security = False
+    program.current_function.private = "public"
 
 def p_class5(p):
     'class5 :'
+    program.current_class.funDir.set(program.current_function_name,program.current_function)
 
-    program.current_class.funDir[program.current_function_name] = program.current_function
 def p_class6(p):
     'class6 :'
     #Better to add it at the end
-    program.ClassDir[current_class_name] = program.current_class
+    program.ClassDir.set(program.current_class_name,program.current_class)
     program.current_stage = True
     program.class_stage = False
 
@@ -437,15 +439,16 @@ def p_class7(p):
 
 def p_class8(p):
     'class8 :'
-    program.current_function.add_params(program.current_params)
+    #program.current_function.add_params(program.current_params)
+    program.new_params()
 
 def p_class9(p):
     'class9 :'
     #this is wrong
-    if current_class_name in program.funDir:
-        program.fundir[current_class_name].append(program.current_function)
+    if program.current_class_name in program.funDir:
+        program.funDir[program.current_class_name].append(program.current_function)
     else:
-        program.fundir[current_class_name] = [program.current_function]
+        program.funDir.set(program.current_class_name,[program.current_function])
         #IS A LIST!!!!!!
     program.new_function()
 #################
