@@ -247,7 +247,7 @@ def p_let1(p):
     if program.current_stage:#global constant
         if p[-1] in program.varTable:
             print('\033[91m' + "ERROR:" + '\033[0m' + " Variable already declared at line " + str(p.lexer.lineno) + ".")
-            
+
 
 
     # if(program.current_stage){
@@ -274,7 +274,7 @@ def p_let2(p):
         else:
             program.globalMemory.memory[program.current_var.address] = False
     # ONLY WORKS FOR GLOBAL MEMORY
-    # reset 
+    # reset
     # current_var_name , value, type, etc?
     program.new_type()
 
@@ -292,10 +292,10 @@ def p_let3(p):
             program.globalMemory.memory[program.current_var.address] = float(program.current_value)
         else:
             program.globalMemory.memory[program.current_var.address] = program.current_value
-        
+
     # current_var_name = ""
     # current_var
-    # Make assignment quad for variable 
+    # Make assignment quad for variable
 
 #################
 #-------------------------------
@@ -359,7 +359,7 @@ def p_class(p):
 
 def p_class_a(p):
     '''
-    class_a   : COL ID
+    class_a   : COL ID class2
     | empty
     '''
 
@@ -371,14 +371,14 @@ def p_class_b(p):
 
 def p_class_e(p):
     '''
-    class_e : PRIVATE
+    class_e : PRIVATE class3
     | empty
     '''
 
 def p_class_f(p):
     '''
-    class_f : var
-    | let
+    class_f : var class4
+    | let class4
     '''
 # first mandatory init already stablished
 def p_class_c(p):
@@ -389,12 +389,12 @@ def p_class_c(p):
 # class_d = optional ->  recursive(optional(private)function)
 def p_class_d(p):
     '''
-    class_d : class_e function class_d
-    | empty
+    class_d : class_e function class5 class4 class_d
+    | class6
     '''
 
 #-----------------------------------------------------------------------
-# Neuro points atomic stage
+# Neuro points for class
 #################
 
 def p_class1(p):
@@ -404,12 +404,54 @@ def p_class1(p):
     else:
         program.current_class_name = p[-1]
         program.new_class()
+        program.current_stage = False
+        program.class_stage = True
         print(p[-1])
+def p_class2(p):
+    'class2 :'
+    #This is inheritance copy all as deepcopy
+    program.inherit_class(current_class_name,p[-1])
+
+def p_class3(p):
+    'class3 :'
+    program.current_security = True
+
+def p_class4(p):
+    'class4 :'
+    program.current_security = False
+
+def p_class5(p):
+    'class5 :'
+
+    program.current_class.funDir[program.current_function_name] = program.current_function
+def p_class6(p):
+    'class6 :'
+    #Better to add it at the end
+    program.ClassDir[current_class_name] = program.current_class
+    program.current_stage = True
+    program.class_stage = False
+
+def p_class7(p):
+    'class7 :'
+    program.current_function_name = program.current_class_name
+        
+def p_class8(p):
+    'class8 :'
+    program.current_function.add_params(program.current_params)
+
+def p_class9(p):
+    'class9 :'
+    #this is wrong
+    if current_class_name in program.funDir:
+        program.fundir[current_class_name].append(program.current_function)
+    else:
+        program.fundir[current_class_name] = [program.current_function]
+    program.new_function()
 #################
 #-----------------------------------------------------------------------
 
 def p_init(p):
-    'init   : INIT LP params RP block'
+    'init   : INIT class7 LP params RP class8 block class9'
 
 def p_statement(p):
     '''

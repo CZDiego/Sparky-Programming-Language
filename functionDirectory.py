@@ -16,6 +16,9 @@ class Function:
 	def __getitem__(self, key):  # it will be program.funDir[funKey][varKey] and not program.funDir.get(key).varTable[key]
 		return self.varTable[key]
 
+	def add_params(self,params):
+		self.varTable.update(params)
+
 	def deepcopy(self):
 		return deepcopy(self)
 
