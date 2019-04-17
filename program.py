@@ -65,6 +65,9 @@ class Program:
     def new_params(self):
         self.current_params = VarTable()
 
+    def inherit_class(self, name):
+        self.current_class = deepcopy(self.ClassDir[name])
+
     def print_quads(self):
         for quad in self.Quads:
             print(quad)

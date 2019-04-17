@@ -17,6 +17,22 @@ class Person{
 
 }
 
+class Student : Person{
+
+	var age : Int;
+	var name : Float;
+	var age : Int;
+
+	init(){
+
+	}
+
+	function getAge() -> Int{
+       //debería ser error
+	}
+
+}
+
 var diego : Int;
 var diego : Float;
 var diego2 : Bool;

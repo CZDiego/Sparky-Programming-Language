@@ -123,7 +123,7 @@ def p_type4(p):
     if p[-1] not in program.ClassDir:
         print('\033[91m' + "ERROR:" + '\033[0m' + " Object Class has not been declared at line " + str(p.lexer.lineno) + ".")
     program.current_type.spark_type = p[-1]
-    
+
 #################
 #-----------------------------------------------------------------------
 
@@ -400,17 +400,20 @@ def p_class_d(p):
 def p_class1(p):
     'class1 :'
     if p[-1] in program.ClassDir:
-        print("ERROR : Class Already declared")
+        print('\033[91m' + "ERROR:" + '\033[0m' + ": Class Already declared")
     else:
         program.current_class_name = p[-1]
         program.new_class()
         program.current_stage = False
         program.class_stage = True
         print(p[-1])
+        
 def p_class2(p):
     'class2 :'
+    if p[-1] not in program.ClassDir:
+        print('\033[91m' + "ERROR:" + '\033[0m' + ": Father Class has not been declared")
     #This is inheritance copy all as deepcopy
-    program.inherit_class(current_class_name,p[-1])
+    program.inherit_class(p[-1])
 
 def p_class3(p):
     'class3 :'
