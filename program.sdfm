@@ -17,7 +17,7 @@ class Person{
 
 }
 
-class Student : Person{
+class Student : DAD{
 
 	var age : Int;
 	var name : Float;
