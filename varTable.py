@@ -16,7 +16,8 @@ class Var:
 		self.private   = "Public"
 		self.address   = 0
 		self.constant  = False
-
+	def var_is_object(self):
+		return self.s_type.spark_type in ["Int", "Bool", "Float"]
 	def deepcopy(self):
 		return deepcopy(self)
 

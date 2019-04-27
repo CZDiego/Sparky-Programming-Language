@@ -407,7 +407,7 @@ def p_class1(p):
         program.current_stage = False
         program.class_stage = True
         print(p[-1])
-        
+
 def p_class2(p):
     'class2 :'
     if p[-1] not in program.ClassDir:
@@ -451,8 +451,9 @@ def p_class9(p):
     if program.current_class_name in program.funDir:
         program.funDir[program.current_class_name].append(program.current_function)
     else:
-        program.funDir.set(program.current_class_name,[program.current_function])
-        #IS A LIST!!!!!!
+        program.funDir.set(program.current_class_name, dict())
+        program.funDir[program.current_class_name][program.current_function.get_param_key(program.current_function.get_param_key(program.current_params))]
+        #IS A dict!!!!!! ESTO VA CUANDO YA TERMINES DE LEER LOS PARAMETROS DEL INIT
     program.new_function()
 #################
 #-----------------------------------------------------------------------

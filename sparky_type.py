@@ -9,8 +9,11 @@
 class SparkyType:
     def __init__(self):
         self.spark_type = ""
-        self.col = -1
-        self.row = -1
+        self.col = 0
+        self.row = 0
+
+    def typeKey(self):
+        return self.spark_type+str(self.col)+str(self.row)
 
 '''
 class bcolors:
