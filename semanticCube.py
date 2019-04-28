@@ -140,8 +140,10 @@ class SemanticCube:
 		self.cube[("=", "Bool", "Bool")]    = "Error"
 
 	def checkResult(self, op1, op2, operator):
-		return self.cube[(op1, op2, operator)]
+		key = (op1, op2, operator)
+		if key in self.cube:
+			return self.cube[key]
+		else:
+			return "Error"
 
-
-
-		
+			
