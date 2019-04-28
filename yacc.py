@@ -13,7 +13,11 @@ import math
 program = Program()
 
 def p_program(p):
-    'program   : prog0 program_a program_c program_d main'
+    'program   : prog0 program_a program_c program_d main quads'
+
+def p_quads(p):
+    'quads :'
+    program.print_quads()
 
 def p_program_a(p):
     '''
@@ -44,7 +48,6 @@ def p_prog0(p):
     program.current_quad = ("goto", None, None, None)
     program.add_quad()
     program.add_pJump()
-    program.print_quads()
     # Goto is missing the operator add to pending operators List
     # increment program.BASE +1
 def p_prog1(p):
@@ -549,63 +552,184 @@ def p_else(p):
     'else   : ELSE block'
 
 def p_expression(p):
-    'expression : comparison expression_a'
+    'expression : comparison expression1 expression_a'
 
 def p_expression_a(p):
     '''
-    expression_a    : AND comparison expression_a
-    | OR comparison
+    expression_a    : AND expression2 comparison expression1 expression_a
+    | OR expression2 comparison expression1 expression_a
     | empty
     '''
+#-----------------------------------------------------------------------
+# Neuro points comparison stage 
+#################
+def p_expression1(p):
+    'expression1   :'
+    if len(program.pOper) != 0:
+        if program.pOper[-1] == "&&" or program.pOper[-1] == "||":
+            right_operand = program.VP.pop()
+            right_type = program.pType.pop()
+            left_operand = program.VP.pop()
+            left_type = program.pType.pop()
+            operator = program.pOper.pop()
+            result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+            if result_type == "Error":
+                print("TYPE MISMATCH, HELP")
+            else:
+                result = 999 #AVAIL.NEXT
+                program.current_quad = (operator, left_operand, right_operand, None)
+                program.add_quad()
+                program.VP.append(result)
+                program.pType.append(result_type)
+
+def p_expression2(p):
+    'expression2   :'
+    program.pOper.append(p[-1])
 
 def p_comparison(p):
-    'comparison    : exp comparison_a'
+    'comparison    : exp comparison1 comparison_a'
 
 def p_comparison_a(p):
     '''
-    comparison_a  : comparison_b exp comparison_a
+    comparison_a  : comparison_b exp comparison1 comparison_a
     | empty
     '''
 def p_comparison_b(p):
     '''
-    comparison_b  : GEQ
-    | LEQ
-    | GT
-    | LT
-    | EQUAL
-    | NEQ
+    comparison_b  : GEQ comparison2
+    | LEQ comparison2
+    | GT comparison2
+    | LT comparison2
+    | EQUAL comparison2
+    | NEQ comparison2
     '''
 
+#-----------------------------------------------------------------------
+# Neuro points comparison stage 
+#################
+def p_comparison1(p):
+    'comparison1   :'
+    if len(program.pOper) != 0:
+        if program.pOper[-1] == ">=" or program.pOper[-1] == "<=" or program.pOper[-1] == ">" or program.pOper[-1] == "<" or program.pOper[-1] == "==" or program.pOper[-1] == "!=":
+            right_operand = program.VP.pop()
+            right_type = program.pType.pop()
+            left_operand = program.VP.pop()
+            left_type = program.pType.pop()
+            operator = program.pOper.pop()
+            result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+            if result_type == "Error":
+                print("TYPE MISMATCH, HELP")
+            else:
+                result = 999 #AVAIL.NEXT
+                program.current_quad = (operator, left_operand, right_operand, None)
+                program.add_quad()
+                program.VP.append(result)
+                program.pType.append(result_type)
+
+def p_comparison2(p):
+    'comparison2   :'
+    program.pOper.append(p[-1])
+
 def p_exp(p):
-    'exp    : term exp_a'
+    'exp    : term exp1 exp_a'
 
 def p_exp_a(p):
     '''
-    exp_a   : PLUS term exp_a
-    | MINUS term exp_a
+    exp_a   : PLUS exp2 term exp1 exp_a
+    | MINUS exp2 term exp1 exp_a
     | empty
     '''
 
+#-----------------------------------------------------------------------
+# Neuro points exp stage 
+#################
+def p_exp1(p):
+    'exp1   :'
+    if len(program.pOper) != 0:
+        if program.pOper[-1] == "+" or program.pOper[-1] == "-":
+            right_operand = program.VP.pop()
+            right_type = program.pType.pop()
+            left_operand = program.VP.pop()
+            left_type = program.pType.pop()
+            operator = program.pOper.pop()
+            result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+            if result_type == "Error":
+                print("TYPE MISMATCH, HELP")
+            else:
+                result = 999 #AVAIL.NEXT
+                program.current_quad = (operator, left_operand, right_operand, None)
+                program.add_quad()
+                program.VP.append(result)
+                program.pType.append(result_type)
+
+def p_exp2(p):
+    'exp2   :'
+    program.pOper.append(p[-1])
+
 def p_term(p):
-    'term    : factor term_a'
+    'term    : factor term1 term_a'
 def p_term_a(p):
     '''
-    term_a   : MUL factor term_a
-    | DIV factor term_a
+    term_a   : MUL term2 factor term1 term_a
+    | DIV term2 factor term1 term_a
     | empty
     '''
+
+#-----------------------------------------------------------------------
+# Neuro points term stage 
+#################
+def p_term1(p):
+    'term1   :'
+    if len(program.pOper) != 0:
+        if program.pOper[-1] == "*" or program.pOper[-1] == "/":
+            right_operand = program.VP.pop()
+            right_type = program.pType.pop()
+            left_operand = program.VP.pop()
+            left_type = program.pType.pop()
+            operator = program.pOper.pop()
+            result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+            if result_type == "Error":
+                print("TYPE MISMATCH, HELP")
+            else:
+                result = 999 #AVAIL.NEXT
+                program.current_quad = (operator, left_operand, right_operand, None)
+                program.add_quad()
+                program.VP.append(result)
+                program.pType.append(result_type)
+
+def p_term2(p):
+    'term2   :'
+    program.pOper.append(p[-1])
 
 def p_factor(p):
     '''
-    factor  : LP expression RP
-    | factor_a var_cte
+    factor  : LP factor1 expression RP factor2
+    | factor_a var_cte factor3
     '''
+
+#-----------------------------------------------------------------------
+# Neuro points factor stage 
+#################
+def p_factor1(p):
+    'factor1   :'
+    program.pOper.append("(")
+
+def p_factor2(p):
+    'factor2   :'
+    p = program.pOper.pop()
+
+def p_factor3(p):
+    'factor3   :'
+    program.VP.append("id")
+    program.pType.append("Bool")
+
 def p_factor_a(p):
     '''
     factor_a    : MINUS
     | NOT
     | empty
     '''
+
 def p_var_cte(p):
     '''
     var_cte : obj call_func_optional
@@ -692,7 +816,7 @@ def p_error(p):
 parser = yacc.yacc(start='program')
 
 
-with open("program.sdfm", "r") as inputFile:
+with open("program2.sdfm", "r") as inputFile:
     data = inputFile.read()
 
 result = parser.parse(data)
