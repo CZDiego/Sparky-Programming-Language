@@ -57,7 +57,7 @@ class Program:
         self.current_object = Object()
 
     def new_class(self):
-        self.current_typ = Object()
+        self.current_class = Class()
 
     def new_function(self):
         self.current_function = Function()
@@ -75,3 +75,9 @@ class Program:
     def print_jumps(self):
         for jump in self.pJumps:
             print(jump)
+
+    def get_param_key(self):
+        param_key = ""
+        for var in self.current_params.directory:
+            param_key = param_key + var.s_type.type_key()
+        return param_key

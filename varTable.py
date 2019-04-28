@@ -8,6 +8,7 @@ from copy import deepcopy
 from memory import Memory
 from sparky_type import SparkyType
 
+
 class Var:
 
 	def __init__(self):

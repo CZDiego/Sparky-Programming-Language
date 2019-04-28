@@ -108,14 +108,11 @@ def p_type2(p):
     'type2  :'
     program.current_type.spark_type = p[-1]
     program.current_type.col = p[-3]
-    program.current_type.row = -1
     # //total space needed
 
 def p_type3(p):
     'type3  :'
     program.current_type.spark_type = p[-1]
-    program.current_type.col = -1 #atomic not array
-    program.current_type.row = -1 #atomic not matrix
 
 
 def p_type4(p):
@@ -407,12 +404,12 @@ def p_class1(p):
         program.current_stage = False
         program.class_stage = True
         print(p[-1])
-        
+
 def p_class2(p):
     'class2 :'
     if p[-1] not in program.ClassDir:
         print('\033[91m' + "ERROR:" + '\033[0m' + ": Father Class has not been declared")
-    #This is inheritance copy all as deepcopy
+    #  This is inheritance copy all as deepcopy
     program.inherit_class(p[-1])
 
 def p_class3(p):
@@ -431,10 +428,11 @@ def p_class5(p):
 
 def p_class6(p):
     'class6 :'
-    #Better to add it at the end
-    program.ClassDir.set(program.current_class_name,program.current_class)
+    #  Better to add it at the end
+    program.ClassDir.set(program.current_class_name, program.current_class)
     program.current_stage = True
     program.class_stage = False
+    print(program.current_class.varTable.directory)
 
 def p_class7(p):
     'class7 :'
@@ -442,18 +440,22 @@ def p_class7(p):
 
 def p_class8(p):
     'class8 :'
-    #program.current_function.add_params(program.current_params)
+    #  program.current_function.add_params(program.current_params)
     program.new_params()
 
 def p_class9(p):
     'class9 :'
-    #this is wrong
+    #  this is wrong
     if program.current_class_name in program.funDir:
-        program.funDir[program.current_class_name].append(program.current_function)
+        print('\033[91m' + "ERROR:" + '\033[0m' + ": Init function for class already declared")
     else:
-        program.funDir.set(program.current_class_name,[program.current_function])
-        #IS A LIST!!!!!!
+        program.current_function.add_params(program.current_params)
+        program.current_type.spark_type = program.current_class_name
+        program.current_function.ret = program.current_type
+        program.funDir.set(program.current_class_name, program.current_function)
     program.new_function()
+    program.new_params()
+    program.new_type()
 #################
 #-----------------------------------------------------------------------
 

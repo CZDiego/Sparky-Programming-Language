@@ -10,8 +10,8 @@ from copy import deepcopy
 
 
 class Object:
-    def __init__(self):
-        self.varTable = VarTable()
+    def __init__(self): # Search object functions with type key
+        self.varTable  = VarTable()
 
     # it will be program.Objects[key] = object
     def __set__(self, key, var):

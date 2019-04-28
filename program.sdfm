@@ -17,11 +17,7 @@ class Person{
 
 }
 
-class Student : DAD{
-
-	var age : Int;
-	var name : Float;
-	var age : Int;
+class Student : Person{
 
 	init(){
 

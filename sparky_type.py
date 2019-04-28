@@ -9,8 +9,15 @@
 class SparkyType:
     def __init__(self):
         self.spark_type = ""
-        self.col = -1
-        self.row = -1
+        self.col = 0
+        self.row = 0
+
+    def type_key(self):
+        return self.spark_type + "," + str(self.col) + "," + str(self.row)
+
+    def is_object(self):
+        return self.spark_type not in ["Int", "Bool", "Float"]
+
 
 '''
 class bcolors:
