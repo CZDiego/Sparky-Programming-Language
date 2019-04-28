@@ -1,4 +1,6 @@
 main(){
 
-	a = (a > b || c < d) && (a <= b || true);
+	if (true > false || true < false) && (true <= false || true){
+
+	}
 }
