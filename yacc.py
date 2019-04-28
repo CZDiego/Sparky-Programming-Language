@@ -432,6 +432,7 @@ def p_class6(p):
     program.ClassDir.set(program.current_class_name, program.current_class)
     program.current_stage = True
     program.class_stage = False
+    print(program.current_class.varTable.directory)
 
 def p_class7(p):
     'class7 :'
