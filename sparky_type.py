@@ -18,6 +18,12 @@ class SparkyType:
     def is_object(self):
         return self.spark_type not in ["Int", "Bool", "Float"]
 
+    def is_matrix(self):
+        return self.col > 0
+
+    def is_array(self):
+        return self.row > 0
+
 
 '''
 class bcolors:
