@@ -8,6 +8,7 @@ from copy import deepcopy
 from memory import Memory
 from sparky_type import SparkyType
 
+
 class Var:
 
 	def __init__(self):
@@ -16,8 +17,7 @@ class Var:
 		self.private   = "Public"
 		self.address   = 0
 		self.constant  = False
-	def var_is_object(self):
-		return self.s_type.spark_type in ["Int", "Bool", "Float"]
+
 	def deepcopy(self):
 		return deepcopy(self)
 

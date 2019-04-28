@@ -6,6 +6,7 @@
 # ------------------------------------------------------------
 from varTable import VarTable
 from copy import deepcopy
+from sparky_type import SparkyType
 
 
 class Function:
@@ -13,19 +14,13 @@ class Function:
 		self.private 	= "public"
 		self.address	= 0
 		self.param_key  = ""
+		self.ret		= SparkyType()
 		self.varTable 	= VarTable()
 
 	def __getitem__(self, key):  # it will be program.funDir[funKey][varKey] and not program.funDir.get(key).varTable[key]
 		return self.varTable[key]
 
-	def get_param_key(self,params):
-		p_key = ""
-		for v in params.dictionary:
-			p_key = p_key + v.s_type.typeKey()
-		return p_key
-
-	def add_params(self,params):
-		self.param_key = self.get_param_key(params)
+	def add_params(self, params):
 		self.varTable.update(params)  # this will increase
 
 	def deepcopy(self):
