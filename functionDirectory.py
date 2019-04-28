@@ -21,7 +21,7 @@ class Function:
 		return self.varTable[key]
 
 	def add_params(self, params):
-		self.varTable.update(params)  # this will increase
+		self.varTable.directory.update(params.directory)  # this will increase
 
 	def deepcopy(self):
 		return deepcopy(self)
