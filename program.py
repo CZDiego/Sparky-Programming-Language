@@ -45,10 +45,10 @@ class Program:
     def add_quad(self):
         self.Quads.append(deepcopy(self.current_quad))
         self.current_quad = ()
+        self.BASE += 1
 
     def add_pJump(self):
         self.pJumps.append(self.BASE)
-        self.BASE += 1
 
     def new_type(self):
         self.current_type = SparkyType()
