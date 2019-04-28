@@ -503,14 +503,37 @@ def p_assignement(p):
     'assignment : obj IS expression SEMICOL'
 
 def p_print(p):
-    'print : PRINT LP print_a RP SEMICOL'
+    'print : PRINT LP print_a RP print3 SEMICOL'
 
 def p_print_a(p):
     '''
     print_a : expression
-    | CTE_S
-    | empty
+    | CTE_S print1
+    | empty print2
     '''
+#  -----------------------------------------------------------------------
+#  Neuro points for  obj
+#  ################
+
+def p_print1(p):
+    'print1 : '
+    program.pType.append("cte_s")
+    program.VP.append(p[-1] + "\n")
+
+def p_print2(p):
+    'print2 : '
+    program.pType.append("cte_s")
+    program.VP.append("\n")
+
+def p_print3(p):
+    'print3 : '
+    print("printin")
+    result = program.VP.pop()
+    result_type = program.pType.pop()
+    program.current_quad = ("WRITE", result, None, None)
+    program.add_quad()
+
+
 def p_input(p):
     'input  : INPUT LP obj RP SEMICOL'
 
@@ -577,7 +600,7 @@ def p_expression1(p):
                 print("TYPE MISMATCH, HELP")
             else:
                 result = 999 #AVAIL.NEXT
-                program.current_quad = (operator, left_operand, right_operand, None)
+                program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
                 program.pType.append(result_type)
@@ -621,7 +644,7 @@ def p_comparison1(p):
                 print("TYPE MISMATCH, HELP")
             else:
                 result = 999 #AVAIL.NEXT
-                program.current_quad = (operator, left_operand, right_operand, None)
+                program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
                 program.pType.append(result_type)
@@ -657,7 +680,7 @@ def p_exp1(p):
                 print("TYPE MISMATCH, HELP")
             else:
                 result = 999 #AVAIL.NEXT
-                program.current_quad = (operator, left_operand, right_operand, None)
+                program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
                 program.pType.append(result_type)
@@ -692,7 +715,7 @@ def p_term1(p):
                 print("TYPE MISMATCH, HELP")
             else:
                 result = 999 #AVAIL.NEXT
-                program.current_quad = (operator, left_operand, right_operand, None)
+                program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
                 program.pType.append(result_type)
