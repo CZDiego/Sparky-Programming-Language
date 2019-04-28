@@ -477,8 +477,25 @@ def p_return(p):
     'return : RETURN expression SEMICOL'
 
 def p_obj(p):
-    'obj : ID array attribute'
+    'obj : ID obj1 array attribute'
 
+#  -----------------------------------------------------------------------
+#  Neuro points for  obj
+#  ################
+
+def p_obj1(p):
+    'obj1 :'
+    program.current_id = p[-1]
+    program.current_type = program.varTable[program.current_id].s_type
+    if program.current_type.is_object():
+        print(program.current_id)
+        program.current_id_is_object = True
+    if program.current_type.s_type.is_matrix():
+        program.current_id_is_matrix = True
+    elif program.current_type.s_type.is_array():
+        program.current_id_is_array = True 
+#  ################
+#  -----------------------------------------------------------------------
 def p_assignement(p):
     'assignment : obj IS expression SEMICOL'
 
@@ -596,17 +613,51 @@ def p_var_cte(p):
     | CTE_F
     | CTE_B
     '''
+    
 def p_array(p):
     '''
-    array   : LC expression RC array_a
-    | empty
+    array   : LC expression RC array4 array_a
+    | array1
     '''
 def p_array_a(p):
     '''
-    array_a  : LC expression RC
-    | empty
+    array_a  : LC expression RC array3
+    | array2
     '''
 
+#  -----------------------------------------------------------------------
+#  Neuro points for array
+#  ################
+
+def p_array1(p):
+    'array1 :'
+    if program.current_id_is_matrix or program.current_id_is_array:
+        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is dimensional")
+
+def p_array2(p):
+    'array2 :'
+    if program.current_id_is_matrix:
+        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is a 2D Matrix - only 1 dimension stated")
+    program.new_type()
+
+def p_array3(p):
+    'array3 :'
+    if program.current_id_is_array:
+        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is an Array - 2 dimension stated")
+
+    program.current_quad = ("VER", 0, program.current_type.col, program.VP.pop())
+    program.pType.pop()
+    program.add_quad()
+    program.new_type()
+
+def p_array4(p):
+    'array4 :'
+    program.current_quad = ("VER", 0, program.current_type.row, program.VP.pop())
+    program.pType.pop()
+    program.add_quad()
+
+#  ################
+#  -----------------------------------------------------------------------
 def p_attribute(p):
     '''
     attribute   : DOT ID

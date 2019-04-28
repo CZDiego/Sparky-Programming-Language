@@ -26,6 +26,7 @@ class Program:
         self.pOper                  = []
         self.pType                  = []
         self.current_quad           = ()
+        self.current_id             = ""
         self.current_class          = Class()
         self.current_object         = Object()
         self.current_var            = Var()
@@ -38,6 +39,9 @@ class Program:
         self.current_function_name  = ""
         self.current_stage          = True   # Working inside the global program
         self.class_stage            = False  # Working either in a class or a function
+        self.current_id_is_object   = False
+        self.current_id_is_array    = False
+        self.current_id_is_matrix   = False
 
 # IF current_stage == True then Program
 # ELSE IF class_stage == True then Class
@@ -81,3 +85,9 @@ class Program:
         for var in self.current_params.directory:
             param_key = param_key + var.s_type.type_key()
         return param_key
+
+    def new_id(self):
+        self.current_id_is_object  = False
+        self.current_id_is_array   = False
+        self.current_id_is_matrix  = False
+        self.current_id            = ""
