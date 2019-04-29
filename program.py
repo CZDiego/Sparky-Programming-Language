@@ -37,12 +37,14 @@ class Program:
         self.current_class_name     = ""
         self.current_var_name       = ""
         self.current_function_name  = ""
+        self.current_attribute      = ""
         self.current_stage          = True   # Working inside the global program
         self.class_stage            = False  # Working either in a class or a function
         self.function_stage         = False  # Working either in a class or a function
         self.current_id_is_object   = False
         self.current_id_is_array    = False
         self.current_id_is_matrix   = False
+        self.current_id_has_attr    = False
 
 # IF current_stage == True then Program
 # ELSE IF class_stage == True then Class
@@ -73,6 +75,10 @@ class Program:
     def new_params(self):
         self.current_params = VarTable()
 
+    def new_attr(self):
+        self.current_id_has_attr = False
+        self.current_attribute = ""
+
     def inherit_class(self, name):
         self.current_class = deepcopy(self.ClassDir[name])
 
@@ -93,7 +99,7 @@ class Program:
     def fill_quad(self, missing):
         quad_num = self.pJumps.pop()
         quad     = self.Quads[quad_num]
-        new_quad = (quad[0], quad[1], quad[2], missing)
+        new_quad = quad[:3]+(missing,)
         self.Quads[quad_num] = new_quad
 
     def new_id(self):
