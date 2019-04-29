@@ -571,18 +571,44 @@ def p_obj(p):
 #  Neuro points for  obj
 #  ################
 
+def p_obj0(p):
+    'obj0 :'
+    if program.class_stage:
+        if program.current_id in program.local_func.varTable:
+            program.local_type = program.local_func.varTable[program.current_id].s_type
+        elif program.current_id in program.local_class.varTable:
+            program.local_type = program.local_class.varTable[program.current_id].s_type
+        elif program.current_id in program.varTable:
+            program.local_type = program.varTable[program.current_id].s_type
+            program.id_found_in_global = True
+        else:
+            print("ERROR: Variable not declared")
+    elif program.function_stage:
+        if program.current_id in program.local_func.varTable:
+            program.local_type = program.local_func.varTable[program.current_id].s_type
+        elif program.current_id in program.varTable:
+            program.local_type = program.varTable[program.current_id].s_type
+            program.id_found_in_global = True
+        else:
+            print("ERROR: Variable not declared")
+    if program.local_type.is_object():
+        program.current_id_is_object = True
+    if program.local_type.s_type.is_matrix():
+        program.current_id_is_matrix = True
+    elif program.local_type.s_type.is_array():
+        program.current_id_is_array = True
+
 def p_obj1(p):
     'obj1 :'
-    program.current_id = p[-1] #  TODO:  if
-    program.current_type = program.varTable[program.current_id].s_type
-    program.new_attr()
-    if program.current_type.is_object():
-        print(program.current_id)
-        program.current_id_is_object = True
-    if program.current_type.s_type.is_matrix():
-        program.current_id_is_matrix = True
-    elif program.current_type.s_type.is_array():
-        program.current_id_is_array = True 
+    program.new_obj()
+    program.current_id = p[-1]
+    if program.class_stage:
+        program.local_class = program.ClassDir[program.current_class_name]
+        program.local_class_func = program.local_class.funDir
+        program.local_func = program.local_class_func[program.current_function_name]
+    elif program.function_stage:
+        program.local_func = program.funDir[program.current_function_name]
+
 #  ################
 #  -----------------------------------------------------------------------
 def p_assignement(p):
@@ -662,49 +688,32 @@ def p_cf1(p):
     if not program.current_id_is_array and not program.current_id_is_matrix:
         if program.current_id_is_object and program.current_id_has_attr:
             if program.class_stage:
-                var_local_to_class_fun = program.ClassDir[program.current_class_name].funDir[program.current_function_name].varTable
-                if program.current_id in var_local_to_class_fun.objects:
-                    s_type = var_local_to_class_fun[program.current_id].s_type
-                    if program.current_attribute in program.ClassDir[s_type.spark_type].funDir:
-                        program.called_function = program.ClassDir[s_type.spark_type].funDir[program.current_attribute]
-                        address = program.called_function.address
-                        program.current_quad = ("ERA", address, None, None)
-                        program.add_quad()
-                    else:
-                        print('\033[91m' + "ERROR:" + '\033[0m' + "Object class has no" + program.current_attribute + " function defined")
-                elif program.current_id in program.ClassDir[program.current_class_name].varTable:
-                    s_type = program.ClassDir[program.current_class_name].varTable[program.current_id].s_type
-                    if program.current_attribute in program.ClassDir[s_type.spark_type].funDir:
-                        program.called_function = program.ClassDir[s_type.spark_type].funDir[program.current_attribute]
-                        address = program.called_function.address
-                        program.current_quad = ("ERA", address, None, None)
-                        program.add_quad()
-                    else:
-                        print('\033[91m' + "ERROR:" + '\033[0m' + "Object class has no" + program.current_attribute + " function defined")
+                if program.current_attribute in program.ClassDir[program.local_type.spark_type].funDir:
+                    program.called_function = program.ClassDir[program.local_type.spark_type].funDir[program.current_attribute]
+                    address = program.called_function.address
+                    program.current_quad = ("ERA", address, None, None)
+                    program.add_quad()
                 else:
-                    print('\033[91m' + "ERROR:" + '\033[0m' + "Object does not exist")
+                    print("ERROR")
 
-            elif program.function_stage and program.current_stage:
-                if program.current_id in program.funDir[program.current_function_name].varTable.objects:
-                    s_type = program.funDir[program.current_function_name].varTable[program.current_id].s_type
-                    if program.current_attribute in program.ClassDir[s_type.spark_type].funDir:
-                        program.called_function = program.ClassDir[s_type.spark_type].funDir[program.current_attribute]
-                        address = program.called_function.address
-                        program.current_quad = ("ERA", address, None, None)
-                        program.add_quad()
-                    else:
-                        print('\033[91m' + "ERROR:" + '\033[0m' + "Object class has no" + program.current_attribute + " function defined")
-                elif program.current_id in program.varTable.objects:
-                    s_type = program.varTable[program.current_id].s_type
-                    if program.current_attribute in program.ClassDir[s_type.spark_type].funDir:
-                        program.called_function = program.ClassDir[s_type.spark_type].funDir[program.current_attribute]
-                        address = program.called_function.address
-                        program.current_quad = ("ERA", address, None, None)
-                        program.add_quad()
-                    else:
-                        print('\033[91m' + "ERROR:" + '\033[0m' + "Object class has no" + program.current_attribute + " function defined")
-        elif not program.current_id_is_object:
-            print("")
+        elif program.current_id_has_attr:
+            print("ERROR: Function does not manage attributes")
+        else:
+            if program.class_stage:
+                if program.current_id in program.local_class:
+                    program.called_function = program.local_class_func[program.current_id]
+                    address = program.called_function.address
+                    program.current_quad = ("ERA", address, None, None)
+                    program.add_quad()
+                else:
+                    print("ERROR : Function does not exists")
+            if program.current_id in program.funDir:
+                program.called_function = program.funDir[program.current_id]
+                address = program.called_function.address
+                program.current_quad = ("ERA", address, None, None)
+                program.add_quad()
+            else:
+                print("ERROR : Function does not exists")
 
 
 
@@ -798,7 +807,7 @@ def p_expression_a(p):
     | empty
     '''
 #-----------------------------------------------------------------------
-# Neuro points comparison stage 
+# Neuro points comparison stage
 #################
 def p_expression1(p):
     'expression1   :'
@@ -842,7 +851,7 @@ def p_comparison_b(p):
     '''
 
 #-----------------------------------------------------------------------
-# Neuro points comparison stage 
+# Neuro points comparison stage
 #################
 def p_comparison1(p):
     'comparison1   :'
@@ -878,7 +887,7 @@ def p_exp_a(p):
     '''
 
 #-----------------------------------------------------------------------
-# Neuro points exp stage 
+# Neuro points exp stage
 #################
 def p_exp1(p):
     'exp1   :'
@@ -913,7 +922,7 @@ def p_term_a(p):
     '''
 
 #-----------------------------------------------------------------------
-# Neuro points term stage 
+# Neuro points term stage
 #################
 def p_term1(p):
     'term1   :'
@@ -945,7 +954,7 @@ def p_factor(p):
     '''
 
 #-----------------------------------------------------------------------
-# Neuro points factor stage 
+# Neuro points factor stage
 #################
 def p_factor1(p):
     'factor1   :'
@@ -974,10 +983,10 @@ def p_var_cte(p):
     | CTE_F
     | CTE_B
     '''
-    
+
 def p_array(p):
     '''
-    array   : LC expression RC array4 array_a
+    array   : LC obj0 expression RC array4 array_a
     | array1
     '''
 def p_array_a(p):
@@ -1013,6 +1022,7 @@ def p_array3(p):
 
 def p_array4(p):
     'array4 :'
+
     program.current_quad = ("VER", 0, program.current_type.row, program.VP.pop())
     program.pType.pop()
     program.add_quad()
@@ -1021,7 +1031,7 @@ def p_array4(p):
 #  -----------------------------------------------------------------------
 def p_attribute(p):
     '''
-    attribute   : DOT ID att1
+    attribute   : DOT obj0 ID att1
     | empty
     '''
 
