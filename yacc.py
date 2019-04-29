@@ -361,6 +361,7 @@ def p_fun6(p):
     program.add_quad()
     if program.current_stage:
         program.funDir.set(program.current_function_name, program.current_function)
+        #  print(program.funDir[program.current_function_name].varTable.directory)
     if program.class_stage:
         program.current_class.funDir.set(program.current_function_name, program.current_function)
 

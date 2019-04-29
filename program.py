@@ -93,7 +93,7 @@ class Program:
     def fill_quad(self, missing):
         quad_num = self.pJumps.pop()
         quad     = self.Quads[quad_num]
-        new_quad = (quad[0], quad[1], quad[2], missing)
+        new_quad = quad[:3]+(missing,)
         self.Quads[quad_num] = new_quad
 
     def new_id(self):
