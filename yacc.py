@@ -45,7 +45,7 @@ def p_program_d(p):
 #################
 def p_prog0(p):
     'prog0    :'
-    program.current_quad = ("goto", None, None, None)
+    program.current_quad = ("GOTO", None, None, None)
     program.add_pJump()
     program.add_quad()
     # Goto is missing the operator add to pending operators List
@@ -645,7 +645,7 @@ def p_loop3(p):
     returnQuad = program.pJumps.pop()
     program.current_quad = ("GOTO", None, None, returnQuad)
     program.add_quad()
-
+#  -----------------------------------------------------------------------
 
 def p_call_function(p):
     'call_function  : obj call_func SEMICOL'
@@ -661,7 +661,7 @@ def p_call_params_a(p):
     | empty
     '''
 def p_condition(p):
-    'condition  : IF expression block condition_a condition_b'
+    'condition  : IF expression condition1 block condition_a condition_b condition4'
 
 def p_condition_a(p):
     '''
@@ -671,12 +671,60 @@ def p_condition_a(p):
 
 def p_condition_b(p):
     '''
-    condition_b : else
+    condition_b : condition3 else
     | empty
     '''
 
+#  -----------------------------------------------------------------------
+#  Neuro points for  loop
+#  ################
+
+def p_condition1(p):
+    'condition1 : '
+    program.pJumps.append("$")
+    exp_type = program.pType.pop()
+    if exp_type != "Bool":
+        print("ERROR TYPE MISMATCH")
+    else:
+        result = program.VP.pop()
+        program.add_pJump()
+        program.current_quad = ("GOTOF", result, None, None)
+        program.add_quad()
+
+def p_condition2(p):
+    'condition2 : '
+    program.fill_quad(program.BASE + 1)
+    program.add_pJump()
+    program.current_quad = ("GOTO", None, None, None)
+    program.add_quad()
+
+    exp_type = program.pType.pop()
+    if exp_type != "Bool":
+        print("ERROR TYPE MISMATCH")
+    else:
+        result = program.VP.pop()
+        program.add_pJump()
+        program.current_quad = ("GOTOF", result, None, None)
+        program.add_quad()
+
+def p_condition3(p):
+    'condition3 : '
+    program.fill_quad(program.BASE + 1)
+    program.add_pJump()
+    program.current_quad = ("GOTO", None, None, None)
+    program.add_quad()
+
+def p_condition4(p):
+    'condition4 : '
+    print("while not empty")
+    while program.pJumps[-1] != "$":
+        program.fill_quad(program.BASE)
+    program.pJumps.pop()
+
+#  -----------------------------------------------------------------------
+
 def p_elseif(p):
-    'elseif : ELSEIF expression block'
+    'elseif : ELSEIF expression condition2 block'
 
 def p_else(p):
     'else   : ELSE block'

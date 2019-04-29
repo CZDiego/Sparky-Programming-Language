@@ -1,12 +1,21 @@
 main(){
 
-	while (true > false || true < false) && (true <= false || true){
-		if (true > true){
 
+	print("Antes");
+
+	if true && true{
+		print("if first");
+
+		while true && true{
+			print("WHILE");
 		}
-	}
 
-	print(7.1);
+	}elseif false{
+		print("elif1");
+	}else{
+		print("else");
+	}
+	print("final");
 
 
 }

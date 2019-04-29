@@ -120,7 +120,9 @@ def t_CTE_I(t):
     return t
 
 def t_CTE_S(t):
-    r'\"[a-zA-Z_0-9]*\"'
+    r'\"[a-zA-Z_0-9 ]*\"'
+    t.value = t.value[1:]
+    t.value = t.value[:-1]
     return t
 
 def t_CTE_B(t):
