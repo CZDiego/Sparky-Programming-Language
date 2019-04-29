@@ -33,6 +33,10 @@ class Program:
         self.current_function       = Function()
         self.current_params         = VarTable()
         self.current_type           = SparkyType()
+        self.local_class_func       = FunctionDirectory()
+        self.local_func             = Function()
+        self.local_class            = Class()
+        self.local_type             = SparkyType()
         self.current_value          = 0
         self.current_class_name     = ""
         self.current_var_name       = ""
@@ -43,6 +47,8 @@ class Program:
         self.class_stage            = False  # Working either in a class or a function
         self.function_stage         = False  # Working either in a class or a function
         self.current_id_is_object   = False
+        self.id_could_be_function   = False
+        self.id_found_in_global     = False
         self.current_id_is_array    = False
         self.current_id_is_matrix   = False
         self.current_id_has_attr    = False
@@ -79,6 +85,21 @@ class Program:
     def new_attr(self):
         self.current_id_has_attr = False
         self.current_attribute = ""
+
+    def new_obj(self):
+        self.new_attr()
+        self.new_id()
+        self.current_id_is_object   = False
+        self.id_could_be_function   = False
+        self.id_found_in_global     = False
+        self.current_id_is_array    = False
+        self.current_id_is_matrix   = False
+        self.current_id_has_attr    = False
+        self.called_function        = Function()
+        self.local_class_func       = FunctionDirectory()
+        self.local_func             = Function()
+        self.local_class            = Class()
+        self.local_type             = SparkyType()
 
     def inherit_class(self, name):
         self.current_class = deepcopy(self.ClassDir[name])
