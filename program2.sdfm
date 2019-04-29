@@ -1,6 +1,12 @@
 main(){
 
-	if (true > false || true < false) && (true <= false || true){
+	while (true > false || true < false) && (true <= false || true){
+		if (true > true){
 
+		}
 	}
+
+	print(7.1);
+
+
 }

@@ -582,19 +582,68 @@ def p_assignement(p):
     'assignment : obj IS expression SEMICOL'
 
 def p_print(p):
-    'print : PRINT LP print_a RP SEMICOL'
+    'print : PRINT LP print_a RP print3 SEMICOL'
 
 def p_print_a(p):
     '''
     print_a : expression
-    | CTE_S
-    | empty
+    | CTE_S print1
+    | empty print2
     '''
+#  -----------------------------------------------------------------------
+#  Neuro points for print
+#  ################
+
+def p_print1(p):
+    'print1 : '
+    program.pType.append("cte_s")
+    program.VP.append(p[-1] + "\n")
+
+def p_print2(p):
+    'print2 : '
+    program.pType.append("cte_s")
+    program.VP.append("\n")
+
+def p_print3(p):
+    'print3 : '
+    result = program.VP.pop()
+    result_type = program.pType.pop()
+    program.current_quad = ("WRITE", result, None, None)
+    program.add_quad()
+
+
 def p_input(p):
     'input  : INPUT LP obj RP SEMICOL'
 
 def p_loop(p):
-    'loop   : WHILE expression block'
+    'loop   : WHILE loop1 expression loop2 block loop3'
+
+#  -----------------------------------------------------------------------
+#  Neuro points for  loop
+#  ################
+
+def p_loop1(p):
+    'loop1 : '
+    program.add_pJump()
+
+def p_loop2(p):
+    'loop2 : '
+    exp_type = program.pType.pop()
+    if exp_type != "Bool":
+        print("ERROR TYPE MISMATCH")
+    else:
+        result = program.VP.pop()
+        program.add_pJump()
+        program.current_quad = ("GOTOF", result, None, None)
+        program.add_quad()
+
+def p_loop3(p):
+    'loop3 : '
+    program.fill_quad(program.BASE + 1)
+    returnQuad = program.pJumps.pop()
+    program.current_quad = ("GOTO", None, None, returnQuad)
+    program.add_quad()
+
 
 def p_call_function(p):
     'call_function  : obj call_func SEMICOL'
@@ -656,7 +705,7 @@ def p_expression1(p):
                 print("TYPE MISMATCH, HELP")
             else:
                 result = 999 #AVAIL.NEXT
-                program.current_quad = (operator, left_operand, right_operand, None)
+                program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
                 program.pType.append(result_type)
@@ -700,7 +749,7 @@ def p_comparison1(p):
                 print("TYPE MISMATCH, HELP")
             else:
                 result = 999 #AVAIL.NEXT
-                program.current_quad = (operator, left_operand, right_operand, None)
+                program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
                 program.pType.append(result_type)
@@ -736,7 +785,7 @@ def p_exp1(p):
                 print("TYPE MISMATCH, HELP")
             else:
                 result = 999 #AVAIL.NEXT
-                program.current_quad = (operator, left_operand, right_operand, None)
+                program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
                 program.pType.append(result_type)
@@ -771,7 +820,7 @@ def p_term1(p):
                 print("TYPE MISMATCH, HELP")
             else:
                 result = 999 #AVAIL.NEXT
-                program.current_quad = (operator, left_operand, right_operand, None)
+                program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
                 program.pType.append(result_type)
@@ -895,7 +944,7 @@ def p_error(p):
 parser = yacc.yacc(start='program')
 
 
-with open("program3.sdfm", "r") as inputFile:
+with open("program2.sdfm", "r") as inputFile:
     data = inputFile.read()
 
 result = parser.parse(data)
