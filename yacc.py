@@ -512,7 +512,7 @@ def p_print_a(p):
     | empty print2
     '''
 #  -----------------------------------------------------------------------
-#  Neuro points for  obj
+#  Neuro points for print
 #  ################
 
 def p_print1(p):
@@ -527,7 +527,6 @@ def p_print2(p):
 
 def p_print3(p):
     'print3 : '
-    print("printin")
     result = program.VP.pop()
     result_type = program.pType.pop()
     program.current_quad = ("WRITE", result, None, None)
@@ -538,7 +537,34 @@ def p_input(p):
     'input  : INPUT LP obj RP SEMICOL'
 
 def p_loop(p):
-    'loop   : WHILE expression block'
+    'loop   : WHILE loop1 expression loop2 block loop3'
+
+#  -----------------------------------------------------------------------
+#  Neuro points for  loop
+#  ################
+
+def p_loop1(p):
+    'loop1 : '
+    program.add_pJump()
+
+def p_loop2(p):
+    'loop2 : '
+    exp_type = program.pType.pop()
+    if exp_type != "Bool":
+        print("ERROR TYPE MISMATCH")
+    else:
+        result = program.VP.pop()
+        program.add_pJump()
+        program.current_quad = ("GOTOF", result, None, None)
+        program.add_quad()
+
+def p_loop3(p):
+    'loop3 : '
+    #FILL PJUMPS
+    returnQuad = program.pJumps.pop()
+    program.current_quad = ("GOTO", None, None, returnQuad)
+    program.add_quad()
+
 
 def p_call_function(p):
     'call_function  : obj call_func SEMICOL'
