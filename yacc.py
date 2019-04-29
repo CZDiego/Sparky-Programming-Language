@@ -306,6 +306,12 @@ def p_main(p):
 def p_main0(p):
     'main0   :'
     program.fill_quad(program.BASE)
+    program.function_stage = True
+    program.current_stage = True
+    program.current_function_name = "Main"
+    program.new_function()
+    program.funDir.set(program.current_function_name, program.current_function)
+    program.current_function.varTable.set()
 
 def p_function(p):
     'function   : FUNCTION fun0 ID fun1 LP fun2 params fun3 RP function_a function_block fun6'
@@ -321,7 +327,6 @@ def p_function_a(p):
 
 def p_fun0(p):
     'fun0   :'
-    program.new_function()
     program.function_stage = True
     program.current_function.address = program.BASE
 
@@ -364,6 +369,7 @@ def p_fun6(p):
         #  print(program.funDir[program.current_function_name].varTable.directory)
     if program.class_stage:
         program.current_class.funDir.set(program.current_function_name, program.current_function)
+    program.new_function()
 
 # ################
 #  ------------------------------------------------------------------------
@@ -568,7 +574,7 @@ def p_obj(p):
 
 def p_obj1(p):
     'obj1 :'
-    program.current_id = p[-1]
+    program.current_id = p[-1] #  TODO:  if
     program.current_type = program.varTable[program.current_id].s_type
     program.new_attr()
     if program.current_type.is_object():
@@ -648,7 +654,61 @@ def p_loop3(p):
 
 
 def p_call_function(p):
-    'call_function  : obj call_func SEMICOL'
+    'call_function  : obj cf1 call_func SEMICOL'
+
+
+def p_cf1(p):
+    'cf1    :'
+
+    if not program.current_id_is_array and not program.current_id_is_matrix:
+        if program.current_id_is_object and program.current_id_has_attr:
+            if program.class_stage:
+                var_local_to_class_fun = program.ClassDir[program.current_class_name].funDir[program.current_function_name].varTable
+                if program.current_id in var_local_to_class_fun.objects:
+                    s_type = var_local_to_class_fun[program.current_id].s_type
+                    if program.current_attribute in program.ClassDir[s_type.spark_type].funDir:
+                        program.called_function = program.ClassDir[s_type.spark_type].funDir[program.current_attribute]
+                        address = program.called_function.address
+                        program.current_quad = ("ERA", address, None, None)
+                        program.add_quad()
+                    else:
+                        print('\033[91m' + "ERROR:" + '\033[0m' + "Object class has no" + program.current_attribute + " function defined")
+                elif program.current_id in program.ClassDir[program.current_class_name].varTable:
+                    s_type = program.ClassDir[program.current_class_name].varTable[program.current_id].s_type
+                    if program.current_attribute in program.ClassDir[s_type.spark_type].funDir:
+                        program.called_function = program.ClassDir[s_type.spark_type].funDir[program.current_attribute]
+                        address = program.called_function.address
+                        program.current_quad = ("ERA", address, None, None)
+                        program.add_quad()
+                    else:
+                        print('\033[91m' + "ERROR:" + '\033[0m' + "Object class has no" + program.current_attribute + " function defined")
+                else:
+                    print('\033[91m' + "ERROR:" + '\033[0m' + "Object does not exist")
+
+            elif program.function_stage and program.current_stage:
+                if program.current_id in program.funDir[program.current_function_name].varTable.objects:
+                    s_type = program.funDir[program.current_function_name].varTable[program.current_id].s_type
+                    if program.current_attribute in program.ClassDir[s_type.spark_type].funDir:
+                        program.called_function = program.ClassDir[s_type.spark_type].funDir[program.current_attribute]
+                        address = program.called_function.address
+                        program.current_quad = ("ERA", address, None, None)
+                        program.add_quad()
+                    else:
+                        print('\033[91m' + "ERROR:" + '\033[0m' + "Object class has no" + program.current_attribute + " function defined")
+                elif program.current_id in program.varTable.objects:
+                    s_type = program.varTable[program.current_id].s_type
+                    if program.current_attribute in program.ClassDir[s_type.spark_type].funDir:
+                        program.called_function = program.ClassDir[s_type.spark_type].funDir[program.current_attribute]
+                        address = program.called_function.address
+                        program.current_quad = ("ERA", address, None, None)
+                        program.add_quad()
+                    else:
+                        print('\033[91m' + "ERROR:" + '\033[0m' + "Object class has no" + program.current_attribute + " function defined")
+        elif not program.current_id_is_object:
+            print("")
+
+
+
 
 def p_call_params(p):
     '''
@@ -964,5 +1024,5 @@ with open("program2.sdfm", "r") as inputFile:
 
 result = parser.parse(data)
 
-if result != None:
+if result is not None:
     print(result)

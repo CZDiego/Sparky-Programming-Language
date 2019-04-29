@@ -38,6 +38,7 @@ class Program:
         self.current_var_name       = ""
         self.current_function_name  = ""
         self.current_attribute      = ""
+        self.called_function        = Function()
         self.current_stage          = True   # Working inside the global program
         self.class_stage            = False  # Working either in a class or a function
         self.function_stage         = False  # Working either in a class or a function
