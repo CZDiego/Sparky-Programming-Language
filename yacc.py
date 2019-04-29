@@ -311,7 +311,6 @@ def p_main0(p):
     program.current_function_name = "Main"
     program.new_function()
     program.funDir.set(program.current_function_name, program.current_function)
-    program.current_function.varTable.set()
 
 def p_function(p):
     'function   : FUNCTION fun0 ID fun1 LP fun2 params fun3 RP function_a function_block fun6'
