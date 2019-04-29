@@ -3,7 +3,7 @@ main(){
 
 	print("Antes");
 
-	if true{
+	if true && true{
 		print("if first");
 
 		while true && true{
