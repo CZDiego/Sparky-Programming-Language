@@ -1,7 +1,7 @@
 main(){
 
 	while (true > false || true < false) && (true <= false || true){
-		if (true){
+		if (true > true){
 
 		}
 	}

@@ -639,7 +639,7 @@ def p_loop2(p):
 
 def p_loop3(p):
     'loop3 : '
-    #FILL PJUMPS
+    program.fill_quad(program.BASE + 1)
     returnQuad = program.pJumps.pop()
     program.current_quad = ("GOTO", None, None, returnQuad)
     program.add_quad()
@@ -944,7 +944,7 @@ def p_error(p):
 parser = yacc.yacc(start='program')
 
 
-with open("program3.sdfm", "r") as inputFile:
+with open("program2.sdfm", "r") as inputFile:
     data = inputFile.read()
 
 result = parser.parse(data)
