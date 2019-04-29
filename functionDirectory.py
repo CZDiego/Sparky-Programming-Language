@@ -14,6 +14,7 @@ class Function:
 		self.private 	= "public"
 		self.address	= 0
 		self.param_key  = ""
+		self.params 	= VarTable()
 		self.ret		= SparkyType()
 		self.varTable 	= VarTable()
 
@@ -21,7 +22,8 @@ class Function:
 		return self.varTable[key]
 
 	def add_params(self, params):
-		self.varTable.directory.update(params.directory)  # this will increase
+		self.params.directory.update(deepcopy(params.directory))
+		self.varTable.directory.update(deepcopy(params.directory))  # this will increase
 
 	def deepcopy(self):
 		return deepcopy(self)
@@ -39,6 +41,7 @@ class FunctionDirectory:
 
 	def set(self,key,function):
 		self.directory[key] = function
+
 	# overload ->  key in program.funDir returns true or false if key exists in dir
 	def __contains__(self, key):
 		return key in self.directory
