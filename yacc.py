@@ -570,6 +570,7 @@ def p_obj1(p):
     'obj1 :'
     program.current_id = p[-1]
     program.current_type = program.varTable[program.current_id].s_type
+    program.new_attr()
     if program.current_type.is_object():
         print(program.current_id)
         program.current_id_is_object = True
@@ -913,10 +914,23 @@ def p_array4(p):
 #  -----------------------------------------------------------------------
 def p_attribute(p):
     '''
-    attribute   : DOT ID
+    attribute   : DOT ID att1
     | empty
     '''
 
+
+#  -----------------------------------------------------------------------
+#  Neuro points for array
+#  ################
+
+def p_att1(p):
+    'att1   :'
+    program.current_id_has_attr = True
+    program.current_attribute = p[-1]
+
+
+#  ################
+#  -----------------------------------------------------------------------
 def p_call_func(p):
     'call_func : LP call_params RP'
 
