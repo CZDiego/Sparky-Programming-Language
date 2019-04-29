@@ -46,8 +46,8 @@ def p_program_d(p):
 def p_prog0(p):
     'prog0    :'
     program.current_quad = ("goto", None, None, None)
-    program.add_quad()
     program.add_pJump()
+    program.add_quad()
     # Goto is missing the operator add to pending operators List
     # increment program.BASE +1
 def p_prog1(p):
@@ -300,20 +300,77 @@ def p_let3(p):
 #################
 #-------------------------------
 def p_main(p):
-    'main   : MAIN LP RP function_block'
+    'main   : main0 MAIN LP RP function_block'
+
+
+def p_main0(p):
+    'main0   :'
+    program.fill_quad(program.BASE)
 
 def p_function(p):
-    'function   : FUNCTION ID LP params RP function_a function_block'
+    'function   : FUNCTION fun0 ID fun1 LP fun2 params fun3 RP function_a function_block fun6'
 
 def p_function_a(p):
     '''
-    function_a   : ARROW type
-    | empty
+    function_a   : ARROW type fun4
+    | fun5
     '''
+#  -----------------------------------------------------------------------
+#  Neuro points for function
+#  ################
+
+def p_fun0(p):
+    'fun0   :'
+    program.new_function()
+    program.function_stage = True
+    program.current_function.address = program.BASE
+
+def p_fun1(p):
+    'fun1   :'
+    program.current_function_name = p[-1]
+    if program.current_stage:#  I'm in the global scope
+        if program.current_function_name in program.funDir:
+            print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before.")
+    else:
+        if program.current_function_name in program.current_class.funDir:
+            print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before in class")
+
+
+def p_fun2(p):
+    'fun2   :'
+    program.new_params()
+
+def p_fun3(p):
+    'fun3   :'
+    program.current_function.add_params(program.current_params)
+
+def p_fun4(p):
+    'fun4   :'
+    program.current_function.ret = program.current_type
+
+def p_fun5(p):
+    'fun5   :'
+    program.new_type()
+    program.current_type.spark_type = "void"
+    program.current_function.ret = program.current_type
+    program.new_type()
+
+def p_fun6(p):
+    'fun6   :'
+    program.current_quad = ("ENDPROC", None, None, None)
+    program.add_quad()
+    if program.current_stage:
+        program.funDir.set(program.current_function_name, program.current_function)
+    if program.class_stage:
+        program.current_class.funDir.set(program.current_function_name, program.current_function)
+
+# ################
+#  ------------------------------------------------------------------------
+
 
 def p_params(p):
     '''
-    params   : ID COL type params_a
+    params   : param0 ID param1 COL type param2 params_a
     | empty
     '''
 
@@ -322,6 +379,28 @@ def p_params_a(p):
     params_a   : COMMA params
     | empty
     '''
+#  -----------------------------------------------------------------------
+#  Neuro points for params in function
+#  ################
+
+def p_param0(p):
+    'param0 :'
+    program.new_var()
+
+def p_param1(p):
+    'param1 :'
+    program.current_var_name = p[-1]
+
+def p_param2(p):
+    'param2 :'
+    program.current_var.s_type = program.current_type
+    if program.current_var_name in program.current_params:
+        print('\033[91m' + "ERROR:" + '\033[0m' + "Function already has a parameter with that name.")
+    else:
+        program.current_params.set(program.current_var_name, program.current_var)
+
+# ################
+#  ------------------------------------------------------------------------
 
 def p_block(p):
     'block  : LB block_a RB'
@@ -865,7 +944,7 @@ def p_error(p):
 parser = yacc.yacc(start='program')
 
 
-with open("program2.sdfm", "r") as inputFile:
+with open("program3.sdfm", "r") as inputFile:
     data = inputFile.read()
 
 result = parser.parse(data)

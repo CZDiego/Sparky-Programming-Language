@@ -39,6 +39,7 @@ class Program:
         self.current_function_name  = ""
         self.current_stage          = True   # Working inside the global program
         self.class_stage            = False  # Working either in a class or a function
+        self.function_stage         = False  # Working either in a class or a function
         self.current_id_is_object   = False
         self.current_id_is_array    = False
         self.current_id_is_matrix   = False
@@ -56,6 +57,9 @@ class Program:
 
     def new_type(self):
         self.current_type = SparkyType()
+
+    def new_var(self):
+        self.current_var = Var()
 
     def new_object(self):
         self.current_object = Object()
@@ -85,6 +89,12 @@ class Program:
         for var in self.current_params.directory:
             param_key = param_key + var.s_type.type_key()
         return param_key
+
+    def fill_quad(self, missing):
+        quad_num = self.pJumps.pop()
+        quad     = self.Quads[quad_num]
+        new_quad = (quad[0], quad[1], quad[2], missing)
+        self.Quads[quad_num] = new_quad
 
     def new_id(self):
         self.current_id_is_object  = False
