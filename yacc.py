@@ -878,7 +878,7 @@ def p_expression1(p):
             if result_type == "Error":
                 print("TYPE MISMATCH, HELP")
             else:
-                result = 999 #AVAIL.NEXT
+                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
                 program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
@@ -922,7 +922,7 @@ def p_comparison1(p):
             if result_type == "Error":
                 print("TYPE MISMATCH, HELP")
             else:
-                result = 999 #AVAIL.NEXT
+                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
                 program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
@@ -958,7 +958,7 @@ def p_exp1(p):
             if result_type == "Error":
                 print("TYPE MISMATCH, HELP")
             else:
-                result = 999 #AVAIL.NEXT
+                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
                 program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
@@ -993,7 +993,7 @@ def p_term1(p):
             if result_type == "Error":
                 print("TYPE MISMATCH, HELP")
             else:
-                result = 999 #AVAIL.NEXT
+                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
                 program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)

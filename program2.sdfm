@@ -9,9 +9,5 @@ main(){
 	var c : Int;
 	var x : Int;
 
-	a = x ;
-	print("Antes");
-	print("final");
-
-
+	a = c + x + x + x * x;
 }
