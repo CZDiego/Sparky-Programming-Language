@@ -145,7 +145,7 @@ def p_atomic(p):
 
 def p_var(p):
     '''
-    var    : VAR ID var1 COL type var2 var_a SEMICOL
+    var    : VAR ID var1 COL type var_a var2 SEMICOL
     |  VAR ID var1 COL typeM var2 SEMICOL 
     '''
 
