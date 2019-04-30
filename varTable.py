@@ -13,8 +13,7 @@ class Var:
 
 	def __init__(self):
 		self.s_type    = SparkyType()
-		self.scope     = "Global"
-		self.private   = "Public"
+		self.private   = "public"
 		self.address   = 0
 		self.constant  = False
 

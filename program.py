@@ -15,7 +15,6 @@ class Program:
         self.BASE                   = 0  # Starting location for Quadruples //list starts with empty so its -1
         self.Quads                  = []
         self.globalMemory           = Memory("program")
-        #self.funMemory              = Memory("function")
         self.ConsMemory             = Memory("Constant")
         self.varTable               = VarTable()
         self.funDir                 = FunctionDirectory()
@@ -27,6 +26,9 @@ class Program:
         self.pType                  = []
         self.current_quad           = ()
         self.current_id             = ""
+        self.current_attribute      = ""
+        self.current_rows           = 0
+        self.current_cols           = 0
         self.current_class          = Class()
         self.current_object         = Object()
         self.current_var            = Var()
@@ -41,8 +43,8 @@ class Program:
         self.current_class_name     = ""
         self.current_var_name       = ""
         self.current_function_name  = ""
-        self.current_attribute      = ""
         self.called_function        = Function()
+        self.current_scope          = ""   # Working inside the global program
         self.current_stage          = True   # Working inside the global program
         self.class_stage            = False  # Working either in a class or a function
         self.function_stage         = False  # Working either in a class or a function
@@ -52,6 +54,7 @@ class Program:
         self.current_id_is_array    = False
         self.current_id_is_matrix   = False
         self.current_id_has_attr    = False
+        self.current_id_is_func     = False
 
 # IF current_stage == True then Program
 # ELSE IF class_stage == True then Class

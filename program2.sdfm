@@ -1,20 +1,16 @@
+var a : [7]Int;
+var b : Int;
+var c : [10][2]Float;
+var d : Float;
+
 main(){
 
+	var a : Int;
+	var c : Int;
+	var x : Int;
 
+	a = x ;
 	print("Antes");
-
-	if true && true{
-		print("if first");
-
-		while true && true{
-			print("WHILE");
-		}
-
-	}elseif false{
-		print("elif1");
-	}else{
-		print("else");
-	}
 	print("final");
 
 
