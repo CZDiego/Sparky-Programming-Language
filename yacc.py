@@ -586,7 +586,7 @@ def p_return(p):
     'return : RETURN expression SEMICOL'
 
 def p_obj(p):
-    'obj : ID obj1 array attribute'
+    'obj : ID obj1 array attribute obj2'
 
 #  -----------------------------------------------------------------------
 #  Neuro points for  obj
@@ -622,6 +622,11 @@ def p_obj(p):
 def p_obj1(p):
     'obj1 :'
     program.current_id = p[-1]
+    program.pOper.append("$")
+
+def p_obj2(p):
+    'obj2 :'
+    program.pOper.pop()
 
 #  ################
 #  -----------------------------------------------------------------------
@@ -958,7 +963,12 @@ def p_exp_a(p):
 def p_exp1(p):
     'exp1   :'
     if len(program.pOper) != 0:
+        print("check")
+        for x in program.pOper:
+            print(x)
         if program.pOper[-1] == "+" or program.pOper[-1] == "-":
+            for x in program.VP:
+                print(x)
             right_operand = program.VP.pop()
             right_type = program.pType.pop()
             left_operand = program.VP.pop()
@@ -1072,6 +1082,8 @@ def p_var_cte2(p):
     'var_cte2   :'
     #buscarla en memoria global, si no, meterla
     program.VP.append(int(p[-1]))
+    print(program.current_id)
+    print(p[-1])
     program.pType.append("Int")
 
 def p_var_cte3(p):
@@ -1101,42 +1113,17 @@ def p_array_a(p):
 #  Neuro points for array
 #  ################
 
-#def p_array1(p):
-#    'array1 :'
-#    if program.current_id_is_matrix or program.current_id_is_array:
-#        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is dimensional")
-
-#def p_array2(p):
-#    'array2 :'
-#    if program.current_id_is_matrix:
-#        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is a 2D Matrix - only 1 dimension stated")
-#    program.new_type()
-
-#def p_array3(p):
-#    'array3 :'
-#    if program.current_id_is_array:
-#        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is an Array - 2 dimension stated")
-#    program.current_quad = ("VER", 0, program.current_type.col, program.VP.pop())
-#    program.pType.pop()
-#    program.add_quad()
-#    program.new_type()
-
-#def p_array4(p):
-#    'array4 :'
-#    program.current_quad = ("VER", 0, program.current_type.row, program.VP.pop())
-#    program.pType.pop()
-#    program.add_quad()
-
 def p_array1(p):
     'array1 :'
     #verifica que id es una variable dimensionada
+    print("array1")
+
+    program.pOper.append('$')
+    for x in program.pOper:
+        print(x)
     program.pArray.append(program.current_id)
     program.current_id_is_array = True
     var = program.current_function.varTable[program.current_id]
-    #dim = 1
-    #program.pDim.append((program.current_id, dim))
-    #obtener primer campo de descripción de id
-    #program.pOper.append("$")
     row_type = program.pType[-1]
     if row_type != "Int":
         print("ERROR to access array you need to provide Int index")
@@ -1144,16 +1131,11 @@ def p_array1(p):
         program.current_quad = ("VER", 0, var.s_type.row - 1, program.VP[-1])
         program.add_quad()
 
-        #program.current_rows = program.VP.pop()
-
 def p_array2(p):
     'array2 :'
     program.current_id_is_array = False
     program.current_id_is_matrix = True
     var = program.current_function.varTable[program.current_id]
-    #dim = 2
-    #program.pDim.pop()
-    #program.pDim.append((program.current_id, dim))
 
     col_type = program.pType[-1]
     if col_type != "Int":
@@ -1161,12 +1143,12 @@ def p_array2(p):
     else:
         program.current_quad = ("VER", 0, var.s_type.col - 1, program.VP[-1])
         program.add_quad()
-        #program.current_cols = program.VP.pop()
 
 def p_array3(p):
     'array3 :'
     current_array = program.pArray.pop()
     base_address = program.current_function.varTable[current_array].address
+    total_rows = program.current_function.varTable[current_array].s_type.row
 
     if program.current_id_is_array:
         rows = program.VP.pop()
@@ -1183,16 +1165,26 @@ def p_array3(p):
         cols_type = program.pType.pop()
         rows = program.VP.pop()
         rows_type = program.pType.pop()
-        cols_result = program.current_function.tempMemory.get_next_address(cols_type, 0, 0)
-        rows_result = program.current_function.tempMemory.get_next_address(rows_type, 0, 0)
-        program.current_quad = ("*", rows, base_address, result)
+        result = program.current_function.tempMemory.get_next_address("Int", 0, 0)
+        program.current_quad = ("*", rows, total_rows, result)
         program.add_quad()
 
+        result2 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
+        program.current_quad = ("+", result, cols, result2)
+        program.add_quad()
+
+        result3 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
+        program.current_quad = ("~+", result2, base_address, result3)
+        program.add_quad()
+
+        program.VP.append((result3,))
+        program.pType.append("Int")
+    program.pOper.pop()
+
         
-
-
 #  ################
 #  -----------------------------------------------------------------------
+
 def p_attribute(p):
     '''
     attribute   : DOT ID att1

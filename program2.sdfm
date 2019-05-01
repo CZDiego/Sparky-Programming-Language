@@ -8,7 +8,7 @@ main(){
 	var a : Int;
 	var c : [50]Int;
 	var x : Int;
-	var d : [10][10]Int;
+	var d : [15][10]Int;
 
-	x = d[2];
+	a = c[2] + d[8+9][9];
 }
