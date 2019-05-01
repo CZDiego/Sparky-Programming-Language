@@ -24,6 +24,7 @@ class Program:
         self.VP                     = []  # Polish vector
         self.pOper                  = []
         self.pType                  = []
+        self.pArray                 = []
         self.current_quad           = ()
         self.current_id             = ""
         self.current_attribute      = ""

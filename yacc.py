@@ -9,6 +9,8 @@ from lex import tokens
 from program import Program
 from varTable import Var
 import math
+import types
+import collections
 
 program = Program()
 
@@ -590,43 +592,35 @@ def p_obj(p):
 #  Neuro points for  obj
 #  ################
 
-def p_obj0(p):
-    'obj0 :'
-    if program.class_stage:
-        if program.current_id in program.current_function.varTable:
-            program.local_type = program.current_function.varTable[program.current_id].s_type
-        elif program.current_id in program.current_class.varTable:
-            program.local_type = program.current_class.varTable[program.current_id].s_type
-        elif program.current_id in program.varTable:
-            program.local_type = program.varTable[program.current_id].s_type
-            program.id_found_in_global = True
-        else:
-            print("ERROR: Variable not declared")
-    elif program.function_stage:
-        if program.current_id in program.current_function.varTable:
-            program.local_type = program.current_function.varTable[program.current_id].s_type
-        elif program.current_id in program.varTable:
-            program.local_type = program.varTable[program.current_id].s_type
-            program.id_found_in_global = True
-        else:
-            print("ERROR: Variable not declared")
-    if program.local_type.is_object():
-        program.current_id_is_object = True
-    if program.local_type.s_type.is_matrix():
-        program.current_id_is_matrix = True
-    elif program.local_type.s_type.is_array():
-        program.current_id_is_array = True
+#def p_obj0(p):
+#    'obj0 :'
+#    if program.class_stage:
+#        if program.current_id in program.current_function.varTable:
+#            program.local_type = program.current_function.varTable[program.current_id].s_type
+#        elif program.current_id in program.current_class.varTable:
+#            program.local_type = program.current_class.varTable[program.current_id].s_type
+#        elif program.current_id in program.varTable:
+#            program.local_type = program.varTable[program.current_id].s_type
+#            program.id_found_in_global = True
+#        else:
+#            print("ERROR: Variable not declared")
+#    elif program.function_stage:
+#        if program.current_id in program.current_function.varTable:
+#            program.local_type = program.current_function.varTable[program.current_id].s_type
+#        elif program.current_id in program.varTable:
+#            program.local_type = program.varTable[program.current_id].s_type
+#            program.id_found_in_global = True
+#        else:
+#            print("ERROR: Variable not declared")
+#    if program.local_type.is_object():
+#        program.current_id_is_object = True
+#    if program.local_type.s_type.is_matrix():
+#        program.current_id_is_matrix = True
+#    elif program.local_type.s_type.is_array():
+#        program.current_id_is_array = True
 
 def p_obj1(p):
     'obj1 :'
-    #program.new_obj()
-    #program.current_id = p[-1]
-    #if program.class_stage:
-    #    program.local_class = program.ClassDir[program.current_class_name]
-    #    program.local_class_func = program.local_class.funDir
-    #    program.local_func = program.local_class_func[program.current_function_name]
-    #elif program.function_stage:
-    #    program.local_func = program.funDir[program.current_function_name]
     program.current_id = p[-1]
 
 #  ################
@@ -1060,8 +1054,9 @@ def p_var_cte1(p):
         if program.current_attribute == "":
             if program.current_rows == 0 and program.current_cols == 0:
                 #id
-                program.VP.append(program.current_function.varTable[program.current_id].address)
-                program.pType.append(program.current_function.varTable[program.current_id].s_type.spark_type)
+                print("id")
+                #program.VP.append(program.current_function.varTable[program.current_id].address)
+                #program.pType.append(program.current_function.varTable[program.current_id].s_type.spark_type)
             else:    
                 print("array")
                 #id[1]
@@ -1093,12 +1088,12 @@ def p_var_cte4(p):
 
 def p_array(p):
     '''
-    array   : LC expression array5 RC array_a
+    array   : LC expression array1 RC array_a array3
     | empty
     '''
 def p_array_a(p):
     '''
-    array_a  : LC expression array6 RC 
+    array_a  : LC expression array2 RC 
     | empty
     '''
 
@@ -1106,51 +1101,95 @@ def p_array_a(p):
 #  Neuro points for array
 #  ################
 
+#def p_array1(p):
+#    'array1 :'
+#    if program.current_id_is_matrix or program.current_id_is_array:
+#        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is dimensional")
+
+#def p_array2(p):
+#    'array2 :'
+#    if program.current_id_is_matrix:
+#        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is a 2D Matrix - only 1 dimension stated")
+#    program.new_type()
+
+#def p_array3(p):
+#    'array3 :'
+#    if program.current_id_is_array:
+#        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is an Array - 2 dimension stated")
+#    program.current_quad = ("VER", 0, program.current_type.col, program.VP.pop())
+#    program.pType.pop()
+#    program.add_quad()
+#    program.new_type()
+
+#def p_array4(p):
+#    'array4 :'
+#    program.current_quad = ("VER", 0, program.current_type.row, program.VP.pop())
+#    program.pType.pop()
+#    program.add_quad()
+
 def p_array1(p):
     'array1 :'
-    if program.current_id_is_matrix or program.current_id_is_array:
-        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is dimensional")
-
-def p_array2(p):
-    'array2 :'
-    if program.current_id_is_matrix:
-        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is a 2D Matrix - only 1 dimension stated")
-    program.new_type()
-
-def p_array3(p):
-    'array3 :'
-    if program.current_id_is_array:
-        print('\033[91m' + "ERROR:" + '\033[0m' + ": variable is an Array - 2 dimension stated")
-
-    program.current_quad = ("VER", 0, program.current_type.col, program.VP.pop())
-    program.pType.pop()
-    program.add_quad()
-    program.new_type()
-
-def p_array4(p):
-    'array4 :'
-
-    program.current_quad = ("VER", 0, program.current_type.row, program.VP.pop())
-    program.pType.pop()
-    program.add_quad()
-
-def p_array5(p):
-    'array5 :'
     #verifica que id es una variable dimensionada
+    program.pArray.append(program.current_id)
+    program.current_id_is_array = True
     var = program.current_function.varTable[program.current_id]
-    row_type = program.pType.pop()
+    #dim = 1
+    #program.pDim.append((program.current_id, dim))
+    #obtener primer campo de descripción de id
+    #program.pOper.append("$")
+    row_type = program.pType[-1]
     if row_type != "Int":
         print("ERROR to access array you need to provide Int index")
     else:
-        program.current_rows = program.VP.pop()
+        program.current_quad = ("VER", 0, var.s_type.row - 1, program.VP[-1])
+        program.add_quad()
 
-def p_array6(p):
-    'array6 :'
-    col_type = program.pType.pop()
+        #program.current_rows = program.VP.pop()
+
+def p_array2(p):
+    'array2 :'
+    program.current_id_is_array = False
+    program.current_id_is_matrix = True
+    var = program.current_function.varTable[program.current_id]
+    #dim = 2
+    #program.pDim.pop()
+    #program.pDim.append((program.current_id, dim))
+
+    col_type = program.pType[-1]
     if col_type != "Int":
         print("ERROR to access array you need to provide Int index")
     else:
-        program.current_cols = program.VP.pop()
+        program.current_quad = ("VER", 0, var.s_type.col - 1, program.VP[-1])
+        program.add_quad()
+        #program.current_cols = program.VP.pop()
+
+def p_array3(p):
+    'array3 :'
+    current_array = program.pArray.pop()
+    base_address = program.current_function.varTable[current_array].address
+
+    if program.current_id_is_array:
+        rows = program.VP.pop()
+        rows_type = program.pType.pop()
+        result = program.current_function.tempMemory.get_next_address(rows_type, 0, 0)
+        program.current_quad = ("~+", rows, base_address, result)
+        program.add_quad()
+        program.VP.append((result,))
+        program.pType.append("Int")
+
+    elif program.current_id_is_matrix:
+        #array
+        cols = program.VP.pop()
+        cols_type = program.pType.pop()
+        rows = program.VP.pop()
+        rows_type = program.pType.pop()
+        cols_result = program.current_function.tempMemory.get_next_address(cols_type, 0, 0)
+        rows_result = program.current_function.tempMemory.get_next_address(rows_type, 0, 0)
+        program.current_quad = ("*", rows, base_address, result)
+        program.add_quad()
+
+        
+
 
 #  ################
 #  -----------------------------------------------------------------------
