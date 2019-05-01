@@ -8,9 +8,8 @@ import ply.yacc as yacc
 from lex import tokens
 from program import Program
 from varTable import Var
+from sparky_type import SparkyType
 import math
-import types
-import collections
 
 program = Program()
 
@@ -105,27 +104,27 @@ def p_type0(p):
 
 def p_type1(p):
     'type1  :'
-    #program.current_type.spark_type = p[-1]
+    #program.current_type.type = p[-1]
     program.current_type.row = int(p[-6])
     program.current_type.col = int(p[-3])
     # //total space needed
 
 def p_type2(p):
     'type2  :'
-    #program.current_type.spark_type = p[-1]
+    #program.current_type.type = p[-1]
     program.current_type.row = int(p[-3])
     # //total space needed
 
 def p_type3(p):
     'type3  :'
-    program.current_type.spark_type = p[-1]
+    program.current_type.type = p[-1]
 
 
 def p_type4(p):
     'type4  :'
     if p[-1] not in program.ClassDir:
         print('\033[91m' + "ERROR:" + '\033[0m' + " Object Class has not been declared at line " + str(p.lexer.lineno) + ".")
-    program.current_type.spark_type = p[-1]
+    program.current_type.type = p[-1]
 
 #################
 #-----------------------------------------------------------------------
@@ -197,11 +196,11 @@ def p_var1(p):
 def p_var2(p):
     'var2    :'
     if program.current_scope == "global":
-        program.current_var.address = program.globalMemory.get_next_address(program.current_type.spark_type, program.current_type.row, program.current_type.col)
+        program.current_var.address = program.globalMemory.get_next_address(program.current_type.type, program.current_type.row, program.current_type.col)
         program.current_var.s_type = program.current_type
         program.varTable.set(program.current_var_name, program.current_var)
     if program.current_scope == "function":
-        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type.spark_type, program.current_type.row, program.current_type.col)
+        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type.type, program.current_type.row, program.current_type.col)
         program.current_var.s_type = program.current_type
         program.current_function.varTable.set(program.current_var_name, program.current_var)
 
@@ -218,7 +217,7 @@ def p_var2(p):
 def p_var4(p):
     'var4   :'
     program.current_value = p[-1]
-    program.current_type.spark_type = "Int"
+    program.current_type.type = "Int"
     # current_assignation_right = "Int"
     #  memory manager?
     # if(!ConstantDir.Search(p[-1])){
@@ -235,7 +234,7 @@ def p_var4(p):
 def p_var5(p):
     'var5   :'
     program.current_value = p[-1]
-    program.current_type.spark_type = "Float"
+    program.current_type.type = "Float"
     #current_assignation_right = "Float"
     # if(!ConstantDir.Search(p[-1])){
     #      var location = program.Memory.INT_CONST_MEMORY_LOC
@@ -248,7 +247,7 @@ def p_var5(p):
 def p_var6(p):
     'var6   :'
     program.current_value = p[-1]
-    program.current_type.spark_type = "Bool"
+    program.current_type.type = "Bool"
     #current_assignation_right = "Bool"
     #  Same as 5 and 4 but could be
     #  initialized in memory from start
@@ -289,12 +288,12 @@ def p_let1(p):
 def p_let2(p):
     'let2   :'
     program.current_var.s_type = program.current_type
-    program.current_var.address = program.globalMemory.get_next_address(program.current_type.spark_type, 0, 0)
+    program.current_var.address = program.globalMemory.get_next_address(program.current_type.type, 0, 0)
     program.varTable.set(program.current_var_name, program.current_var)
     if program.current_stage:
-        if program.current_type.spark_type == "Int":
+        if program.current_type.type == "Int":
             program.globalMemory.memory[program.current_var.address] = 0
-        elif program.current_type.spark_type == "Float":
+        elif program.current_type.type == "Float":
             program.globalMemory.memory[program.current_var.address] = 0.0
         else:
             program.globalMemory.memory[program.current_var.address] = False
@@ -307,7 +306,7 @@ def p_let3(p):
     'let3   :'
     #check semantic cube
     #CHECK MAYBE FAILS ON GLOBAL MEMORY
-    result = program.semanticCube.checkResult("=", program.current_var.s_type.spark_type, program.current_type.spark_type)
+    result = program.semanticCube.checkResult("=", program.current_var.s_type.type, program.current_type.type)
     if result == "Error":
         print('\033[91m' + "ERROR:" + '\033[0m' + " Type Mismatch at line " + str(p.lexer.lineno) + ".")
     else:
@@ -381,7 +380,7 @@ def p_fun4(p):
 def p_fun5(p):
     'fun5   :'
     program.new_type()
-    program.current_type.spark_type = "void"
+    program.current_type.type = "void"
     program.current_function.ret = program.current_type
     program.new_type()
 
@@ -559,7 +558,7 @@ def p_class9(p):
         print('\033[91m' + "ERROR:" + '\033[0m' + ": Init function for class already declared")
     else:
         program.current_function.add_params(program.current_params)
-        program.current_type.spark_type = program.current_class_name
+        program.current_type.type = program.current_class_name
         program.current_function.ret = program.current_type
         program.funDir.set(program.current_class_name, program.current_function)
     program.new_function()
@@ -650,7 +649,7 @@ def p_assignement1(p):
                 print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
             else:
                 program.VP.append(program.current_function.varTable[program.current_id].address)
-                program.pType.append(program.current_function.varTable[program.current_id].s_type.spark_type)
+                program.pType.append(program.current_function.varTable[program.current_id].s_type)
                 program.pOper.append("=")
         elif program.current_rows >= 0 and program.current_cols == 0:
             #id[Expression] = . expression
@@ -678,7 +677,7 @@ def p_assignement2(p):
     left_type = program.pType.pop()
     left_operand = program.VP.pop()
     operator = program.pOper.pop()
-    result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+    result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
         print("Error Type Mismatch")
     else:
@@ -701,12 +700,16 @@ def p_print_a(p):
 
 def p_print1(p):
     'print1 : '
-    program.pType.append("cte_s")
+    t = SparkyType()
+    t.type = "cte_s"
+    program.pType.append(t)
     program.VP.append(p[-1] + "\n")
 
 def p_print2(p):
     'print2 : '
-    program.pType.append("cte_s")
+    t = SparkyType()
+    t.type = "cte_s"
+    program.pType.append(t)
     program.VP.append("\n")
 
 def p_print3(p):
@@ -734,7 +737,7 @@ def p_loop1(p):
 def p_loop2(p):
     'loop2 : '
     exp_type = program.pType.pop()
-    if exp_type != "Bool":
+    if exp_type.type != "Bool":
         print("ERROR TYPE MISMATCH")
     else:
         result = program.VP.pop()
@@ -760,8 +763,8 @@ def p_cf1(p):
     if not program.current_id_is_array and not program.current_id_is_matrix:
         if program.current_id_is_object and program.current_id_has_attr:
             if program.class_stage:
-                if program.current_attribute in program.ClassDir[program.local_type.spark_type].funDir:
-                    program.called_function = program.ClassDir[program.local_type.spark_type].funDir[program.current_attribute]
+                if program.current_attribute in program.ClassDir[program.local_type.type].funDir:
+                    program.called_function = program.ClassDir[program.local_type.type].funDir[program.current_attribute]
                     address = program.called_function.address
                     program.current_quad = ("ERA", address, None, None)
                     program.add_quad()
@@ -823,7 +826,7 @@ def p_condition1(p):
     'condition1 : '
     program.pJumps.append("$")
     exp_type = program.pType.pop()
-    if exp_type != "Bool":
+    if exp_type.type != "Bool":
         print("ERROR TYPE MISMATCH")
     else:
         result = program.VP.pop()
@@ -839,7 +842,7 @@ def p_condition2(p):
     program.add_quad()
 
     exp_type = program.pType.pop()
-    if exp_type != "Bool":
+    if exp_type.type != "Bool":
         print("ERROR TYPE MISMATCH")
     else:
         result = program.VP.pop()
@@ -889,7 +892,7 @@ def p_expression1(p):
             left_operand = program.VP.pop()
             left_type = program.pType.pop()
             operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
             if result_type == "Error":
                 print("TYPE MISMATCH, HELP")
             else:
@@ -897,7 +900,9 @@ def p_expression1(p):
                 program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
-                program.pType.append(result_type)
+                t = SparkyType()
+                t.type = result_type
+                program.pType.append(t)
 
 def p_expression2(p):
     'expression2   :'
@@ -933,7 +938,7 @@ def p_comparison1(p):
             left_operand = program.VP.pop()
             left_type = program.pType.pop()
             operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
             if result_type == "Error":
                 print("TYPE MISMATCH, HELP")
             else:
@@ -941,7 +946,9 @@ def p_comparison1(p):
                 program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
-                program.pType.append(result_type)
+                t = SparkyType()
+                t.type = result_type
+                program.pType.append(t)
 
 def p_comparison2(p):
     'comparison2   :'
@@ -963,18 +970,13 @@ def p_exp_a(p):
 def p_exp1(p):
     'exp1   :'
     if len(program.pOper) != 0:
-        print("check")
-        for x in program.pOper:
-            print(x)
         if program.pOper[-1] == "+" or program.pOper[-1] == "-":
-            for x in program.VP:
-                print(x)
             right_operand = program.VP.pop()
             right_type = program.pType.pop()
             left_operand = program.VP.pop()
             left_type = program.pType.pop()
             operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
             if result_type == "Error":
                 print("TYPE MISMATCH, HELP")
             else:
@@ -982,7 +984,9 @@ def p_exp1(p):
                 program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
-                program.pType.append(result_type)
+                t = SparkyType()
+                t.type = result_type
+                program.pType.append(t)
 
 def p_exp2(p):
     'exp2   :'
@@ -1009,7 +1013,7 @@ def p_term1(p):
             left_operand = program.VP.pop()
             left_type = program.pType.pop()
             operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type, right_type)
+            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
             if result_type == "Error":
                 print("TYPE MISMATCH, HELP")
             else:
@@ -1017,7 +1021,9 @@ def p_term1(p):
                 program.current_quad = (operator, left_operand, right_operand, result)
                 program.add_quad()
                 program.VP.append(result)
-                program.pType.append(result_type)
+                t = SparkyType()
+                t.type = result_type
+                program.pType.append(t)
 
 def p_term2(p):
     'term2   :'
@@ -1066,7 +1072,7 @@ def p_var_cte1(p):
                 #id
                 print("id")
                 #program.VP.append(program.current_function.varTable[program.current_id].address)
-                #program.pType.append(program.current_function.varTable[program.current_id].s_type.spark_type)
+                #program.pType.append(program.current_function.varTable[program.current_id].s_type.type)
             else:    
                 print("array")
                 #id[1]
@@ -1082,21 +1088,25 @@ def p_var_cte2(p):
     'var_cte2   :'
     #buscarla en memoria global, si no, meterla
     program.VP.append(int(p[-1]))
-    print(program.current_id)
-    print(p[-1])
-    program.pType.append("Int")
+    t = SparkyType()
+    t.type = "Int"
+    program.pType.append(t)
 
 def p_var_cte3(p):
     'var_cte3   :'
     #buscarla en memoria global, si no, meterla
     program.VP.append(1.1)
-    program.pType.append("Float")
+    t = SparkyType()
+    t.type = "Float"
+    program.pType.append(t)
 
 def p_var_cte4(p):
     'var_cte4   :'
     #buscarla en memoria global, si no, meterla
     program.VP.append(True)
-    program.pType.append("Bool")
+    t = SparkyType()
+    t.type = "Bool"
+    program.pType.append(t)
 
 def p_array(p):
     '''
@@ -1116,15 +1126,12 @@ def p_array_a(p):
 def p_array1(p):
     'array1 :'
     #verifica que id es una variable dimensionada
-    print("array1")
 
     program.pOper.append('$')
-    for x in program.pOper:
-        print(x)
     program.pArray.append(program.current_id)
     program.current_id_is_array = True
     var = program.current_function.varTable[program.current_id]
-    row_type = program.pType[-1]
+    row_type = program.pType[-1].type
     if row_type != "Int":
         print("ERROR to access array you need to provide Int index")
     else:
@@ -1137,7 +1144,7 @@ def p_array2(p):
     program.current_id_is_matrix = True
     var = program.current_function.varTable[program.current_id]
 
-    col_type = program.pType[-1]
+    col_type = program.pType[-1].type
     if col_type != "Int":
         print("ERROR to access array you need to provide Int index")
     else:
@@ -1157,7 +1164,10 @@ def p_array3(p):
         program.current_quad = ("~+", rows, base_address, result)
         program.add_quad()
         program.VP.append((result,))
-        program.pType.append("Int")
+
+        t = SparkyType()
+        t.type = "Int"
+        program.pType.append(t)
 
     elif program.current_id_is_matrix:
         #array
@@ -1178,7 +1188,9 @@ def p_array3(p):
         program.add_quad()
 
         program.VP.append((result3,))
-        program.pType.append("Int")
+        t = SparkyType()
+        t.type = "Int"
+        program.pType.append(t)
     program.pOper.pop()
 
         

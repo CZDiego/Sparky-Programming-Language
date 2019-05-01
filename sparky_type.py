@@ -8,15 +8,15 @@
 
 class SparkyType:
     def __init__(self):
-        self.spark_type = ""
+        self.type = ""
         self.row = 0
         self.col = 0
 
     def type_key(self):
-        return self.spark_type + "," + str(self.col) + "," + str(self.row)
+        return self.type + "," + str(self.col) + "," + str(self.row)
 
     def is_object(self):
-        return self.spark_type not in ["Int", "Bool", "Float"]
+        return self.type not in ["Int", "Bool", "Float"]
 
     def is_matrix(self):
         return self.col > 0
