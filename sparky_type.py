@@ -24,6 +24,14 @@ class SparkyType:
     def is_array(self):
         return self.row > 0
 
+    def check_type(self, spark):
+        if self.type != spark.type:
+            return False
+        if self.row != spark.row:
+            return False
+        if self.col != spark.col:
+            return False
+        return True
 
 '''
 class bcolors:

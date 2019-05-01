@@ -73,8 +73,9 @@ def p_prog3(p):
 
 def p_prog4(p):
     'prog4  :'
-    # same as prog2
+    program.funDir.set(program.current_function_name, program.current_function)
     # Add to function sub dictionary of program dictionary
+
 
 #################
 #-----------------------------------------------------------------------
@@ -325,6 +326,10 @@ def p_let3(p):
 #-------------------------------
 def p_main(p):
     'main   : main0 MAIN LP RP function_block'
+    #for fun in program.funDir.directory:
+    #    print("function: " + fun)
+    #    for var_key in program.funDir[fun].varTable.directory:
+    #        print("var: " + var_key)
 
 
 def p_main0(p):
@@ -351,13 +356,15 @@ def p_function_a(p):
 
 def p_fun0(p):
     'fun0   :'
+    program.new_function()
     program.function_stage = True
+    program.current_scope = "function"
     program.current_function.address = program.BASE
 
 def p_fun1(p):
     'fun1   :'
     program.current_function_name = p[-1]
-    if program.current_stage:#  I'm in the global scope
+    if program.current_scope == "global":
         if program.current_function_name in program.funDir:
             print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before.")
     else:
@@ -382,18 +389,12 @@ def p_fun5(p):
     program.new_type()
     program.current_type.type = "void"
     program.current_function.ret = program.current_type
-    program.new_type()
 
 def p_fun6(p):
     'fun6   :'
+    program.function_stage = False
     program.current_quad = ("ENDPROC", None, None, None)
     program.add_quad()
-    if program.current_stage:
-        program.funDir.set(program.current_function_name, program.current_function)
-        #  print(program.funDir[program.current_function_name].varTable.directory)
-    if program.class_stage:
-        program.current_class.funDir.set(program.current_function_name, program.current_function)
-    program.new_function()
 
 # ################
 #  ------------------------------------------------------------------------
@@ -421,14 +422,16 @@ def p_param0(p):
 def p_param1(p):
     'param1 :'
     program.current_var_name = p[-1]
+    if program.current_var_name in program.current_params:
+        print('\033[91m' + "ERROR:" + '\033[0m' + "Function already has a parameter with that name.")
 
 def p_param2(p):
     'param2 :'
     program.current_var.s_type = program.current_type
-    if program.current_var_name in program.current_params:
-        print('\033[91m' + "ERROR:" + '\033[0m' + "Function already has a parameter with that name.")
-    else:
-        program.current_params.set(program.current_var_name, program.current_var)
+    s_type = program.current_type
+    program.current_var.address = program.current_function.funMemory.get_next_address(s_type, s_type.row, s_type.col)
+    program.current_function.varTable.set(program.current_var_name, program.current_var)
+    program.current_function.param_key.append((s_type, program.current_var_name))
 
 # ################
 #  ------------------------------------------------------------------------
@@ -754,55 +757,54 @@ def p_loop3(p):
 #  -----------------------------------------------------------------------
 
 def p_call_function(p):
-    'call_function  : obj cf1 call_func SEMICOL'
+    'call_function  : obj call_f1 call_func SEMICOL call_f2'
 
 
-def p_cf1(p):
-    'cf1    :'
+def p_call_f1(p):
+    'call_f1    :'
+    program.called_function = program.funDir[program.current_id]
+    # program.funDir[program.pIDs.pop()]
+    program.current_param_num = 0
+    program.current_quad = ("ERA", program.called_function.address, None, None)
+    program.add_quad()
 
-    if not program.current_id_is_array and not program.current_id_is_matrix:
-        if program.current_id_is_object and program.current_id_has_attr:
-            if program.class_stage:
-                if program.current_attribute in program.ClassDir[program.local_type.type].funDir:
-                    program.called_function = program.ClassDir[program.local_type.type].funDir[program.current_attribute]
-                    address = program.called_function.address
-                    program.current_quad = ("ERA", address, None, None)
-                    program.add_quad()
-                else:
-                    print("ERROR")
-
-        elif program.current_id_has_attr:
-            print("ERROR: Function does not manage attributes")
-        else:
-            if program.class_stage:
-                if program.current_id in program.local_class:
-                    program.called_function = program.local_class_func[program.current_id]
-                    address = program.called_function.address
-                    program.current_quad = ("ERA", address, None, None)
-                    program.add_quad()
-                else:
-                    print("ERROR : Function does not exists")
-            if program.current_id in program.funDir:
-                program.called_function = program.funDir[program.current_id]
-                address = program.called_function.address
-                program.current_quad = ("ERA", address, None, None)
-                program.add_quad()
-            else:
-                print("ERROR : Function does not exists")
-
-
-
+def p_call_f2(p):
+    'call_f2    :'
+    program.current_quad = ("GOSUB", program.called_function.address, None, None)
+    program.add_quad()
 
 def p_call_params(p):
     '''
-    call_params    : expression call_params_a
-    | empty
+    call_params    : expression call_param1 call_params_a
+    | call_param2
     '''
 def p_call_params_a(p):
     '''
-    call_params_a  : COMMA expression call_params_a
-    | empty
+    call_params_a  : COMMA expression call_param1 call_params_a
+    | call_param2
     '''
+
+def p_call_param1(p):
+    'call_param1    :'
+    if (program.current_param_num + 1) > len(program.called_function.param_key):
+        print("ERROR : Function has 1 more argument than expected")
+
+    popped_type = program.pType.pop()
+    fun_param_type = program.called_function.param_key[program.current_param_num][0]
+    if fun_param_type.check_type(popped_type):
+        program.current_quad = ("PARAM", program.VP.pop(), None, program.current_param_num)
+        program.add_quad()
+        program.current_param_num += 1
+    else:
+        print("ERROR : Parameter given is of wrong type")
+
+
+
+def p_call_param2(p):
+    'call_param2    :'
+    if len(program.called_function.param_key) != program.current_param_num:
+        print("ERROR : Function expecting another parameter")
+
 def p_condition(p):
     'condition  : IF expression condition1 block condition_a condition_b condition4'
 
@@ -1249,7 +1251,7 @@ def p_error(p):
 parser = yacc.yacc(start='program')
 
 
-with open("program2.sdfm", "r") as inputFile:
+with open("global_function_test.sdfm", "r") as inputFile:
     data = inputFile.read()
 
 result = parser.parse(data)

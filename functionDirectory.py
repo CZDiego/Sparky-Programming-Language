@@ -13,7 +13,7 @@ class Function:
 	def __init__(self):
 		self.private 	= "public"
 		self.address	= 0
-		self.param_key  = ""
+		self.param_key  = []
 		self.params 	= VarTable()
 		self.ret		= SparkyType()
 		self.varTable 	= VarTable()
