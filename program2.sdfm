@@ -6,8 +6,8 @@ var d : Float;
 main(){
 
 	var a : Int;
-	var c : Int;
+	var c : [99]Int;
 	var x : Int;
 
-	a = c + x + x + x * x;
+	a = x;
 }

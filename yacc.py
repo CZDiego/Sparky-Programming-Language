@@ -640,19 +640,37 @@ def p_assignement1(p):
     #buscar que exista en tabla de variables local y asi
     if program.current_id in program.current_function.varTable:
         if program.current_rows == 0 and program.current_cols == 0:
-            print("not array")
             #id = . expression
-            program.VP.append(program.current_function.varTable[program.current_id].address)
-            program.pType.append(program.current_function.varTable[program.current_id].s_type.spark_type)
-            program.pOper.append("=")
-
-        else:
+            #is_object
+            type = program.current_function.varTable[program.current_id].s_type
+            if type.row > 0:
+                #id is array
+                print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
+            elif type.is_object():
+                #id is object
+                print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
+            else:
+                program.VP.append(program.current_function.varTable[program.current_id].address)
+                program.pType.append(program.current_function.varTable[program.current_id].s_type.spark_type)
+                program.pOper.append("=")
+        elif program.current_rows >= 0 and program.current_cols == 0:
+            #id[Expression] = . expression
+            print(program.current_rows)
+            print(program.current_function.varTable[program.current_id].address)
+            print(program.current_function.varTable[program.current_id].address + program.current_rows)
             print("array")
+        else:
+            #id[Expression][expression] = . expression
+            print("matrix")
 
     elif program.current_id in program.varTable:
         print("Global")
     else:
         print("ERROR variable no declarada")
+    program.current_rows = 0
+    program.current_cols = 0
+    program.current_id = ""
+    program.current_attribute = ""
 
 def p_assignement2(p):
     'assignement2 :'
@@ -661,8 +679,6 @@ def p_assignement2(p):
     left_type = program.pType.pop()
     left_operand = program.VP.pop()
     operator = program.pOper.pop()
-    print(right_type)
-    print(left_type)
     result_type = program.semanticCube.checkResult(operator, left_type, right_type)
     if result_type == "Error":
         print("Error Type Mismatch")
@@ -1060,7 +1076,7 @@ def p_var_cte1(p):
 def p_var_cte2(p):
     'var_cte2   :'
     #buscarla en memoria global, si no, meterla
-    program.VP.append(1)
+    program.VP.append(int(p[-1]))
     program.pType.append("Int")
 
 def p_var_cte3(p):
@@ -1120,6 +1136,8 @@ def p_array4(p):
 
 def p_array5(p):
     'array5 :'
+    #verifica que id es una variable dimensionada
+    var = program.current_function.varTable[program.current_id]
     row_type = program.pType.pop()
     if row_type != "Int":
         print("ERROR to access array you need to provide Int index")
