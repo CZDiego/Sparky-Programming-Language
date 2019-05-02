@@ -60,11 +60,8 @@ def p_prog1(p):
 
 def p_prog2(p):
     'prog2  :'
-    # new class object!
-    # current_class_name is set at class rules
-    # current_class is an object class created in class rules
-    # program.classesDir.Add(current_class_name,current_class)
-    # Add to class sub dictionary of program dictionary
+    program.ClassDir.set(program.current_class_name, program.current_class)
+    program.new_class()
 
 def p_prog3(p):
     'prog3  :'
@@ -144,6 +141,88 @@ def p_atomic(p):
 
 #################
 #-----------------------------------------------------------------------
+
+def p_var_class(p):
+    '''
+    var_class   : VAR ID var_c1 COL type var_class_a var_c2 SEMICOL
+    |  VAR ID var_c1 COL typeM var_c2 SEMICOL
+    '''
+
+#assignment in declaration
+def p_var_class_a(p):
+    '''
+    var_class_a   : IS var_class_b
+    | empty
+    '''
+# Possible name change to cte_vars
+def p_var_class_b(p):
+    '''
+    var_class_b   : CTE_I var_c4
+    | CTE_F var_c5
+    | CTE_B var_c6
+    '''
+
+
+# -----------------------------------------------------------------------
+# Neuro points var stage
+#################
+
+def p_var_c1(p):
+    'var_c1    :'
+    if program.current_scope == "global":
+        if p[-1] in program.current_class.varTable.directory:
+            print("ERROR VARIABLE DECLARADA ANTERIORMENTE")
+        else:
+            program.current_var_name = p[-1]
+
+    if program.current_scope == "function":
+        if p[-1] in program.current_function.varTable:
+            print("ERROR VARIABLE DECLARADA ANTERIORMENTE")
+        else:
+            program.current_var_name = p[-1]
+
+
+def p_var_c2(p):
+    'var_c2    :'
+    if program.current_scope == "global":
+        program.current_var.address = -1
+        program.current_var.s_type = program.current_type
+        if program.current_var.s_type.is_object():
+                print("ERROR: Object class does not support objects")
+
+        program.current_class.varTable.set(program.current_var_name, program.current_var)
+
+    if program.current_scope == "function":
+        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type.type,
+                                                                                          program.current_type.row,
+                                                                                          program.current_type.col)
+        program.current_var.s_type = program.current_type
+        program.current_function.varTable.set(program.current_var_name, program.current_var)
+
+    program.current_var = Var()
+    program.current_var_name = ""
+    program.new_type()
+
+def p_var_c4(p):
+    'var_c4   :'
+    program.current_value = p[-1]
+    program.current_type.type = "Int"
+
+def p_var_c5(p):
+    'var_c5   :'
+    program.current_value = p[-1]
+    program.current_type.type = "Float"
+
+
+def p_var_c6(p):
+    'var_c6   :'
+    program.current_value = p[-1]
+    program.current_type.type = "Bool"
+
+
+#################
+# -----------------------------------------------------------------------
+
 
 def p_var(p):
     '''
@@ -273,8 +352,6 @@ def p_let1(p):
         if p[-1] in program.varTable:
             print('\033[91m' + "ERROR:" + '\033[0m' + " Variable already declared at line " + str(p.lexer.lineno) + ".")
 
-
-
     # if(program.current_stage){
     #   if(program.VarTable.Search(p[-1])) then error
     #  }else {
@@ -326,10 +403,11 @@ def p_let3(p):
 #-------------------------------
 def p_main(p):
     'main   : main0 MAIN LP RP function_block'
-    #for fun in program.funDir.directory:
-    #    print("function: " + fun)
-    #    for var_key in program.funDir[fun].varTable.directory:
-    #        print("var: " + var_key)
+
+    for cla in program.ClassDir.directory:
+        print("class: " + cla)
+        for var_key in program.ClassDir[cla].varTable.directory:
+             print("var: " + var_key)
 
 
 def p_main0(p):
@@ -357,7 +435,6 @@ def p_function_a(p):
 def p_fun0(p):
     'fun0   :'
     program.new_function()
-    program.function_stage = True
     program.current_scope = "function"
     program.current_function.address = program.BASE
 
@@ -490,7 +567,7 @@ def p_class_e(p):
 
 def p_class_f(p):
     '''
-    class_f : var class4
+    class_f : var_class class4
     | let class4
     '''
 
@@ -507,14 +584,12 @@ def p_class_d(p):
 
 def p_class1(p):
     'class1 :'
+    program.new_class()
+    program.class_stage = True
     if p[-1] in program.ClassDir:
         print('\033[91m' + "ERROR:" + '\033[0m' + ": Class Already declared")
     else:
         program.current_class_name = p[-1]
-        program.new_class()
-        program.current_stage = False
-        program.class_stage = True
-        print(p[-1])
 
 def p_class2(p):
     'class2 :'
@@ -535,23 +610,21 @@ def p_class4(p):
 
 def p_class5(p):
     'class5 :'
-    program.current_class.funDir.set(program.current_function_name,program.current_function)
+    program.current_class.funDir.set(program.current_function_name, program.current_function)
+    program.current_scope = "global"
 
 def p_class6(p):
     'class6 :'
     #  Better to add it at the end
-    program.ClassDir.set(program.current_class_name, program.current_class)
-    program.current_stage = True
-    program.class_stage = False
-    print(program.current_class.varTable.directory)
 
 def p_class7(p):
     'class7 :'
+    program.new_function()
     program.current_function_name = program.current_class_name
 
 def p_class8(p):
     'class8 :'
-    #  program.current_function.add_params(program.current_params)
+    program.current_function.add_params(program.current_params)
     program.new_params()
 
 def p_class9(p):
