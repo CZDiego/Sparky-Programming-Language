@@ -14,11 +14,14 @@ import math
 program = Program()
 
 def p_program(p):
-    'program   : prog0 program_a program_c program_d main quads'
+    'program   : prog0 program_a program_c program_d main end'
 
-def p_quads(p):
-    'quads :'
+def p_end(p):
+    'end :'
+    program.current_quad = ("END", None, None, None)
+    program.add_quad()
     program.print_quads()
+
 
 def p_program_a(p):
     '''
@@ -625,6 +628,7 @@ def p_obj1(p):
     'obj1 :'
     program.current_id = p[-1]
     program.pOper.append("$")
+    program.pIDs.append((p[-1],False, False))
 
 def p_obj2(p):
     'obj2 :'
@@ -640,38 +644,27 @@ def p_assignement1(p):
     # OBJ = . EXPRESSION ;
     #buscar que exista en tabla de variables local y asi
     if program.current_id in program.current_function.varTable:
-        if program.current_rows == 0 and program.current_cols == 0:
-            #id = . expression
-            #is_object
-            type = program.current_function.varTable[program.current_id].s_type
-            if type.row > 0:
-                #id is array
-                print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
-            elif type.is_object():
-                #id is object
-                print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
-            else:
-                program.VP.append(program.current_function.varTable[program.current_id].address)
-                program.pType.append(program.current_function.varTable[program.current_id].s_type)
-                program.pOper.append("=")
-        elif program.current_rows >= 0 and program.current_cols == 0:
-            #id[Expression] = . expression
-            print(program.current_rows)
-            print(program.current_function.varTable[program.current_id].address)
-            print(program.current_function.varTable[program.current_id].address + program.current_rows)
-            print("array")
+        #id = . expression
+        #is_object
+        t = program.current_function.varTable[program.current_id].s_type
+        if t.row > 0:
+            #id is array
+            print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
+        elif t.is_object():
+            #id is object
+            print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
         else:
-            #id[Expression][expression] = . expression
-            print("matrix")
+            program.VP.append(program.current_function.varTable[program.current_id].address)
+            program.pType.append(program.current_function.varTable[program.current_id].s_type)
+            program.pOper.append("=")
 
     elif program.current_id in program.varTable:
         print("Global")
     else:
         print("ERROR variable no declarada")
-    program.current_rows = 0
-    program.current_cols = 0
     program.current_id = ""
     program.current_attribute = ""
+    program.pIDs.pop()
 
 def p_assignement2(p):
     'assignement2 :'
@@ -762,7 +755,7 @@ def p_call_function(p):
 
 def p_call_f1(p):
     'call_f1    :'
-    program.called_function = program.funDir[program.current_id]
+    program.called_function = program.funDir[program.pIDs[-1][0]]
     # program.funDir[program.pIDs.pop()]
     program.current_param_num = 0
     program.current_quad = ("ERA", program.called_function.address, None, None)
@@ -889,22 +882,7 @@ def p_expression1(p):
     'expression1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "&&" or program.pOper[-1] == "||":
-            right_operand = program.VP.pop()
-            right_type = program.pType.pop()
-            left_operand = program.VP.pop()
-            left_type = program.pType.pop()
-            operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
-            if result_type == "Error":
-                print("TYPE MISMATCH, HELP")
-            else:
-                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
-                program.current_quad = (operator, left_operand, right_operand, result)
-                program.add_quad()
-                program.VP.append(result)
-                t = SparkyType()
-                t.type = result_type
-                program.pType.append(t)
+            solveOperation()
 
 def p_expression2(p):
     'expression2   :'
@@ -935,22 +913,7 @@ def p_comparison1(p):
     'comparison1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == ">=" or program.pOper[-1] == "<=" or program.pOper[-1] == ">" or program.pOper[-1] == "<" or program.pOper[-1] == "==" or program.pOper[-1] == "!=":
-            right_operand = program.VP.pop()
-            right_type = program.pType.pop()
-            left_operand = program.VP.pop()
-            left_type = program.pType.pop()
-            operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
-            if result_type == "Error":
-                print("TYPE MISMATCH, HELP")
-            else:
-                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
-                program.current_quad = (operator, left_operand, right_operand, result)
-                program.add_quad()
-                program.VP.append(result)
-                t = SparkyType()
-                t.type = result_type
-                program.pType.append(t)
+            solveOperation()
 
 def p_comparison2(p):
     'comparison2   :'
@@ -973,22 +936,7 @@ def p_exp1(p):
     'exp1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "+" or program.pOper[-1] == "-":
-            right_operand = program.VP.pop()
-            right_type = program.pType.pop()
-            left_operand = program.VP.pop()
-            left_type = program.pType.pop()
-            operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
-            if result_type == "Error":
-                print("TYPE MISMATCH, HELP")
-            else:
-                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
-                program.current_quad = (operator, left_operand, right_operand, result)
-                program.add_quad()
-                program.VP.append(result)
-                t = SparkyType()
-                t.type = result_type
-                program.pType.append(t)
+            solveOperation()
 
 def p_exp2(p):
     'exp2   :'
@@ -1010,22 +958,7 @@ def p_term1(p):
     'term1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "*" or program.pOper[-1] == "/":
-            right_operand = program.VP.pop()
-            right_type = program.pType.pop()
-            left_operand = program.VP.pop()
-            left_type = program.pType.pop()
-            operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
-            if result_type == "Error":
-                print("TYPE MISMATCH, HELP")
-            else:
-                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
-                program.current_quad = (operator, left_operand, right_operand, result)
-                program.add_quad()
-                program.VP.append(result)
-                t = SparkyType()
-                t.type = result_type
-                program.pType.append(t)
+            solveOperation()
 
 def p_term2(p):
     'term2   :'
@@ -1070,20 +1003,25 @@ def p_var_cte1(p):
     else:
         #NOT FUNC
         if program.current_attribute == "":
-            if program.current_rows == 0 and program.current_cols == 0:
-                #id
-                print("id")
-                #program.VP.append(program.current_function.varTable[program.current_id].address)
-                #program.pType.append(program.current_function.varTable[program.current_id].s_type.type)
-            else:    
-                print("array")
-                #id[1]
-                #id[1][2]
+            #id
+
+            if not program.pIDs[-1][1] and not program.pIDs[-1][2]:
+                address = program.current_function.varTable[program.current_id].address
+                program.VP.append(address)
+                t = SparkyType()
+                t.type = "Int"
+                program.pType.append(t)
+            #elif program.current_id_is_matrix:
+
+
         else:
-            print("object")
+            print("id with attribute")
             #id.id
             #id[1].id
             #id[1][2].id
+
+    program.pIDs.pop()
+    
 
 
 def p_var_cte2(p):
@@ -1130,9 +1068,13 @@ def p_array1(p):
     #verifica que id es una variable dimensionada
 
     program.pOper.append('$')
-    program.pArray.append(program.current_id)
-    program.current_id_is_array = True
-    var = program.current_function.varTable[program.current_id]
+    program.pArray.append(program.pIDs[-1][0])
+
+    #changing
+    x = program.pIDs.pop()
+    program.pIDs.append((x[0], True, False))
+
+    var = program.current_function.varTable[program.pIDs[-1][0]]
     row_type = program.pType[-1].type
     if row_type != "Int":
         print("ERROR to access array you need to provide Int index")
@@ -1142,9 +1084,10 @@ def p_array1(p):
 
 def p_array2(p):
     'array2 :'
-    program.current_id_is_array = False
-    program.current_id_is_matrix = True
-    var = program.current_function.varTable[program.current_id]
+    #changing
+    x = program.pIDs.pop()
+    program.pIDs.append((x[0], False, True))
+    var = program.current_function.varTable[program.pIDs[-1][0]]
 
     col_type = program.pType[-1].type
     if col_type != "Int":
@@ -1159,10 +1102,10 @@ def p_array3(p):
     base_address = program.current_function.varTable[current_array].address
     total_rows = program.current_function.varTable[current_array].s_type.row
 
-    if program.current_id_is_array:
+    if program.pIDs[-1][1]:
         rows = program.VP.pop()
         rows_type = program.pType.pop()
-        result = program.current_function.tempMemory.get_next_address(rows_type, 0, 0)
+        result = program.current_function.tempMemory.get_next_address(rows_type.type, 0, 0)
         program.current_quad = ("~+", rows, base_address, result)
         program.add_quad()
         program.VP.append((result,))
@@ -1171,14 +1114,14 @@ def p_array3(p):
         t.type = "Int"
         program.pType.append(t)
 
-    elif program.current_id_is_matrix:
+    elif program.pIDs[-1][2]:
         #array
         cols = program.VP.pop()
         cols_type = program.pType.pop()
         rows = program.VP.pop()
         rows_type = program.pType.pop()
         result = program.current_function.tempMemory.get_next_address("Int", 0, 0)
-        program.current_quad = ("*", rows, total_rows, result)
+        program.current_quad = (".*", rows, total_rows, result)
         program.add_quad()
 
         result2 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
@@ -1186,7 +1129,7 @@ def p_array3(p):
         program.add_quad()
 
         result3 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
-        program.current_quad = ("~+", result2, base_address, result3)
+        program.current_quad = (".+", result2, base_address, result3)
         program.add_quad()
 
         program.VP.append((result3,))
@@ -1250,8 +1193,26 @@ def p_error(p):
 # Build the parser
 parser = yacc.yacc(start='program')
 
+def solveOperation():
+    right_operand = program.VP.pop()
+    right_type = program.pType.pop()
+    left_operand = program.VP.pop()
+    left_type = program.pType.pop()
+    operator = program.pOper.pop()
+    result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
+    if result_type == "Error":
+        print("TYPE MISMATCH, HELP")
+    else:
+        result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
+        program.current_quad = (operator, left_operand, right_operand, result)
+        program.add_quad()
+        program.VP.append(result)
+        t = SparkyType()
+        t.type = result_type
+        program.pType.append(t)
 
-with open("global_function_test.sdfm", "r") as inputFile:
+
+with open("program2.sdfm", "r") as inputFile:
     data = inputFile.read()
 
 result = parser.parse(data)
