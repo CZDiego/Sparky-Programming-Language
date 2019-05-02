@@ -5,12 +5,13 @@ var d : Float;
 
 main(){
 
-	var a : Int;
-	var c : [50]Int;
-	var x : Int;
-	var d : [15][10]Int;
-	var z : Int;
+	var a : Int;         //20000
+	var c : [50]Int;     //20001
+	var x : Int;         //20051
+	var d : [15][10]Int; //20052
+	var z : Int;         //20202
 
-	a = c[z + x * c[z]] + d[z+9][1];
-	a = z + z;
+	x = d[z + x * c[z]][a];
+
+
 }

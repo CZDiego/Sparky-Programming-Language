@@ -14,11 +14,14 @@ import math
 program = Program()
 
 def p_program(p):
-    'program   : prog0 program_a program_c program_d main quads'
+    'program   : prog0 program_a program_c program_d main end'
 
-def p_quads(p):
-    'quads :'
+def p_end(p):
+    'end :'
+    program.current_quad = ("END", None, None, None)
+    program.add_quad()
     program.print_quads()
+
 
 def p_program_a(p):
     '''
@@ -665,6 +668,8 @@ def p_assignement1(p):
 
 def p_assignement2(p):
     'assignement2 :'
+    for x in program.VP:
+        print(x)
     right_type = program.pType.pop()
     right_operand = program.VP.pop()
     left_type = program.pType.pop()
@@ -879,22 +884,7 @@ def p_expression1(p):
     'expression1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "&&" or program.pOper[-1] == "||":
-            right_operand = program.VP.pop()
-            right_type = program.pType.pop()
-            left_operand = program.VP.pop()
-            left_type = program.pType.pop()
-            operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
-            if result_type == "Error":
-                print("TYPE MISMATCH, HELP")
-            else:
-                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
-                program.current_quad = (operator, left_operand, right_operand, result)
-                program.add_quad()
-                program.VP.append(result)
-                t = SparkyType()
-                t.type = result_type
-                program.pType.append(t)
+            solveOperation()
 
 def p_expression2(p):
     'expression2   :'
@@ -925,22 +915,7 @@ def p_comparison1(p):
     'comparison1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == ">=" or program.pOper[-1] == "<=" or program.pOper[-1] == ">" or program.pOper[-1] == "<" or program.pOper[-1] == "==" or program.pOper[-1] == "!=":
-            right_operand = program.VP.pop()
-            right_type = program.pType.pop()
-            left_operand = program.VP.pop()
-            left_type = program.pType.pop()
-            operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
-            if result_type == "Error":
-                print("TYPE MISMATCH, HELP")
-            else:
-                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
-                program.current_quad = (operator, left_operand, right_operand, result)
-                program.add_quad()
-                program.VP.append(result)
-                t = SparkyType()
-                t.type = result_type
-                program.pType.append(t)
+            solveOperation()
 
 def p_comparison2(p):
     'comparison2   :'
@@ -963,22 +938,7 @@ def p_exp1(p):
     'exp1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "+" or program.pOper[-1] == "-":
-            right_operand = program.VP.pop()
-            right_type = program.pType.pop()
-            left_operand = program.VP.pop()
-            left_type = program.pType.pop()
-            operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
-            if result_type == "Error":
-                print("TYPE MISMATCH, HELP")
-            else:
-                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
-                program.current_quad = (operator, left_operand, right_operand, result)
-                program.add_quad()
-                program.VP.append(result)
-                t = SparkyType()
-                t.type = result_type
-                program.pType.append(t)
+            solveOperation()
 
 def p_exp2(p):
     'exp2   :'
@@ -1000,22 +960,7 @@ def p_term1(p):
     'term1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "*" or program.pOper[-1] == "/":
-            right_operand = program.VP.pop()
-            right_type = program.pType.pop()
-            left_operand = program.VP.pop()
-            left_type = program.pType.pop()
-            operator = program.pOper.pop()
-            result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
-            if result_type == "Error":
-                print("TYPE MISMATCH, HELP")
-            else:
-                result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
-                program.current_quad = (operator, left_operand, right_operand, result)
-                program.add_quad()
-                program.VP.append(result)
-                t = SparkyType()
-                t.type = result_type
-                program.pType.append(t)
+            solveOperation()
 
 def p_term2(p):
     'term2   :'
@@ -1067,11 +1012,13 @@ def p_var_cte1(p):
                 t = SparkyType()
                 t.type = "Int"
                 program.pType.append(t)
+
         else:
             print("id with attribute")
             #id.id
             #id[1].id
             #id[1][2].id
+
     program.pIDs.pop()
     
     program.current_id_is_array = False
@@ -1170,7 +1117,7 @@ def p_array3(p):
         rows = program.VP.pop()
         rows_type = program.pType.pop()
         result = program.current_function.tempMemory.get_next_address("Int", 0, 0)
-        program.current_quad = ("*", rows, total_rows, result)
+        program.current_quad = (".*", rows, total_rows, result)
         program.add_quad()
 
         result2 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
@@ -1178,7 +1125,7 @@ def p_array3(p):
         program.add_quad()
 
         result3 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
-        program.current_quad = ("~+", result2, base_address, result3)
+        program.current_quad = (".+", result2, base_address, result3)
         program.add_quad()
 
         program.VP.append((result3,))
@@ -1241,6 +1188,24 @@ def p_error(p):
 
 # Build the parser
 parser = yacc.yacc(start='program')
+
+def solveOperation():
+    right_operand = program.VP.pop()
+    right_type = program.pType.pop()
+    left_operand = program.VP.pop()
+    left_type = program.pType.pop()
+    operator = program.pOper.pop()
+    result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
+    if result_type == "Error":
+        print("TYPE MISMATCH, HELP")
+    else:
+        result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
+        program.current_quad = (operator, left_operand, right_operand, result)
+        program.add_quad()
+        program.VP.append(result)
+        t = SparkyType()
+        t.type = result_type
+        program.pType.append(t)
 
 
 with open("program2.sdfm", "r") as inputFile:
