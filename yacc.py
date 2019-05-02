@@ -628,7 +628,7 @@ def p_obj1(p):
     'obj1 :'
     program.current_id = p[-1]
     program.pOper.append("$")
-    program.pIDs.append(p[-1])
+    program.pIDs.append((p[-1],False, False))
 
 def p_obj2(p):
     'obj2 :'
@@ -668,8 +668,6 @@ def p_assignement1(p):
 
 def p_assignement2(p):
     'assignement2 :'
-    for x in program.VP:
-        print(x)
     right_type = program.pType.pop()
     right_operand = program.VP.pop()
     left_type = program.pType.pop()
@@ -757,7 +755,7 @@ def p_call_function(p):
 
 def p_call_f1(p):
     'call_f1    :'
-    program.called_function = program.funDir[program.pIDs[-1]]
+    program.called_function = program.funDir[program.pIDs[-1][0]]
     # program.funDir[program.pIDs.pop()]
     program.current_param_num = 0
     program.current_quad = ("ERA", program.called_function.address, None, None)
@@ -1006,12 +1004,15 @@ def p_var_cte1(p):
         #NOT FUNC
         if program.current_attribute == "":
             #id
-            if not program.current_id_is_array and not program.current_id_is_matrix:
+
+            if not program.pIDs[-1][1] and not program.pIDs[-1][2]:
                 address = program.current_function.varTable[program.current_id].address
                 program.VP.append(address)
                 t = SparkyType()
                 t.type = "Int"
                 program.pType.append(t)
+            #elif program.current_id_is_matrix:
+
 
         else:
             print("id with attribute")
@@ -1021,8 +1022,6 @@ def p_var_cte1(p):
 
     program.pIDs.pop()
     
-    program.current_id_is_array = False
-    program.current_id_is_matrix = False
 
 
 def p_var_cte2(p):
@@ -1069,9 +1068,13 @@ def p_array1(p):
     #verifica que id es una variable dimensionada
 
     program.pOper.append('$')
-    program.pArray.append(program.pIDs[-1])
-    program.current_id_is_array = True
-    var = program.current_function.varTable[program.pIDs[-1]]
+    program.pArray.append(program.pIDs[-1][0])
+
+    #changing
+    x = program.pIDs.pop()
+    program.pIDs.append((x[0], True, False))
+
+    var = program.current_function.varTable[program.pIDs[-1][0]]
     row_type = program.pType[-1].type
     if row_type != "Int":
         print("ERROR to access array you need to provide Int index")
@@ -1081,9 +1084,10 @@ def p_array1(p):
 
 def p_array2(p):
     'array2 :'
-    program.current_id_is_array = False
-    program.current_id_is_matrix = True
-    var = program.current_function.varTable[program.pIDs[-1]]
+    #changing
+    x = program.pIDs.pop()
+    program.pIDs.append((x[0], False, True))
+    var = program.current_function.varTable[program.pIDs[-1][0]]
 
     col_type = program.pType[-1].type
     if col_type != "Int":
@@ -1098,7 +1102,7 @@ def p_array3(p):
     base_address = program.current_function.varTable[current_array].address
     total_rows = program.current_function.varTable[current_array].s_type.row
 
-    if program.current_id_is_array:
+    if program.pIDs[-1][1]:
         rows = program.VP.pop()
         rows_type = program.pType.pop()
         result = program.current_function.tempMemory.get_next_address(rows_type.type, 0, 0)
@@ -1110,7 +1114,7 @@ def p_array3(p):
         t.type = "Int"
         program.pType.append(t)
 
-    elif program.current_id_is_matrix:
+    elif program.pIDs[-1][2]:
         #array
         cols = program.VP.pop()
         cols_type = program.pType.pop()

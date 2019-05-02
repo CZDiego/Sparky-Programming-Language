@@ -11,7 +11,7 @@ main(){
 	var d : [15][10]Int; //20052
 	var z : Int;         //20202
 
-	x = d[z + x * c[z]][a];
+	x = d[ x * c[z]][a];
 
 
 }
