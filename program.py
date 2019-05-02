@@ -25,11 +25,10 @@ class Program:
         self.pOper                  = []
         self.pType                  = []
         self.pArray                 = []
+        self.pIDs                   = []
         self.current_quad           = ()
         self.current_id             = ""
         self.current_attribute      = ""
-        self.current_rows           = 0
-        self.current_cols           = 0
         self.current_param_num      = 0
         self.current_class          = Class()
         self.current_object         = Object()

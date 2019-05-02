@@ -9,6 +9,8 @@ main(){
 	var c : [50]Int;
 	var x : Int;
 	var d : [15][10]Int;
+	var z : Int;
 
-	a = c[c[2+1]] + d[8+9][9];
+	a = c[z + x * c[z]] + d[z+9][1];
+	a = z + z;
 }
