@@ -27,7 +27,6 @@ class Program:
         self.pArray                 = []
         self.pIDs                   = []
         self.current_quad           = ()
-        self.current_id             = ""
         self.current_attribute      = ""
         self.current_param_num      = 0
         self.current_class          = Class()
@@ -52,8 +51,6 @@ class Program:
         self.current_id_is_object   = False
         self.id_could_be_function   = False
         self.id_found_in_global     = False
-        self.current_id_is_array    = False
-        self.current_id_is_matrix   = False
         self.current_id_has_attr    = False
         self.current_id_is_func     = False
 

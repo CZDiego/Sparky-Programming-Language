@@ -9,7 +9,6 @@ class Person{
 
 	function factorial(foo : Float, number : Int ){
     var a : Int;
-    age = 1;
     print("hello");
     }
 
@@ -24,7 +23,26 @@ class Student : Person{
 
 	}
 
+
+	function HOHOHO(foo : Float, number : Int ){
+
+    }
+
 }
+
+class x : Student{
+
+	init(){
+
+	}
+
+
+	function y(foo : Float, number : Int ){
+
+    }
+
+}
+
 
 main(){
 
