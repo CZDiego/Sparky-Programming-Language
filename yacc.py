@@ -10,6 +10,7 @@ from program import Program
 from varTable import Var
 from sparky_type import SparkyType
 import math
+import sys
 
 program = Program()
 
@@ -1315,15 +1316,36 @@ def solveOperation():
         program.pType.append(t)
 
 
-with open("tests/program3.sdfm", "r") as inputFile:
-    data = inputFile.read()
+if len(sys.argv) != 2:
+    print("please provide one argument")
+else:
+    with open(sys.argv[1], "r") as inputFile:
+        data = inputFile.read()
+    print(sys.argv[1])
+    try:
+        result = parser.parse(data)
+    finally:
+        print("VirtualMachine.execute()")
+        program.print_quads()
+        print("pJumps")
+        for x in program.pJumps:
+            print(x)
+        print("VP")
+        for x in program.VP:
+            print(x)
+        print("pOpers")
+        for x in program.pOper:
+            print(x)
+        print("pType")
+        for x in program.pType:
+            print(x)
+        print("pType")
+        for x in program.pArray:
+            print(x)
+        print("pIDs")
+        for x in program.pIDs:
+            print(x)
+        #virtualMachine.execute()
 
-try:
-    result = parser.parse(data)
-finally:
-    print("VirtualMachine.execute()")
-    program.print_quads()
-    #virtualMachine.begin()
-
-if result is not None:
-    print(result)
+    if result is not None:
+        print(result)
