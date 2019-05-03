@@ -5,13 +5,14 @@ var d : Float;
 
 main(){
 
-	var a : Int;         //20000
-	var c : [50]Int;     //20001
-	var x : Int;         //20051
-	var d : [15][10]Int; //20052
-	var z : Int;         //20202
+	var a : Int;
+	var x : Int;
+	var z : Int;
 
-	x = d[ x * c[z]][a];
+	a = ((4 + 6 / 3) * 2) * 3;
+	print ( a);
+	input(x);
+	print(x + a);
 
 
 }

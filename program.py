@@ -45,13 +45,7 @@ class Program:
         self.current_function_name  = ""
         self.called_function        = Function()
         self.current_scope          = ""   # Working inside the global program
-        self.current_stage          = True   # Working inside the global program
         self.class_stage            = False  # Working either in a class or a function
-        self.function_stage         = False  # Working either in a class or a function
-        self.current_id_is_object   = False
-        self.id_could_be_function   = False
-        self.id_found_in_global     = False
-        self.current_id_has_attr    = False
         self.current_id_is_func     = False
 
 # IF current_stage == True then Program
@@ -106,12 +100,10 @@ class Program:
         self.current_class = deepcopy(self.ClassDir[name])
 
     def print_quads(self):
-        for quad in self.Quads:
-            print(quad)
-
-    def print_jumps(self):
-        for jump in self.pJumps:
-            print(jump)
+        for idx, quad in enumerate(self.Quads):
+            print(idx, quad)
+        #for quad in self.Quads:
+            #print(quad)
 
     def get_param_key(self):
         param_key = ""

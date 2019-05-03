@@ -9,6 +9,7 @@ from lex import tokens
 from program import Program
 from varTable import Var
 from sparky_type import SparkyType
+from virtualMachine import VirtualMachine
 import math
 import sys
 
@@ -40,7 +41,7 @@ def p_program_c(p):
 
 def p_program_d(p):
     '''
-    program_d  : function prog4 program_d
+    program_d  : function program_d
     | empty
     '''
 #-----------------------------------------------------------------------
@@ -70,11 +71,6 @@ def p_prog3(p):
     'prog3  :'
     # same as prog2
     # Add to var sub dictionary of program dictionary
-
-def p_prog4(p):
-    'prog4  :'
-    #program.funDir.set(program.current_function_name, program.current_function)
-    # Add to function sub dictionary of program dictionary
 
 
 #################
@@ -351,7 +347,7 @@ def p_let1(p):
     program.current_var_name = p[-1]
 
 
-    if program.current_stage:#global constant
+    if program.current_scope == "global":#global constant
         if p[-1] in program.varTable:
             print('\033[91m' + "ERROR:" + '\033[0m' + " Variable already declared at line " + str(p.lexer.lineno) + ".")
 
@@ -371,7 +367,7 @@ def p_let2(p):
     program.current_var.s_type = program.current_type
     program.current_var.address = program.globalMemory.get_next_address(program.current_type.type, 0, 0)
     program.varTable.set(program.current_var_name, program.current_var)
-    if program.current_stage:
+    if program.current_scope == "global":
         if program.current_type.type == "Int":
             program.globalMemory.memory[program.current_var.address] = 0
         elif program.current_type.type == "Float":
@@ -418,14 +414,12 @@ def p_main0(p):
     'main0   :'
     program.fill_quad(program.BASE)
     program.current_scope = "function"
-    program.function_stage = True
-    program.current_stage = True
     program.current_function_name = "main"
     program.new_function()
     program.funDir.set(program.current_function_name, program.current_function)
 
 def p_function(p):
-    'function   : FUNCTION fun0 ID fun1 LP fun2 params fun3 RP function_a function_block fun6'
+    'function   : FUNCTION fun0 ID fun1 LP params fun3 RP function_a function_block fun6'
 
 def p_function_a(p):
     '''
@@ -439,8 +433,9 @@ def p_function_a(p):
 def p_fun0(p):
     'fun0   :'
     program.new_function()
-    
+    program.new_params()
     program.current_function.address = program.BASE
+    
 
 def p_fun1(p):
     'fun1   :'
@@ -455,12 +450,7 @@ def p_fun1(p):
             print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before in class")
 
     program.current_scope = "function"
-
-
-def p_fun2(p):
-    'fun2   :'
-    program.new_params()
-
+    
 def p_fun3(p):
     'fun3   :'
     program.current_function.add_params(program.current_params)
@@ -477,7 +467,6 @@ def p_fun5(p):
 
 def p_fun6(p):
     'fun6   :'
-    program.function_stage = False
     program.current_quad = ("ENDPROC", None, None, None)
     program.add_quad()
 
@@ -686,33 +675,6 @@ def p_obj(p):
 #  Neuro points for  obj
 #  ################
 
-#def p_obj0(p):
-#    'obj0 :'
-#    if program.class_stage:
-#        if program.current_id in program.current_function.varTable:
-#            program.local_type = program.current_function.varTable[program.current_id].s_type
-#        elif program.current_id in program.current_class.varTable:
-#            program.local_type = program.current_class.varTable[program.current_id].s_type
-#        elif program.current_id in program.varTable:
-#            program.local_type = program.varTable[program.current_id].s_type
-#            program.id_found_in_global = True
-#        else:
-#            print("ERROR: Variable not declared")
-#    elif program.function_stage:
-#        if program.current_id in program.current_function.varTable:
-#            program.local_type = program.current_function.varTable[program.current_id].s_type
-#        elif program.current_id in program.varTable:
-#            program.local_type = program.varTable[program.current_id].s_type
-#            program.id_found_in_global = True
-#        else:
-#            print("ERROR: Variable not declared")
-#    if program.local_type.is_object():
-#        program.current_id_is_object = True
-#    if program.local_type.s_type.is_matrix():
-#        program.current_id_is_matrix = True
-#    elif program.local_type.s_type.is_array():
-#        program.current_id_is_array = True
-
 def p_obj1(p):
     'obj1 :'
     program.current_id = p[-1]
@@ -801,7 +763,7 @@ def p_print3(p):
     'print3 : '
     result = program.VP.pop()
     result_type = program.pType.pop()
-    program.current_quad = ("WRITE", result, None, None)
+    program.current_quad = ("PRINT", result, None, None)
     program.add_quad()
 
 
@@ -815,12 +777,12 @@ def p_input1(p):
         #id simple
         address = program.current_function.varTable[x[0]].address
         type = program.current_function.varTable[x[0]].s_type.type
-        program.current_quad = ("WRITE", type, None, address)
+        program.current_quad = ("INPUT", type, None, address)
         program.add_quad()
     else:
         address = program.VP.pop()
         s_type = program.pType.pop()
-        program.current_quad = ("WRITE", s_type.type, None, address)
+        program.current_quad = ("INPUT", s_type.type, None, address)
         program.add_quad()
 
 def p_loop(p):
@@ -1131,7 +1093,7 @@ def p_var_cte1(p):
 def p_var_cte2(p):
     'var_cte2   :'
     #buscarla en memoria global, si no, meterla
-    program.VP.append(int(p[-1]))
+    program.VP.append(("cte", int(p[-1])))
     t = SparkyType()
     t.type = "Int"
     program.pType.append(t)
@@ -1139,7 +1101,7 @@ def p_var_cte2(p):
 def p_var_cte3(p):
     'var_cte3   :'
     #buscarla en memoria global, si no, meterla
-    program.VP.append(1.1)
+    program.VP.append(("cte", float(p[-1])))
     t = SparkyType()
     t.type = "Float"
     program.pType.append(t)
@@ -1147,7 +1109,7 @@ def p_var_cte3(p):
 def p_var_cte4(p):
     'var_cte4   :'
     #buscarla en memoria global, si no, meterla
-    program.VP.append(True)
+    program.VP.append(("cte", bool(p[-1])))
     t = SparkyType()
     t.type = "Bool"
     program.pType.append(t)
@@ -1212,7 +1174,7 @@ def p_array3(p):
         result = program.current_function.tempMemory.get_next_address(rows_type.type, 0, 0)
         program.current_quad = ("~+", rows, base_address, result)
         program.add_quad()
-        program.VP.append((result,))
+        program.VP.append(("pointer", result))
 
         t = SparkyType()
         t.type = "Int"
@@ -1236,7 +1198,7 @@ def p_array3(p):
         program.current_quad = (".+", result2, base_address, result3)
         program.add_quad()
 
-        program.VP.append((result3,))
+        program.VP.append(("pointer", result3))
         t = SparkyType()
         t.type = "Int"
         program.pType.append(t)
@@ -1317,7 +1279,7 @@ def solveOperation():
 
 
 if len(sys.argv) != 2:
-    print("please provide one argument")
+    print("please provide exactly one argument")
 else:
     with open(sys.argv[1], "r") as inputFile:
         data = inputFile.read()
@@ -1345,7 +1307,9 @@ else:
         print("pIDs")
         for x in program.pIDs:
             print(x)
-        #virtualMachine.execute()
+        #vm = VirtualMachine()
+        #vm.quads = program.Quads
+        #vm.execute()
 
     if result is not None:
         print(result)
