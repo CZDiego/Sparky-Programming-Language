@@ -5,7 +5,7 @@
 # Diego Contreras            | A00817441
 # ------------------------------------------------------------
 from copy import deepcopy
-from memory import Memory
+from memory import MemoryMap
 from sparky_type import SparkyType
 
 

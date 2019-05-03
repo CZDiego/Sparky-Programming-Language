@@ -6,7 +6,7 @@ from objects import ClassTable
 from objects import Class
 from objects import Object
 from semanticCube import SemanticCube
-from memory import Memory
+from memory import MemoryMap
 from copy import deepcopy
 from sparky_type import SparkyType
 
@@ -14,8 +14,8 @@ class Program:
     def __init__(self):
         self.BASE                   = 0  # Starting location for Quadruples //list starts with empty so its -1
         self.Quads                  = []
-        self.globalMemory           = Memory("program")
-        self.ConsMemory             = Memory("Constant")
+        self.globalMemory           = MemoryMap("program")
+        self.ConsMemory             = MemoryMap("Constant")
         self.varTable               = VarTable()
         self.funDir                 = FunctionDirectory()
         self.ClassDir               = ClassTable()

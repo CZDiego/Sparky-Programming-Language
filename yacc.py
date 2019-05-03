@@ -1315,7 +1315,7 @@ def solveOperation():
         program.pType.append(t)
 
 
-with open("program3.sdfm", "r") as inputFile:
+with open("tests/program3.sdfm", "r") as inputFile:
     data = inputFile.read()
 
 try:
