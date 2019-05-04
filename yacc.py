@@ -1244,7 +1244,7 @@ def p_call_func_optional(p):
 
 def p_call_f3(p):
     'call_f3    :'
-    program.current_quad = ("GOSUB", program.called_function.address, None, None)
+    program.current_quad = ("GOSUB", program.era_return[1], None, None)
     program.add_quad()
     era_return = program.pEras.pop()
     if era_return[0].type == "void":
