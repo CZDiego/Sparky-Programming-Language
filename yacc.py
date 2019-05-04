@@ -1176,7 +1176,7 @@ def p_array3(p):
         rows = program.VP.pop()
         rows_type = program.pType.pop()
         result = program.current_function.tempMemory.get_next_address(rows_type.type, 0, 0)
-        program.current_quad = ("~+", rows, base_address, result)
+        program.current_quad = ("+", rows, base_address, result)
         program.add_quad()
         program.VP.append(("pointer", result))
 
@@ -1191,7 +1191,7 @@ def p_array3(p):
         rows = program.VP.pop()
         rows_type = program.pType.pop()
         result = program.current_function.tempMemory.get_next_address("Int", 0, 0)
-        program.current_quad = (".*", rows, total_rows, result)
+        program.current_quad = (".*", rows, ("cte", total_rows), result)
         program.add_quad()
 
         result2 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
@@ -1199,7 +1199,7 @@ def p_array3(p):
         program.add_quad()
 
         result3 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
-        program.current_quad = (".+", result2, base_address, result3)
+        program.current_quad = ("+", result2, base_address, result3)
         program.add_quad()
 
         program.VP.append(("pointer", result3))

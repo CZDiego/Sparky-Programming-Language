@@ -5,23 +5,11 @@ function uno(){
 main(){
 
 	var a : Int;
-	var b : Int;
-	var x : Int;
-	var z : Int;
-	var y : Float;
+	var b : Float;
 	var c : Bool;
+	var d : [3]Int;
 
 	a = 10;
-	b = 8;
-
-	if a < 30{
-		if a == b{
-			print(b);
-		}
-	}
-
-	c = true;
-
-	print(a);
+	print(a + a);
 
 }
