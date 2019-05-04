@@ -226,7 +226,7 @@ def p_var_c6(p):
 def p_var(p):
     '''
     var    : VAR ID var1 COL type var_a var2 SEMICOL
-    |  VAR ID var1 COL typeM var2 SEMICOL 
+    |  VAR ID var1 COL typeM var2 SEMICOL
     '''
 
 #assignment in declaration
@@ -291,7 +291,7 @@ def p_var2(p):
     # current_var_name = p[-1]
     # add (current_var_name, current_var)
     # current_var = new var
-    
+
 
 def p_var4(p):
     'var4   :'
@@ -435,7 +435,7 @@ def p_fun0(p):
     program.new_function()
     program.new_params()
     program.current_function.address = program.BASE
-    
+
 
 def p_fun1(p):
     'fun1   :'
@@ -444,13 +444,13 @@ def p_fun1(p):
         if program.current_function_name in program.funDir:
             print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before.")
         else:
-            program.funDir.set(program.current_function_name, program.current_function)        
+            program.funDir.set(program.current_function_name, program.current_function)
     else:
         if program.current_function_name in program.current_class.funDir:
             print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before in class")
 
     program.current_scope = "function"
-    
+
 def p_fun3(p):
     'fun3   :'
     program.current_function.add_params(program.current_params)
@@ -820,20 +820,12 @@ def p_loop3(p):
 #  -----------------------------------------------------------------------
 
 def p_call_function(p):
-    'call_function  : obj call_f1 call_func SEMICOL call_f2'
-
-
-def p_call_f1(p):
-    'call_f1    :'
-    program.called_function = program.funDir[program.pIDs[-1][0]]
-    # program.funDir[program.pIDs.pop()]
-    program.current_param_num = 0
-    program.current_quad = ("ERA", program.called_function.address, None, None)
-    program.add_quad()
+    'call_function  : obj call_func SEMICOL call_f2'
 
 def p_call_f2(p):
     'call_f2    :'
-    program.current_quad = ("GOSUB", program.called_function.address, None, None)
+    era_return = program.pEras.pop()
+    program.current_quad = ("GOSUB", era_return[1], None, None)
     program.add_quad()
 
 def p_call_params(p):
@@ -1091,7 +1083,7 @@ def p_var_cte1(p):
             #id[1][2].id
 
     program.pIDs.pop()
-    
+
 
 
 def p_var_cte2(p):
@@ -1125,7 +1117,7 @@ def p_array(p):
     '''
 def p_array_a(p):
     '''
-    array_a  : LC expression array2 RC 
+    array_a  : LC expression array2 RC
     | empty
     '''
 
@@ -1208,7 +1200,7 @@ def p_array3(p):
         program.pType.append(t)
     program.pOper.pop()
 
-        
+
 #  ################
 #  -----------------------------------------------------------------------
 
@@ -1232,18 +1224,35 @@ def p_att1(p):
 #  ################
 #  -----------------------------------------------------------------------
 def p_call_func(p):
-    'call_func : LP call_params RP'
+    'call_func : call_f1 LP call_params RP'
+
+
+def p_call_f1(p):
+    'call_f1    :'
+    program.called_function = program.funDir[program.pIDs[-1][0]]
+    # program.funDir[program.pIDs.pop()]
+    program.current_param_num = 0
+    program.current_quad = ("ERA", program.called_function.address, None, None)
+    program.add_quad()
+    program.pEras.append(program.called_function.return_type, program.called_function.address)
 
 def p_call_func_optional(p):
     '''
-    call_func_optional : call_func call_func_optional1
+    call_func_optional : call_func call_f3
     | empty
     '''
-    
 
-def p_call_func_optional1(p):
-    'call_func_optional1 : '
-    program.current_id_is_func = True
+def p_call_f3(p):
+    'call_f3    :'
+    program.current_quad = ("GOSUB", program.called_function.address, None, None)
+    program.add_quad()
+    era_return = program.pEras.pop()
+    if era_return[0].type == "void":
+        print("ERROR Type MISMATCH")
+        # pide memoria para tipo temporal
+    address = program.current_function.funMemory.get_next_address(era_return[0])
+    program.current_quad = ("=", era_return[1], None, address)
+
 
 #no need for comment since lexer ignores it
 
