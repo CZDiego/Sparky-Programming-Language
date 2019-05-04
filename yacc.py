@@ -719,9 +719,13 @@ def p_assignement1(p):
 
 def p_assignement2(p):
     'assignement2 :'
+    print("assign")
+
     right_type = program.pType.pop()
+    print(right_type.type)
     right_operand = program.VP.pop()
     left_type = program.pType.pop()
+    print(left_type.type)
     left_operand = program.VP.pop()
     operator = program.pOper.pop()
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)

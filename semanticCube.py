@@ -137,7 +137,7 @@ class SemanticCube:
 		self.cube[("-", "Bool", "Bool")]    = "Error"
 		self.cube[("*", "Bool", "Bool")]    = "Error"
 		self.cube[("/", "Bool", "Bool")]    = "Error"
-		self.cube[("=", "Bool", "Bool")]    = "Error"
+		self.cube[("=", "Bool", "Bool")]    = "Bool"
 
 	def checkResult(self, op1, op2, operator):
 		key = (op1, op2, operator)
