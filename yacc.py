@@ -458,6 +458,13 @@ def p_fun3(p):
 def p_fun4(p):
     'fun4   :'
     program.current_function.return_type = program.current_type
+    program.new_var()
+    program.current_var_name = program.current_function.address
+    program.current_var.address =  program.globalMemory.get_next_address(program.current_function.return_type)
+    program.current_var.s_type = program.current_type
+    program.varTable.set(program.current_var_name, program.current_var)
+    program.new_var()
+    #pide memoria global con nombre
 
 def p_fun5(p):
     'fun5   :'
@@ -662,7 +669,7 @@ def p_return1(p):
     result = program.VP.pop()
     result_type = program.pType.pop()
     if result_type.check_type(program.current_function.return_type):
-        program.current_quad = ("RETURN", result, None, None)
+        program.current_quad = ("RETURN", result, None, program.varTable[program.current_function.address].address)
         program.add_quad()
     else:
         print("ERROR!! type Mismatch!!")
@@ -824,7 +831,8 @@ def p_call_function(p):
 
 def p_call_f2(p):
     'call_f2    :'
-    era_return = program.pEras.pop()
+    program.pIDs.pop()
+    program.pEras.pop()
     program.current_quad = ("GOSUB", era_return[1], None, None)
     program.add_quad()
 
@@ -1244,14 +1252,17 @@ def p_call_func_optional(p):
 
 def p_call_f3(p):
     'call_f3    :'
+    program.pIDs.pop()
+    era_return = program.pEras.pop()
     program.current_quad = ("GOSUB", program.era_return[1], None, None)
     program.add_quad()
-    era_return = program.pEras.pop()
     if era_return[0].type == "void":
         print("ERROR Type MISMATCH")
         # pide memoria para tipo temporal
     address = program.current_function.funMemory.get_next_address(era_return[0])
-    program.current_quad = ("=", era_return[1], None, address)
+    program.VP.append(addres)
+    program.current_quad = ("=", program.VarTable[program.era_return[1]].address, None, address)
+    program.add_quad()
 
 
 #no need for comment since lexer ignores it
