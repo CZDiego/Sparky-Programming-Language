@@ -1,0 +1,9 @@
+
+main(){
+	var i : Int; 
+	var j : [10]Int;
+	i = 2;
+	i = i * 2 - 1;
+	input(j[10]);
+	//kprint(i + dos(i + j));
+}

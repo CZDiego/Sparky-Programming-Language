@@ -1,0 +1,16 @@
+main(){
+
+	var a : Int;
+	var x : Int;
+	var z : Int;
+	var y : Float;
+	var c : Bool;
+
+	a = ((4 + 6 / 3) * 2) * 3;
+	print ( a);
+	input(x);
+	print(x + a);
+
+	c = true && true;
+
+}

@@ -4,7 +4,7 @@
 # Luis Salomon Flores Ugalde | A00817435
 # Diego Contreras            | A00817441
 # ------------------------------------------------------------
-from memory import Memory
+from memory import MemoryMap
 from varTable import VarTable
 from functionDirectory import FunctionDirectory
 from copy import deepcopy
@@ -33,7 +33,7 @@ class Class:
     def __init__(self):
         self.funDir = FunctionDirectory()
         self.varTable = VarTable()
-        self.funMemory = Memory("object")
+        self.funMemory = MemoryMap("object")
 
     def deepcopy(self):
         return deepcopy(self)

@@ -1,7 +1,9 @@
-function factorial(foo : Float, number : Int ){
+function factorial(foo : Float, number : Int ) -> Int{
     var a : Int;
+    var b : Int;
     a = 1;
     print("hello");
+    return b;
 }
 
 main(){
@@ -9,5 +11,5 @@ main(){
     var b : Float;
     a = 1;
     b = 5;
-    factorial(1.0,2);
+    factorial(1.1,a + a);
 }
