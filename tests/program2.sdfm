@@ -15,7 +15,7 @@ main(){
 	b = 8;
 
 	if a < 30{
-		if a < b{
+		if a == b{
 			print(b);
 		}
 	}

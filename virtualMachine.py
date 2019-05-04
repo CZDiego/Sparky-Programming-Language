@@ -10,12 +10,19 @@ class VirtualMachine:
 		self.start_time = 0
 		self.end_time = 0
 		self.funcs = {
-			"+" : self.plus,
-			"-" : self.minus,
+			"=" : self.equals,
 			"*" : self.multiplication,
 			"/" : self.division,
-			"=" : self.equals,
+			"+" : self.plus,
+			"-" : self.minus,
 			"<" : self.less_than,
+			">" : self.greater_than,
+			"<=" : self.less_equal,
+			">=" : self.greater_equal,
+			"!=" : self.different,
+			"==" : self.same,
+			"&&" : self.compare_and,
+			"||" : self.compare_or,
 			"PRINT" : self.print,
 			"INPUT" : self.input,
 			"GOTO" : self.goto,
@@ -71,13 +78,9 @@ class VirtualMachine:
 			#pointer
 			return 10 # memory[tp[1]]
 
-	def plus(self, quad):
-		print("plus")
-		self.memory[quad[3]] = self.memory[quad[1]] + self.memory[quad[2]]
-
-	def minus(self, quad):
-		print("minus")
-		self.memory[quad[3]] = self.memory[quad[1]] - self.memory[quad[2]]
+	def equals(self, quad):
+		print("equals")
+		self.memory[quad[3]] = self.memory[quad[1]]
 
 	def multiplication(self, quad):
 		print("multiplication")
@@ -87,13 +90,66 @@ class VirtualMachine:
 		print("division")
 		self.memory[quad[3]] = self.memory[quad[1]] / self.memory[quad[2]]
 
-	def equals(self, quad):
-		print("equals")
-		self.memory[quad[3]] = self.memory[quad[1]]
+	def plus(self, quad):
+		print("plus")
+		self.memory[quad[3]] = self.memory[quad[1]] + self.memory[quad[2]]
+
+	def minus(self, quad):
+		print("minus")
+		self.memory[quad[3]] = self.memory[quad[1]] - self.memory[quad[2]]
 
 	def less_than(self, quad):
 		print("less_than")
 		if self.memory[quad[1]] < self.memory[quad[2]]:
+			self.memory[quad[3]] = True
+		else:
+			self.memory[quad[3]] = False
+
+	def greater_than(self, quad):
+		print("method")
+		if self.memory[quad[1]] > self.memory[quad[2]]:
+			self.memory[quad[3]] = True
+		else:
+			self.memory[quad[3]] = False
+
+	def less_equal(self, quad):
+		print("method")
+		if self.memory[quad[1]] <= self.memory[quad[2]]:
+			self.memory[quad[3]] = True
+		else:
+			self.memory[quad[3]] = False
+
+	def greater_equal(self, quad):
+		print("method")
+		if self.memory[quad[1]] >= self.memory[quad[2]]:
+			self.memory[quad[3]] = True
+		else:
+			self.memory[quad[3]] = False
+
+	def different(self, quad):
+		print("method")
+		if self.memory[quad[1]] != self.memory[quad[2]]:
+			self.memory[quad[3]] = True
+		else:
+			self.memory[quad[3]] = False
+
+	def same(self, quad):
+		print("method")
+		if self.memory[quad[1]] == self.memory[quad[2]]:
+			self.memory[quad[3]] = True
+		else:
+			self.memory[quad[3]] = False
+
+	def compare_and(self, quad):
+		print("method")
+		if self.memory[quad[1]] and self.memory[quad[2]]:
+			self.memory[quad[3]] = True
+		else:
+			self.memory[quad[3]] = False
+
+	def compare_or(self, quad):
+		print("method")
+		if self.memory[quad[1]] or self.memory[quad[2]]:
 			self.memory[quad[3]] = True
 		else:
 			self.memory[quad[3]] = False
