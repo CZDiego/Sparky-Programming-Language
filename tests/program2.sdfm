@@ -8,8 +8,14 @@ main(){
 	var b : Float;
 	var c : Bool;
 	var z : [10]Bool;
+	var y : [8]Int;
 	a = 10;
 
 	z[6] = true;
+
+	y[6] = 10;
+
+	print(z[6]);
+	print(y[6]);
 
 }

@@ -1186,9 +1186,11 @@ def p_array3(p):
         program.current_quad = ("+", rows, ("cte", base_address), result)
         program.add_quad()
         program.VP.append(("pointer", result))
-
+        
         t = SparkyType()
-        t.type = "Int"
+        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
+        #t.row = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
+        #t.col = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         program.pType.append(t)
 
     elif program.pIDs[-1][2]:
@@ -1211,7 +1213,7 @@ def p_array3(p):
 
         program.VP.append(("pointer", result3))
         t = SparkyType()
-        t.type = "Int"
+        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         program.pType.append(t)
     program.pOper.pop()
 
@@ -1338,9 +1340,9 @@ else:
         print("pIDs")
         for x in program.pIDs:
             print(x)
-        #vm = VirtualMachine()
-        #vm.quads = program.Quads
-        #vm.execute()
+        vm = VirtualMachine()
+        vm.quads = program.Quads
+        vm.execute()
 
     if result is not None:
         print(result)
