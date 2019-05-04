@@ -6,7 +6,6 @@ class VirtualMachine:
 	def __init__(self):
 		self.quads = []
 		self.iterators = []
-		self.memory = dict()
 		self.global_memory = dict()
 		self.function_memory = [dict()]
 		self.start_time = 0
@@ -79,7 +78,7 @@ class VirtualMachine:
 				return 50002
 		else:
 			#pointer
-			return value_from_memory(tp[1]) # memory[tp[1]]
+			return self.value_from_memory(tp[1]) # memory[tp[1]]
 
 	def value_from_memory(self, address):
 		print("getting value from memory")
@@ -187,7 +186,10 @@ class VirtualMachine:
 
 	def print(self, quad):
 		print("printing")
-		print(self.value_from_memory(quad[1]))
+		if isinstance(quad[1], str):
+			print(quad[1])
+		else:
+			print(self.value_from_memory(quad[1]))
 
 	#solamente checa que sea int
 	def input(self, quad):
@@ -251,6 +253,13 @@ class VirtualMachine:
 
 	def ver(self, quad):
 		print("verify")
+		bottom_limit = quad[1]
+		upper_limit = quad[2]
+		value = self.value_from_memory(quad[3])
+		if value < bottom_limit or value > upper_limit:
+			print("Out of bounds")
+			sys.exit(0)
+
 			
 
 	def end(self, quad):

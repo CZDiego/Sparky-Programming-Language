@@ -706,8 +706,14 @@ def p_assignement1(p):
         #is_object
         t = program.current_function.varTable[program.current_id].s_type
         if t.row > 0:
-            #id is array
-            print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
+            if t.col > 0:
+                #matrix
+                print("matrix")
+                program.pOper.append("=")
+            else:
+                print("array")
+                program.pOper.append("=")
+            #print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
         elif t.is_object():
             #id is object
             print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
@@ -735,6 +741,7 @@ def p_assignement2(p):
     print(left_type.type)
     left_operand = program.VP.pop()
     operator = program.pOper.pop()
+    print(operator, left_type.type, right_type.type)
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
         print("Error Type Mismatch")
@@ -761,14 +768,14 @@ def p_print1(p):
     t = SparkyType()
     t.type = "cte_s"
     program.pType.append(t)
-    program.VP.append(p[-1] + "\n")
+    program.VP.append(p[-1])
 
 def p_print2(p):
     'print2 : '
     t = SparkyType()
     t.type = "cte_s"
     program.pType.append(t)
-    program.VP.append("\n")
+    program.VP.append("")
 
 def p_print3(p):
     'print3 : '
@@ -1176,7 +1183,7 @@ def p_array3(p):
         rows = program.VP.pop()
         rows_type = program.pType.pop()
         result = program.current_function.tempMemory.get_next_address(rows_type.type, 0, 0)
-        program.current_quad = ("+", rows, base_address, result)
+        program.current_quad = ("+", rows, ("cte", base_address), result)
         program.add_quad()
         program.VP.append(("pointer", result))
 
@@ -1191,7 +1198,7 @@ def p_array3(p):
         rows = program.VP.pop()
         rows_type = program.pType.pop()
         result = program.current_function.tempMemory.get_next_address("Int", 0, 0)
-        program.current_quad = (".*", rows, ("cte", total_rows), result)
+        program.current_quad = ("*", rows, ("cte", total_rows), result)
         program.add_quad()
 
         result2 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
@@ -1199,7 +1206,7 @@ def p_array3(p):
         program.add_quad()
 
         result3 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
-        program.current_quad = ("+", result2, base_address, result3)
+        program.current_quad = ("+", result2, ("cte", base_address), result3)
         program.add_quad()
 
         program.VP.append(("pointer", result3))
@@ -1331,9 +1338,9 @@ else:
         print("pIDs")
         for x in program.pIDs:
             print(x)
-        vm = VirtualMachine()
-        vm.quads = program.Quads
-        vm.execute()
+        #vm = VirtualMachine()
+        #vm.quads = program.Quads
+        #vm.execute()
 
     if result is not None:
         print(result)
