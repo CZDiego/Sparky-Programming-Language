@@ -13,6 +13,7 @@ class VirtualMachine:
 			"PRINT" : self.print,
 			"INPUT" : self.input,
 			"GOTO" : self.goto,
+			"GOTOF" : self.gotof,
 			"END" : self.end
 		}
 
@@ -84,6 +85,10 @@ class VirtualMachine:
 		self.memory[quad[3]] = self.memory[quad[1]]
 
 	def goto(self, quad):
+		print("goto")
+		self.iterators[-1] = quad[3] - 1
+
+	def gotof(self, quad):
 		print("goto")
 
 	def end(self, quad):
