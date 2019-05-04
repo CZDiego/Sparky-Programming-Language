@@ -26,6 +26,7 @@ class Program:
         self.pType                  = []
         self.pArray                 = []
         self.pIDs                   = []
+        self.pEras                  = []
         self.current_quad           = ()
         self.current_attribute      = ""
         self.current_param_num      = 0
