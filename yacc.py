@@ -1311,9 +1311,9 @@ else:
         print("pIDs")
         for x in program.pIDs:
             print(x)
-        #vm = VirtualMachine()
-        #vm.quads = program.Quads
-        #vm.execute()
+        vm = VirtualMachine()
+        vm.quads = program.Quads
+        vm.execute()
 
     if result is not None:
         print(result)

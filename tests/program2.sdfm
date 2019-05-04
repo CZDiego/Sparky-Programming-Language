@@ -1,16 +1,27 @@
+function uno(){
+	print("holi");
+}
+
 main(){
 
 	var a : Int;
+	var b : Int;
 	var x : Int;
 	var z : Int;
 	var y : Float;
 	var c : Bool;
 
-	a = ((4 + 6 / 3) * 2) * 3;
-	print ( a);
-	input(x);
-	print(x + a);
+	a = 10;
+	b = 8;
 
-	c = true && true;
+	if a < 30{
+		if a < b{
+			print(b);
+		}
+	}
+
+	c = true;
+
+	print(a);
 
 }

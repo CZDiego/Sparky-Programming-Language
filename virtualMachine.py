@@ -1,15 +1,21 @@
 import sys
+import time
+from datetime import timedelta
+
 class VirtualMachine:
 	def __init__(self):
 		self.quads = []
 		self.iterators = []
 		self.memory = dict()
+		self.start_time = 0
+		self.end_time = 0
 		self.funcs = {
 			"+" : self.plus,
 			"-" : self.minus,
 			"*" : self.multiplication,
 			"/" : self.division,
 			"=" : self.equals,
+			"<" : self.less_than,
 			"PRINT" : self.print,
 			"INPUT" : self.input,
 			"GOTO" : self.goto,
@@ -19,11 +25,12 @@ class VirtualMachine:
 
 	def execute(self):
 		print("executing...")
+		self.start_time = time.monotonic()
 		self.iterators.append(0)
 
 		while True:
 			clean_quad = self.clean_quad(self.quads[self.iterators[-1]])
-			print(clean_quad)
+			#print(clean_quad)
 			self.funcs[clean_quad[0]](clean_quad)
 			self.iterators[-1] = self.iterators[-1] + 1
 
@@ -84,15 +91,28 @@ class VirtualMachine:
 		print("equals")
 		self.memory[quad[3]] = self.memory[quad[1]]
 
+	def less_than(self, quad):
+		print("less_than")
+		if self.memory[quad[1]] < self.memory[quad[2]]:
+			self.memory[quad[3]] = True
+		else:
+			self.memory[quad[3]] = False
+
 	def goto(self, quad):
 		print("goto")
 		self.iterators[-1] = quad[3] - 1
 
 	def gotof(self, quad):
-		print("goto")
+		print("gotof")
+		if not self.memory[quad[1]]:
+			self.iterators[-1] = quad[3] - 1			
 
 	def end(self, quad):
 		print("end")
+		self.end_time = time.monotonic()
+		print("Execution time: " + str((timedelta(seconds=self.end_time - self.start_time))))
+
+
 		sys.exit(0)
 
 	def print(self, quad):
