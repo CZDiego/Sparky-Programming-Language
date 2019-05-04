@@ -512,7 +512,7 @@ def p_param2(p):
     s_type = program.current_type
     program.current_var.address = program.current_function.funMemory.get_next_address(s_type, s_type.row, s_type.col)
     program.current_function.varTable.set(program.current_var_name, program.current_var)
-    program.current_function.param_key.append((s_type, program.current_var_name))
+    program.current_function.param_key.append((s_type, program.current_var.address))
 
 # ################
 #  ------------------------------------------------------------------------
@@ -855,7 +855,7 @@ def p_call_param1(p):
     popped_type = program.pType.pop()
     fun_param_type = program.called_function.param_key[program.current_param_num][0]
     if fun_param_type.check_type(popped_type):
-        program.current_quad = ("PARAM", program.VP.pop(), None, program.current_param_num)
+        program.current_quad = ("PARAM", program.VP.pop(), None, program.called_function.param_key[program.current_param_num][1])
         program.add_quad()
         program.current_param_num += 1
     else:
