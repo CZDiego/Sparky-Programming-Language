@@ -6,7 +6,7 @@
 # ------------------------------------------------------------
 
 
-class Memory:
+class MemoryMap:
 
     def __init__(self, stage):
         if stage == "program":
@@ -37,7 +37,6 @@ class Memory:
             self.MAX_FLOAT_LOC = 59999
             self.BOOL_LOC = 60000
             self.MAX_BOOL_LOC = 64999
-        self.memory = dict()
 
     def int_check(self):
         return self.INT_LOC <= self.MAX_INT_LOC

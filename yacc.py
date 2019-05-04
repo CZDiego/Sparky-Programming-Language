@@ -9,7 +9,9 @@ from lex import tokens
 from program import Program
 from varTable import Var
 from sparky_type import SparkyType
+from virtualMachine import VirtualMachine
 import math
+import sys
 
 program = Program()
 
@@ -20,8 +22,6 @@ def p_end(p):
     'end :'
     program.current_quad = ("END", None, None, None)
     program.add_quad()
-    program.print_quads()
-
 
 def p_program_a(p):
     '''
@@ -41,7 +41,7 @@ def p_program_c(p):
 
 def p_program_d(p):
     '''
-    program_d  : function prog4 program_d
+    program_d  : function program_d
     | empty
     '''
 #-----------------------------------------------------------------------
@@ -65,16 +65,12 @@ def p_prog2(p):
     'prog2  :'
     program.ClassDir.set(program.current_class_name, program.current_class)
     program.new_class()
+    program.class_name = ""
 
 def p_prog3(p):
     'prog3  :'
     # same as prog2
     # Add to var sub dictionary of program dictionary
-
-def p_prog4(p):
-    'prog4  :'
-    program.funDir.set(program.current_function_name, program.current_function)
-    # Add to function sub dictionary of program dictionary
 
 
 #################
@@ -351,7 +347,7 @@ def p_let1(p):
     program.current_var_name = p[-1]
 
 
-    if program.current_stage:#global constant
+    if program.current_scope == "global":#global constant
         if p[-1] in program.varTable:
             print('\033[91m' + "ERROR:" + '\033[0m' + " Variable already declared at line " + str(p.lexer.lineno) + ".")
 
@@ -371,7 +367,7 @@ def p_let2(p):
     program.current_var.s_type = program.current_type
     program.current_var.address = program.globalMemory.get_next_address(program.current_type.type, 0, 0)
     program.varTable.set(program.current_var_name, program.current_var)
-    if program.current_stage:
+    if program.current_scope == "global":
         if program.current_type.type == "Int":
             program.globalMemory.memory[program.current_var.address] = 0
         elif program.current_type.type == "Float":
@@ -409,22 +405,21 @@ def p_main(p):
 
     for cla in program.ClassDir.directory:
         print("class: " + cla)
-        for var_key in program.ClassDir[cla].varTable.directory:
+        for var_key in program.ClassDir[cla].funDir.directory:
              print("var: " + var_key)
+             print("address: " + str(program.ClassDir[cla].funDir[var_key].address))
 
 
 def p_main0(p):
     'main0   :'
     program.fill_quad(program.BASE)
     program.current_scope = "function"
-    program.function_stage = True
-    program.current_stage = True
     program.current_function_name = "main"
     program.new_function()
     program.funDir.set(program.current_function_name, program.current_function)
 
 def p_function(p):
-    'function   : FUNCTION fun0 ID fun1 LP fun2 params fun3 RP function_a function_block fun6'
+    'function   : FUNCTION fun0 ID fun1 LP params fun3 RP function_a function_block fun6'
 
 def p_function_a(p):
     '''
@@ -438,8 +433,9 @@ def p_function_a(p):
 def p_fun0(p):
     'fun0   :'
     program.new_function()
-    program.current_scope = "function"
+    program.new_params()
     program.current_function.address = program.BASE
+    
 
 def p_fun1(p):
     'fun1   :'
@@ -447,32 +443,30 @@ def p_fun1(p):
     if program.current_scope == "global":
         if program.current_function_name in program.funDir:
             print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before.")
+        else:
+            program.funDir.set(program.current_function_name, program.current_function)        
     else:
         if program.current_function_name in program.current_class.funDir:
             print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before in class")
 
-
-def p_fun2(p):
-    'fun2   :'
-    program.new_params()
-
+    program.current_scope = "function"
+    
 def p_fun3(p):
     'fun3   :'
     program.current_function.add_params(program.current_params)
 
 def p_fun4(p):
     'fun4   :'
-    program.current_function.ret = program.current_type
+    program.current_function.return_type = program.current_type
 
 def p_fun5(p):
     'fun5   :'
     program.new_type()
     program.current_type.type = "void"
-    program.current_function.ret = program.current_type
+    program.current_function.return_type = program.current_type
 
 def p_fun6(p):
     'fun6   :'
-    program.function_stage = False
     program.current_quad = ("ENDPROC", None, None, None)
     program.add_quad()
 
@@ -638,7 +632,7 @@ def p_class9(p):
     else:
         program.current_function.add_params(program.current_params)
         program.current_type.type = program.current_class_name
-        program.current_function.ret = program.current_type
+        program.current_function.return_type = program.current_type
         program.funDir.set(program.current_class_name, program.current_function)
     program.new_function()
     program.new_params()
@@ -661,7 +655,18 @@ def p_statement(p):
     '''
 
 def p_return(p):
-    'return : RETURN expression SEMICOL'
+    'return : RETURN expression return1 SEMICOL'
+
+def p_return1(p):
+    'return1 : '
+    result = program.VP.pop()
+    result_type = program.pType.pop()
+    if result_type.check_type(program.current_function.return_type):
+        program.current_quad = ("RETURN", result, None, None)
+        program.add_quad()
+    else:
+        print("ERROR!! type Mismatch!!")
+
 
 def p_obj(p):
     'obj : ID obj1 array attribute obj2'
@@ -669,33 +674,6 @@ def p_obj(p):
 #  -----------------------------------------------------------------------
 #  Neuro points for  obj
 #  ################
-
-#def p_obj0(p):
-#    'obj0 :'
-#    if program.class_stage:
-#        if program.current_id in program.current_function.varTable:
-#            program.local_type = program.current_function.varTable[program.current_id].s_type
-#        elif program.current_id in program.current_class.varTable:
-#            program.local_type = program.current_class.varTable[program.current_id].s_type
-#        elif program.current_id in program.varTable:
-#            program.local_type = program.varTable[program.current_id].s_type
-#            program.id_found_in_global = True
-#        else:
-#            print("ERROR: Variable not declared")
-#    elif program.function_stage:
-#        if program.current_id in program.current_function.varTable:
-#            program.local_type = program.current_function.varTable[program.current_id].s_type
-#        elif program.current_id in program.varTable:
-#            program.local_type = program.varTable[program.current_id].s_type
-#            program.id_found_in_global = True
-#        else:
-#            print("ERROR: Variable not declared")
-#    if program.local_type.is_object():
-#        program.current_id_is_object = True
-#    if program.local_type.s_type.is_matrix():
-#        program.current_id_is_matrix = True
-#    elif program.local_type.s_type.is_array():
-#        program.current_id_is_array = True
 
 def p_obj1(p):
     'obj1 :'
@@ -741,9 +719,13 @@ def p_assignement1(p):
 
 def p_assignement2(p):
     'assignement2 :'
+    print("assign")
+
     right_type = program.pType.pop()
+    print(right_type.type)
     right_operand = program.VP.pop()
     left_type = program.pType.pop()
+    print(left_type.type)
     left_operand = program.VP.pop()
     operator = program.pOper.pop()
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
@@ -785,12 +767,27 @@ def p_print3(p):
     'print3 : '
     result = program.VP.pop()
     result_type = program.pType.pop()
-    program.current_quad = ("WRITE", result, None, None)
+    program.current_quad = ("PRINT", result, None, None)
     program.add_quad()
 
 
 def p_input(p):
-    'input  : INPUT LP obj RP SEMICOL'
+    'input  : INPUT LP obj RP input1 SEMICOL'
+
+def p_input1(p):
+    'input1 : '
+    x = program.pIDs.pop()
+    if not x[1] and not x[2]:
+        #id simple
+        address = program.current_function.varTable[x[0]].address
+        type = program.current_function.varTable[x[0]].s_type.type
+        program.current_quad = ("INPUT", type, None, address)
+        program.add_quad()
+    else:
+        address = program.VP.pop()
+        s_type = program.pType.pop()
+        program.current_quad = ("INPUT", s_type.type, None, address)
+        program.add_quad()
 
 def p_loop(p):
     'loop   : WHILE loop1 expression loop2 block loop3'
@@ -1100,7 +1097,7 @@ def p_var_cte1(p):
 def p_var_cte2(p):
     'var_cte2   :'
     #buscarla en memoria global, si no, meterla
-    program.VP.append(int(p[-1]))
+    program.VP.append(("cte", int(p[-1])))
     t = SparkyType()
     t.type = "Int"
     program.pType.append(t)
@@ -1108,7 +1105,7 @@ def p_var_cte2(p):
 def p_var_cte3(p):
     'var_cte3   :'
     #buscarla en memoria global, si no, meterla
-    program.VP.append(1.1)
+    program.VP.append(("cte", float(p[-1])))
     t = SparkyType()
     t.type = "Float"
     program.pType.append(t)
@@ -1116,7 +1113,7 @@ def p_var_cte3(p):
 def p_var_cte4(p):
     'var_cte4   :'
     #buscarla en memoria global, si no, meterla
-    program.VP.append(True)
+    program.VP.append(("cte", bool(p[-1])))
     t = SparkyType()
     t.type = "Bool"
     program.pType.append(t)
@@ -1181,7 +1178,7 @@ def p_array3(p):
         result = program.current_function.tempMemory.get_next_address(rows_type.type, 0, 0)
         program.current_quad = ("~+", rows, base_address, result)
         program.add_quad()
-        program.VP.append((result,))
+        program.VP.append(("pointer", result))
 
         t = SparkyType()
         t.type = "Int"
@@ -1205,7 +1202,7 @@ def p_array3(p):
         program.current_quad = (".+", result2, base_address, result3)
         program.add_quad()
 
-        program.VP.append((result3,))
+        program.VP.append(("pointer", result3))
         t = SparkyType()
         t.type = "Int"
         program.pType.append(t)
@@ -1274,7 +1271,7 @@ def solveOperation():
     operator = program.pOper.pop()
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
-        print("TYPE MISMATCH, HELP")
+        print("TYPE MISMATCH, HELP in operation")
     else:
         result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
         program.current_quad = (operator, left_operand, right_operand, result)
@@ -1285,10 +1282,38 @@ def solveOperation():
         program.pType.append(t)
 
 
-with open("program2.sdfm", "r") as inputFile:
-    data = inputFile.read()
+if len(sys.argv) != 2:
+    print("please provide exactly one argument")
+else:
+    with open(sys.argv[1], "r") as inputFile:
+        data = inputFile.read()
+    print(sys.argv[1])
+    try:
+        result = parser.parse(data)
+    finally:
+        print("VirtualMachine.execute()")
+        program.print_quads()
+        print("pJumps")
+        for x in program.pJumps:
+            print(x)
+        print("VP")
+        for x in program.VP:
+            print(x)
+        print("pOpers")
+        for x in program.pOper:
+            print(x)
+        print("pType")
+        for x in program.pType:
+            print(x)
+        print("pType")
+        for x in program.pArray:
+            print(x)
+        print("pIDs")
+        for x in program.pIDs:
+            print(x)
+        #vm = VirtualMachine()
+        #vm.quads = program.Quads
+        #vm.execute()
 
-result = parser.parse(data)
-
-if result is not None:
-    print(result)
+    if result is not None:
+        print(result)

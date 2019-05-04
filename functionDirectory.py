@@ -7,18 +7,18 @@
 from varTable import VarTable
 from copy import deepcopy
 from sparky_type import SparkyType
-from memory import Memory
+from memory import MemoryMap
 
 class Function:
 	def __init__(self):
-		self.private 	= "public"
-		self.address	= 0
-		self.param_key  = []
-		self.params 	= VarTable()
-		self.ret		= SparkyType()
-		self.varTable 	= VarTable()
-		self.funMemory  = Memory("function")
-		self.tempMemory = Memory("temporal")
+		self.private 		= "public"
+		self.address		= 0
+		self.param_key  	= []
+		self.params 		= VarTable()
+		self.return_type	= SparkyType()
+		self.varTable 		= VarTable()
+		self.funMemory  	= MemoryMap("function")
+		self.tempMemory 	= MemoryMap("temporal")
 
 	def __getitem__(self, key):  # it will be program.funDir[funKey][varKey] and not program.funDir.get(key).varTable[key]
 		return self.varTable[key]
