@@ -740,6 +740,7 @@ def p_assignement1(p):
 
 def p_assignement2(p):
     'assignement2 :'
+
     right_type = program.pType.pop()
     right_operand = program.VP.pop()
     left_type = program.pType.pop()
@@ -1111,6 +1112,7 @@ def p_var_cte1(p):
 
 
         else:
+            #TODO: CHECAR SI ES FUNCIÓN
             print("id with attribute")
             #id.id
             #id[1].id
@@ -1281,7 +1283,7 @@ def p_call_f1(p):
         program.current_param_num = 0
         program.current_quad = ("ERA", program.called_function.address, None, None)
         program.add_quad()
-        program.pEras.append((program.called_function.return_type,program.called_function.address))
+        program.pEras.append((program.called_function.return_type,program.called_function.address, False))
     else:
         #id . id ( * )
         t = program.current_function.varTable[program.pIDs[-1][0]].s_type
@@ -1294,7 +1296,7 @@ def p_call_f1(p):
         program.current_param_num = 0
         program.current_quad = ("ERA", program.called_function.address, None, None)
         program.add_quad()
-        program.pEras.append((program.called_function.return_type,program.called_function.address))
+        program.pEras.append((program.called_function.return_type,program.called_function.address, True))
 
 
 def p_call_func_optional(p):
@@ -1313,11 +1315,14 @@ def p_call_f3(p):
         print("ERROR Type MISMATCH")
         # pide memoria para tipo temporal
     address = program.current_function.tempMemory.get_next_address(era_return[0])
-    print(program.varTable[era_return[1]].address)
-
     program.current_quad = ("=", program.varTable[era_return[1]].address, None, address)
     program.add_quad()
     program.VP.append(address)
+
+    if era_return[2]:
+        t = SparkyType()
+        t.type = "Int"
+        program.pType.append(t)
 
 
 #no need for comment since lexer ignores it

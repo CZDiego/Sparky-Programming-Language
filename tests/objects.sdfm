@@ -3,8 +3,14 @@ class A{
 
 	}
 
-	function foo(){
+	function foo() -> Int{
 		print("foo");
+		return 999;
+	}
+
+	function foo2() -> Int{
+		print("foo2");
+		return 985;
 	}
 }
 
@@ -14,11 +20,21 @@ function z() -> Int{
 	return 199;
 }
 
+function h() -> Int{
+	print("joojo");
+	return 1920;
+}
+
 main(){
 	var x : Int;
 	var a : A;
 	print("main");
 	x = z();
 	print(x);
-	a.foo();
+	x = a.foo() + a.foo();
+	print(x);
+	x = h();
+	print(x);
+	x = a.foo2();
+	print(x);
 }

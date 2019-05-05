@@ -51,13 +51,10 @@ class VirtualMachine:
 
 		while True:
 			clean_quad = self.clean_quad(self.quads[self.iterators[-1]])
-			#print(clean_quad)
 			self.funcs[clean_quad[0]](clean_quad)
 			self.iterators[-1] = self.iterators[-1] + 1
 
 	def clean_quad(self, quad):
-		
-
 		if not quad[1] is None and quad[1].__class__.__name__ in ('tuple'):
 			new_quad = quad[:1]+(self.clean_tuple(quad[1],1),)+quad[2:4]
 			quad = new_quad
@@ -98,21 +95,6 @@ class VirtualMachine:
 		else:
 			if address in self.function_memory[-1]:
 				return self.function_memory[-1][address]
-			else:
-				print("Error, used variable before initalization")
-				sys.exit(0)
-
-	def value_from_memory_below(self, address):
-		if address < 20000 or address >= 50000:
-			#global memory
-			if address in self.global_memory:
-				return self.global_memory[address]
-			else:
-				print("Error, used variable before initalization")
-				sys.exit(0)
-		else:
-			if address in self.function_memory[-2]:
-				return self.function_memory[-2][address]
 			else:
 				print("Error, used variable before initalization")
 				sys.exit(0)
