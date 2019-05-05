@@ -28,7 +28,6 @@ class Program:
         self.pIDs                   = []
         self.pEras                  = []
         self.current_quad           = ()
-        self.current_attribute      = ""
         self.current_param_num      = 0
         self.current_class          = Class()
         self.current_object         = Object()
@@ -77,9 +76,6 @@ class Program:
 
     def new_params(self):
         self.current_params = VarTable()
-
-    def new_attr(self):
-        self.current_attribute = ""
 
     def new_obj(self):
         self.new_attr()
