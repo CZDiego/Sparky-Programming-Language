@@ -1,19 +1,22 @@
 main(){
 	var x : [100] Int;
 	var a : Int;
-	a = 0;
+	
+	var total : Int;
+	total = 10;
 
-	while a < 100{
-		x[a] = 100 - a;
+	a = 0;
+	while a < total{
+		x[a] = total - a;
 		a = a + 1;
 	}
 
 	a = 0;
-	while a < 100{
+	while a < total{
 		print(x[a]);
 		a = a + 1;
 	}
-	
+
 
 
 	

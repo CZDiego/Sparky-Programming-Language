@@ -193,9 +193,7 @@ def p_var_c2(p):
         program.current_class.varTable.set(program.current_var_name, program.current_var)
 
     if program.current_scope == "function":
-        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type.type,
-                                                                                          program.current_type.row,
-                                                                                          program.current_type.col)
+        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
         program.current_var.s_type = program.current_type
         program.current_function.varTable.set(program.current_var_name, program.current_var)
 
@@ -276,11 +274,11 @@ def p_var1(p):
 def p_var2(p):
     'var2    :'
     if program.current_scope == "global":
-        program.current_var.address = program.globalMemory.get_next_address(program.current_type.type, program.current_type.row, program.current_type.col)
+        program.current_var.address = program.globalMemory.get_next_address(program.current_type)
         program.current_var.s_type = program.current_type
         program.varTable.set(program.current_var_name, program.current_var)
     if program.current_scope == "function":
-        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type.type, program.current_type.row, program.current_type.col)
+        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
         program.current_var.s_type = program.current_type
         program.current_function.varTable.set(program.current_var_name, program.current_var)
 
@@ -366,7 +364,7 @@ def p_let1(p):
 def p_let2(p):
     'let2   :'
     program.current_var.s_type = program.current_type
-    program.current_var.address = program.globalMemory.get_next_address(program.current_type.type, 0, 0)
+    program.current_var.address = program.globalMemory.get_next_address(program.current_type)#00
     program.varTable.set(program.current_var_name, program.current_var)
     if program.current_scope == "global":
         if program.current_type.type == "Int":
@@ -457,7 +455,7 @@ def p_fun4(p):
     program.new_var()
     program.current_var_name = program.current_function.address
     t = program.current_function.return_type
-    program.current_var.address = program.globalMemory.get_next_address(t.type, t.row, t.col)
+    program.current_var.address = program.globalMemory.get_next_address(t)
     program.current_var.s_type = program.current_type
     program.varTable.set(program.current_var_name, program.current_var)
     #pide memoria global con nombre
@@ -507,7 +505,7 @@ def p_param2(p):
     'param2 :'
     program.current_var.s_type = program.current_type
     s_type = program.current_type
-    program.current_var.address = program.current_function.funMemory.get_next_address(s_type.type, s_type.row, s_type.col)
+    program.current_var.address = program.current_function.funMemory.get_next_address(s_type)
     program.current_function.varTable.set(program.current_var_name, program.current_var)
     program.current_function.param_key.append((s_type, program.current_var.address))
 
@@ -1179,7 +1177,9 @@ def p_array3(p):
     if program.pIDs[-1][1]:
         rows = program.VP.pop()
         rows_type = program.pType.pop()
-        result = program.current_function.tempMemory.get_next_address(rows_type.type, 0, 0)
+        t = SparkyType()
+        t.type = "Int"
+        result = program.current_function.tempMemory.get_next_address(t)
         program.current_quad = ("+", rows, ("cte", base_address), result)
         program.add_quad()
         program.VP.append(("pointer", result))
@@ -1196,15 +1196,17 @@ def p_array3(p):
         cols_type = program.pType.pop()
         rows = program.VP.pop()
         rows_type = program.pType.pop()
-        result = program.current_function.tempMemory.get_next_address("Int", 0, 0)
+        t = SparkyType()
+        t.type = "Int"
+        result = program.current_function.tempMemory.get_next_address(t)
         program.current_quad = ("*", rows, ("cte", total_rows), result)
         program.add_quad()
 
-        result2 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
+        result2 = program.current_function.tempMemory.get_next_address(t)
         program.current_quad = ("+", result, cols, result2)
         program.add_quad()
 
-        result3 = program.current_function.tempMemory.get_next_address("Int", 0, 0)
+        result3 = program.current_function.tempMemory.get_next_address(t)
         program.current_quad = ("+", result2, ("cte", base_address), result3)
         program.add_quad()
 
@@ -1268,7 +1270,7 @@ def p_call_f3(p):
     if era_return[0].type == "void":
         print("ERROR Type MISMATCH")
         # pide memoria para tipo temporal
-    address = program.current_function.tempMemory.get_next_address(era_return[0].type, era_return[0].row, era_return[0].col)
+    address = program.current_function.tempMemory.get_next_address(era_return[0])
     program.current_quad = ("=", program.varTable[era_return[1]].address, None, address)
     program.add_quad()
     program.VP.append(address)
@@ -1302,12 +1304,12 @@ def solveOperation():
     if result_type == "Error":
         print("TYPE MISMATCH, HELP in operation")
     else:
-        result = program.current_function.tempMemory.get_next_address(result_type, 0, 0)
+        t = SparkyType()
+        t.type = result_type
+        result = program.current_function.tempMemory.get_next_address(t)
         program.current_quad = (operator, left_operand, right_operand, result)
         program.add_quad()
         program.VP.append(result)
-        t = SparkyType()
-        t.type = result_type
         program.pType.append(t)
 
 

@@ -53,22 +53,25 @@ class MemoryMap:
     def bool_check(self):
         return self.BOOL_LOC <= self.MAX_BOOL_LOC
 
-    def get_next_address(self, type, rows, cols):
+    def get_next_address(self, t):
         total_space = 0
-        if rows == 0 and cols == 0:
+        if t.row == 0 and t.col == 0:
             total_space = 1
-        elif rows >= 0 and cols == 0:
-            total_space = rows
+        elif t.row >= 0 and t.col == 0:
+            total_space = t.row
         else:
-            total_space = rows * cols
+            total_space = t.row * t.col
 
-        if type == "Int":
+        if t.type == "Int":
             self.INT_LOC = self.INT_LOC + total_space
             return self.INT_LOC - total_space
-        elif type == "Float":
+        elif t.type == "Float":
             self.FLOAT_LOC = self.FLOAT_LOC + total_space
             return self.FLOAT_LOC - total_space
-        elif type == "Bool":
+        elif t.type == "Bool":
             self.BOOL_LOC = self.BOOL_LOC + total_space
             return self.BOOL_LOC - total_space
+        elif t.is_object():
+            self.OBJ_LOC = self.OBJ_LOC + total_space
+            return self.OBJ_LOC - total_space
 
