@@ -1,3 +1,9 @@
+# ------------------------------------------------------------
+# virtualMachine.py
+#
+# Luis Salomon Flores Ugalde | A00817435
+# Diego Contreras            | A00817441
+# ------------------------------------------------------------
 import sys
 import time
 from datetime import timedelta

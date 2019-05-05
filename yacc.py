@@ -12,7 +12,6 @@ from sparky_type import SparkyType
 from virtualMachine import VirtualMachine
 import math
 import sys
-import pprint
 
 program = Program()
 
@@ -462,6 +461,7 @@ def p_fun4(p):
     program.current_var.s_type = program.current_type
     program.varTable.set(program.current_var_name, program.current_var)
     #pide memoria global con nombre
+    program.new_var()
 
 def p_fun5(p):
     'fun5   :'
@@ -665,6 +665,7 @@ def p_return1(p):
     'return1 : '
     result = program.VP.pop()
     result_type = program.pType.pop()
+    print(program.varTable[program.current_function.address].address)
     if result_type.check_type(program.current_function.return_type):
         program.current_quad = ("RETURN", result, None, program.varTable[program.current_function.address].address)
         program.add_quad()
@@ -1273,6 +1274,8 @@ def p_call_f1(p):
     if program.pIDs[-1][3] is None:
         program.called_function = program.funDir[program.pIDs[-1][0]]
         # program.funDir[program.pIDs.pop()]
+        print(program.called_function.address)
+        print(program.varTable[program.called_function.address].address)
         x = program.pIDs.pop()
         program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
         program.current_param_num = 0
@@ -1310,6 +1313,8 @@ def p_call_f3(p):
         print("ERROR Type MISMATCH")
         # pide memoria para tipo temporal
     address = program.current_function.tempMemory.get_next_address(era_return[0])
+    print(program.varTable[era_return[1]].address)
+
     program.current_quad = ("=", program.varTable[era_return[1]].address, None, address)
     program.add_quad()
     program.VP.append(address)
