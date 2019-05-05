@@ -33,7 +33,7 @@ class Class:
     def __init__(self):
         self.funDir = FunctionDirectory()
         self.varTable = VarTable()
-        self.funMemory = MemoryMap("object")
+        self.claMemory = MemoryMap("class")
 
     def deepcopy(self):
         return deepcopy(self)

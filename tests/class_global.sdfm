@@ -1,11 +1,33 @@
 class P{
-
-	var age : Int;
+    var age : Int;
 	var name : Float;
+
 	init(){
 
 	}
+	function boo(){
+	    print("Buu");
+	}
+
+	function foo(){
+       age = age+1;
+       print(name);
+       boo();
+	}
+
 }
+
+class A : P{
+    var prime : Int;
+    init(){
+
+    }
+
+    function golucky(){
+        age = prime + 1;
+    }
+}
+
 main(){
 	var x : Int;
 	x = 6;
