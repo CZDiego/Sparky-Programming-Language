@@ -16,27 +16,33 @@ class MemoryMap:
             self.MAX_FLOAT_LOC = 14999
             self.BOOL_LOC = 15000
             self.MAX_BOOL_LOC = 19999
+            self.OBJ_LOC = 20000
+            self.MAX_OBJ_LOC = 24999
         if stage == "function":
-            self.INT_LOC = 20000
-            self.MAX_INT_LOC = 24999
-            self.FLOAT_LOC = 25000
-            self.MAX_FLOAT_LOC = 29999
-            self.BOOL_LOC = 30000
-            self.MAX_BOOL_LOC = 34999
+            self.INT_LOC = 25000
+            self.MAX_INT_LOC = 29999
+            self.FLOAT_LOC = 30000
+            self.MAX_FLOAT_LOC = 34999
+            self.BOOL_LOC = 35000
+            self.MAX_BOOL_LOC = 39999
+            self.OBJ_LOC = 40000
+            self.MAX_OBJ_LOC = 44999
         if stage == "temporal":
-            self.INT_LOC = 35000
-            self.MAX_INT_LOC = 39999
-            self.FLOAT_LOC = 40000
-            self.MAX_FLOAT_LOC = 44999
-            self.BOOL_LOC = 45000
-            self.MAX_BOOL_LOC = 49999
+            self.INT_LOC = 45000
+            self.MAX_INT_LOC = 49999
+            self.FLOAT_LOC = 50000
+            self.MAX_FLOAT_LOC = 54999
+            self.BOOL_LOC = 55000
+            self.MAX_BOOL_LOC = 59999
+            self.OBJ_LOC = 60000
+            self.MAX_OBJ_LOC = 64999
         if stage == "constant":
-            self.INT_LOC = 50000
-            self.MAX_INT_LOC = 54999
-            self.FLOAT_LOC = 55000
-            self.MAX_FLOAT_LOC = 59999
-            self.BOOL_LOC = 60000
-            self.MAX_BOOL_LOC = 64999
+            self.INT_LOC = 65000
+            self.MAX_INT_LOC = 69999
+            self.FLOAT_LOC = 70000
+            self.MAX_FLOAT_LOC = 74999
+            self.BOOL_LOC = 75000
+            self.MAX_BOOL_LOC = 79999
 
     def int_check(self):
         return self.INT_LOC <= self.MAX_INT_LOC
