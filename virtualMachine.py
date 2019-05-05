@@ -144,7 +144,6 @@ class VirtualMachine:
 			self.value_to_memory(quad[3], False)
 
 	def greater_than(self, quad):
-		print("greater_than")
 		if self.value_from_memory(quad[1]) > self.value_from_memory(quad[2]):
 			self.value_to_memory(quad[3], True)
 		else:
