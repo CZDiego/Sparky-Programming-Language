@@ -1,0 +1,22 @@
+//
+//function factorial( n : Int){
+//    var z : Int;
+//	print(n); aqui esta la variable z
+//}
+
+function factorial( n : Int){
+    var z : Int;
+    z = 1;
+	print(n);
+}
+
+function uno(){
+    print("hello");
+}
+
+main(){
+	var x : Int;
+	x = 6;
+	factorial(x);
+	uno();
+}
