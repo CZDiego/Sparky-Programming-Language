@@ -5,6 +5,7 @@
 # Diego Contreras            | A00817441
 # ------------------------------------------------------------
 from memory import MemoryMap
+from sparky_type import SparkyType
 from varTable import VarTable
 from functionDirectory import FunctionDirectory
 from copy import deepcopy
@@ -12,7 +13,9 @@ from copy import deepcopy
 
 class Object:
     def __init__(self): # Search object functions with type key
-        self.varTable  = VarTable()
+        self.s_type     = SparkyType()
+        self.varTable   = VarTable()
+        self.memMap     = dict()
 
     # it will be program.Objects[key] = object
     def __set__(self, key, var):

@@ -34,6 +34,7 @@ class Function:
 class FunctionDirectory:
 	def __init__(self):
 		self.directory = dict()
+		self.objects = dict()
 
 	# it will be program.funDir[key] = function
 	def __set__(self, key, function):

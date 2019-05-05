@@ -9,12 +9,6 @@ class P{
 	    print("Buu");
 	}
 
-	function foo(){
-       age = age+1;
-       print(name);
-       boo();
-	}
-
 }
 
 class A : P{
@@ -24,12 +18,12 @@ class A : P{
     }
 
     function golucky(){
-        age = prime + 1;
+
+        print("golucky");
     }
 }
 
 main(){
-	var x : Int;
-	x = 6;
-	print(x);
+	var x : A;
+	x.golucky();
 }
