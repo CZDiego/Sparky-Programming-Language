@@ -79,7 +79,6 @@ class Program:
         self.current_params = VarTable()
 
     def new_attr(self):
-        self.current_id_has_attr = False
         self.current_attribute = ""
 
     def new_obj(self):
@@ -88,9 +87,6 @@ class Program:
         self.current_id_is_object   = False
         self.id_could_be_function   = False
         self.id_found_in_global     = False
-        self.current_id_is_array    = False
-        self.current_id_is_matrix   = False
-        self.current_id_has_attr    = False
         self.called_function        = Function()
         self.local_class_func       = FunctionDirectory()
         self.local_func             = Function()
@@ -117,9 +113,3 @@ class Program:
         quad     = self.Quads[quad_num]
         new_quad = quad[:3]+(missing,)
         self.Quads[quad_num] = new_quad
-
-    def new_id(self):
-        self.current_id_is_object  = False
-        self.current_id_is_array   = False
-        self.current_id_is_matrix  = False
-        self.current_id            = ""

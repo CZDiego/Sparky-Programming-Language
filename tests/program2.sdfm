@@ -1,16 +1,16 @@
-main(){
-
-	var a : Int;
-	var x : Int;
+function factorial( n : Int) -> Int{
 	var z : Int;
-	var y : Float;
-	var c : Bool;
+	z = 1;
+	print(n);
+	if n == 1{
+		return 1;
+	}
+	return n * factorial(n-1);
+}
 
-	a = ((4 + 6 / 3) * 2) * 3;
-	print ( a);
-	input(x);
-	print(x + a);
 
-	c = true && true;
-
+main(){
+	var x : Int;
+	x = 6;
+	print(factorial(x));
 }

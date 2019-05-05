@@ -1,0 +1,12 @@
+function factorial( n : Int){
+	var z : Int;
+	z = 1;
+	print(n);
+}
+
+
+main(){
+	var x : Int;
+	x = 6;
+	factorial(x);
+}
