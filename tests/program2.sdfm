@@ -1,36 +1,14 @@
-function uno( a : Int) -> Int{
-	return a * 128;
+function f( n : Int) -> Int{
+	if n == 1{
+		return 1;
+	}
+	return n * f(n-1);
 }
 
 
 
 main(){
-	var a : Int;
-	var b : Int;
-	var c : [10]Int;
-
-
-	a = 1 + 19;
-	b = 1;
-
-
-	c[5] = 10;
-	c[6] = 12;
-
-	
-
-	print("before");
-
-	while b <= 3{
-		a = uno(b) + uno(b);
-		print(a);
-		b = b + 1;
-		print(b);
-	}
-
-	print("after");
-
-	print(c[5]);
-	print(c[6]);
-
+	var x : Int;
+	x = 6;
+	print(f(x));
 }

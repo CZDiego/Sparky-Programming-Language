@@ -735,7 +735,6 @@ def p_assignement2(p):
     left_type = program.pType.pop()
     left_operand = program.VP.pop()
     operator = program.pOper.pop()
-    print(operator, left_type.type, right_type.type)
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
         print("Error Type Mismatch")

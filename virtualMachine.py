@@ -4,13 +4,14 @@ from datetime import timedelta
 
 class VirtualMachine:
 	def __init__(self):
-		self.quads           = []
-		self.iterators       = []
-		self.global_memory   = dict()
-		self.function_memory = [dict()]
-		self.start_time      = 0
-		self.end_time        = 0
-		self.funcs           = {
+		self.quads             = []
+		self.iterators         = []
+		self.global_memory     = dict()
+		self.function_memory   = [dict()]
+		self.activation_record = []
+		self.start_time        = 0
+		self.end_time          = 0
+		self.funcs             = {
 			"="       : self.equals,
 			"*"       : self.multiplication,
 			"/"       : self.division,
@@ -234,13 +235,18 @@ class VirtualMachine:
 			self.iterators[-1] = quad[3] - 1
 
 	def era(self, quad):
-		self.function_memory.append(dict())
+		self.activation_record.append(dict())
+		
 
 	def param(self, quad):
-		self.value_to_memory(quad[3], self.value_from_memory_below(quad[1]))
+		self.activation_record[-1][quad[3]] = self.value_from_memory(quad[1])
 
 	def gosub(self, quad):
+		self.function_memory.append(dict())
+		for address in self.activation_record[-1].keys():
+			self.value_to_memory(address, self.activation_record[-1][address])
 		self.iterators.append(quad[1] - 1)
+		self.activation_record.pop()
 
 	def return_value(self, quad):
 		self.value_to_memory(quad[3], self.value_from_memory(quad[1]))
