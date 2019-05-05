@@ -70,13 +70,13 @@ class VirtualMachine:
 		if tp[0] == "cte":
 			if n == 1:
 				self.global_memory[65000] = tp[1]
-				return 50000
+				return 65000
 			elif n == 2:
 				self.global_memory[65001] = tp[1]
-				return 50001
+				return 65001
 			else:
 				self.global_memory[65002] = tp[1]
-				return 50002
+				return 65002
 		else:
 			#pointer
 			return self.value_from_memory(tp[1]) # memory[tp[1]]
