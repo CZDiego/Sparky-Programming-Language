@@ -4,6 +4,8 @@
 # Luis Salomon Flores Ugalde | A00817435
 # Diego Contreras            | A00817441
 # ------------------------------------------------------------
+from copy import deepcopy
+
 import ply.yacc as yacc
 from lex import tokens
 from program import Program
@@ -277,11 +279,27 @@ def p_var2(p):
         program.current_var.s_type = program.current_type
         program.varTable.set(program.current_var_name, program.current_var)
     if program.current_scope == "function":
-        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
         program.current_var.s_type = program.current_type
+        if program.current_var.s_type.is_object():
+            program.new_object()
+            s_type = program.current_var.s_type
+            program.current_object.s_type = s_type;
+            program.current_object.varTable.directory.update(deepcopy(program.ClassDir[s_type.type].varTable.directory))
+            for key in program.ClassDir[program.current_var.s_type.type].varTable.directory:
+                # TODO: If v_type is matrix or array
+                v_type      = program.current_object.varTable[key].s_type
+                old_memo    = program.current_object.varTable[key].address
+                address     = program.current_function.funMemory.get_next_address(v_type)
+                program.current_object.memMap[address] = old_memo
+                program.current_object.varTable[key].address = address
+            program.current_function.varTable.objects[program.current_var_name] = program.current_object
+        else:
+            program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
+
         program.current_function.varTable.set(program.current_var_name, program.current_var)
 
     program.current_var = Var()
+    program.new_object()
     program.current_var_name = ""
     program.new_type()
 
@@ -401,12 +419,6 @@ def p_let3(p):
 def p_main(p):
     'main   : main0 MAIN LP RP function_block'
 
-    for cla in program.ClassDir.directory:
-        print("class: " + cla)
-        for func in program.ClassDir.directory[cla].funDir.directory:
-            print("func: " + func)
-        for var in program.ClassDir[cla].varTable.directory:
-            print("var: " + var +"\naddress: "+ str(program.ClassDir[cla].varTable[var].address))
 
 def p_main0(p):
     'main0   :'
@@ -1391,9 +1403,25 @@ else:
         print("pIDs")
         for x in program.pIDs:
             print(x)
+        for cla in program.ClassDir.directory:
+            print("class: " + cla)
+            for func in program.ClassDir.directory[cla].funDir.directory:
+                print("func: " + func)
+            for var in program.ClassDir[cla].varTable.directory:
+                print("var: " + var + "\naddress: " + str(program.ClassDir[cla].varTable[var].address))
+        for fun in program.funDir.directory:
+            print("fun: " + fun)
+            for var in program.funDir[fun].varTable.directory:
+                if program.funDir[fun].varTable[var].s_type.is_object():
+                    print("object: " + var)
+                    for o_var in program.funDir[fun].varTable.objects[var].varTable.directory:
+                        print("\tvar: " + o_var + "\n\taddress: " + str(program.funDir[fun].varTable.objects[var].varTable[o_var].address))
+                else:
+                    print("var: " + var + "\naddress: " + str(program.funDir[fun].varTable[var].address))
         vm = VirtualMachine()
         vm.quads = program.Quads
         vm.execute()
+
 
     if result is not None:
         print(result)
