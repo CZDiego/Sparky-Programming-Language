@@ -1,0 +1,13 @@
+class P{
+
+	var age : Int;
+	var name : Float;
+	init(){
+
+	}
+}
+main(){
+	var x : Int;
+	x = 6;
+	print(x);
+}

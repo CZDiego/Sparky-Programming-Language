@@ -66,7 +66,7 @@ def p_prog2(p):
     'prog2  :'
     program.ClassDir.set(program.current_class_name, program.current_class)
     program.new_class()
-    program.class_name = ""
+    program.current_class_name = ""
 
 def p_prog3(p):
     'prog3  :'
@@ -404,9 +404,8 @@ def p_let3(p):
 def p_main(p):
     'main   : main0 MAIN LP RP function_block'
 
-    #for cla in program.funDir.directory:
-    #    print("fun: " + cla)
-    #print(program.funDir["factorial"].varTable["n"].address)
+    for cla in program.ClassDir.directory:
+        print("class: " + cla)
 
 def p_main0(p):
     'main0   :'
@@ -507,7 +506,8 @@ def p_param2(p):
     'param2 :'
     program.current_var.s_type = program.current_type
     s_type = program.current_type
-    program.current_var.address = program.current_function.funMemory.get_next_address(s_type.type, s_type.row, s_type.col)
+    program.current_var.address = program.current_function.funMemory.get_next_address(s_type.type, s_type.row,
+                                                                                          s_type.col)
     program.current_function.varTable.set(program.current_var_name, program.current_var)
     program.current_function.param_key.append((s_type, program.current_var.address))
 
