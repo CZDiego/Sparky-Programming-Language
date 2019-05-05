@@ -36,7 +36,7 @@ class MemoryMap:
             self.MAX_BOOL_LOC = 59999
             self.OBJ_LOC = 60000
             self.MAX_OBJ_LOC = 64999
-        if stage == "constant":
+        if stage == "class":
             self.INT_LOC = 65000
             self.MAX_INT_LOC = 69999
             self.FLOAT_LOC = 70000

@@ -69,14 +69,14 @@ class VirtualMachine:
 	def clean_tuple(self, tp, n):
 		if tp[0] == "cte":
 			if n == 1:
-				self.global_memory[65000] = tp[1]
-				return 65000
+				self.global_memory[80000] = tp[1]
+				return 80000
 			elif n == 2:
-				self.global_memory[65001] = tp[1]
-				return 65001
+				self.global_memory[80001] = tp[1]
+				return 80001
 			else:
-				self.global_memory[65002] = tp[1]
-				return 65002
+				self.global_memory[80002] = tp[1]
+				return 80002
 		else:
 			#pointer
 			return self.value_from_memory(tp[1]) # memory[tp[1]]
