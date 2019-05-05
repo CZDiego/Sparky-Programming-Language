@@ -6,8 +6,31 @@ function uno( a : Int) -> Int{
 
 main(){
 	var a : Int;
-	a = a + a;
-	a = uno(100);
+	var b : Int;
+	var c : [10]Int;
 
+
+	a = 1 + 19;
+	b = 1;
+
+
+	c[5] = 10;
+	c[6] = 12;
+
+	
+
+	print("before");
+
+	while b <= 3{
+		a = uno(b) + uno(b);
+		print(a);
+		b = b + 1;
+		print(b);
+	}
+
+	print("after");
+
+	print(c[5]);
+	print(c[6]);
 
 }

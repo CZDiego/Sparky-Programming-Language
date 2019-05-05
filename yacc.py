@@ -686,7 +686,7 @@ def p_obj(p):
 
 def p_obj1(p):
     'obj1 :'
-    program.current_id = p[-1]
+    #program.current_id = p[-1]
     program.pOper.append("$")
     program.pIDs.append((p[-1],False, False))
 
@@ -703,32 +703,28 @@ def p_assignement1(p):
     'assignement1 :'
     # OBJ = . EXPRESSION ;
     #buscar que exista en tabla de variables local y asi
-    if program.current_id in program.current_function.varTable:
+    if program.pIDs[-1][0] in program.current_function.varTable:
         #id = . expression
         #is_object
-        t = program.current_function.varTable[program.current_id].s_type
+        t = program.current_function.varTable[program.pIDs[-1][0]].s_type
         if t.row > 0:
-            if t.col > 0:
-                #matrix
-                print("matrix")
-                program.pOper.append("=")
-            else:
-                print("array")
-                program.pOper.append("=")
+            print("array or matrix")
+            program.pOper.append("=")
+            program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
             #print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
         elif t.is_object():
             #id is object
             print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
         else:
-            program.VP.append(program.current_function.varTable[program.current_id].address)
-            program.pType.append(program.current_function.varTable[program.current_id].s_type)
+            program.VP.append(program.current_function.varTable[program.pIDs[-1][0]].address)
+            program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
             program.pOper.append("=")
 
-    elif program.current_id in program.varTable:
+    elif program.pIDs[-1][0] in program.varTable:
         print("Global")
     else:
         print("ERROR variable no declarada")
-    program.current_id = ""
+    #program.current_id = ""
     program.current_attribute = ""
     program.pIDs.pop()
 
@@ -739,6 +735,7 @@ def p_assignement2(p):
     left_type = program.pType.pop()
     left_operand = program.VP.pop()
     operator = program.pOper.pop()
+    print(operator, left_type.type, right_type.type)
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
         print("Error Type Mismatch")
@@ -835,6 +832,7 @@ def p_call_function(p):
 
 def p_call_f2(p):
     'call_f2    :'
+    program.pOper.pop()
     program.pIDs.pop()
     era_return = program.pEras.pop()
     program.current_quad = ("GOSUB", era_return[1], None, None)
@@ -1088,7 +1086,7 @@ def p_var_cte1(p):
                 program.pType.append(t)
 
             elif not program.pIDs[-1][1] and not program.pIDs[-1][2]:
-                address = program.current_function.varTable[program.current_id].address
+                address = program.current_function.varTable[program.pIDs[-1][0]].address
                 program.VP.append(address)
                 t = SparkyType()
                 t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
@@ -1251,6 +1249,7 @@ def p_call_func(p):
 
 def p_call_f1(p):
     'call_f1    :'
+    program.pOper.append("$")
     program.called_function = program.funDir[program.pIDs[-1][0]]
     # program.funDir[program.pIDs.pop()]
     x = program.pIDs.pop()
@@ -1268,6 +1267,7 @@ def p_call_func_optional(p):
 
 def p_call_f3(p):
     'call_f3    :'
+    program.pOper.pop()
     era_return = program.pEras.pop()
     program.current_quad = ("GOSUB", era_return[1], None, None)
     program.add_quad()
@@ -1277,9 +1277,6 @@ def p_call_f3(p):
     address = program.current_function.tempMemory.get_next_address(era_return[0].type, era_return[0].row, era_return[0].col)
     program.current_quad = ("=", program.varTable[era_return[1]].address, None, address)
     program.add_quad()
-    for x in program.VP:
-        print(x)
-    print(program.varTable[era_return[1]].address)
     program.VP.append(address)
 
 
@@ -1349,9 +1346,9 @@ else:
         print("pIDs")
         for x in program.pIDs:
             print(x)
-        #vm = VirtualMachine()
-        #vm.quads = program.Quads
-        #vm.execute()
+        vm = VirtualMachine()
+        vm.quads = program.Quads
+        vm.execute()
 
     if result is not None:
         print(result)
