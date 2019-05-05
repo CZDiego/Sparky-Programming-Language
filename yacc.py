@@ -1281,7 +1281,7 @@ def p_call_f1(p):
         program.pEras.append((program.called_function.return_type,program.called_function.address))
     else:
         #id . id ( * )
-        t = program.current_function.varTable["a"].s_type
+        t = program.current_function.varTable[program.pIDs[-1][0]].s_type
         current_id = program.pIDs[-1][0]
         attribute = program.pIDs[-1][3]
         program.called_function = program.ClassDir[t.type].funDir[attribute]
