@@ -4,13 +4,13 @@ from datetime import timedelta
 
 class VirtualMachine:
 	def __init__(self):
-		self.quads = []
-		self.iterators = []
-		self.global_memory = dict()
+		self.quads           = []
+		self.iterators       = []
+		self.global_memory   = dict()
 		self.function_memory = [dict()]
-		self.start_time = 0
-		self.end_time = 0
-		self.funcs = {
+		self.start_time      = 0
+		self.end_time        = 0
+		self.funcs           = {
 			"="       : self.equals,
 			"*"       : self.multiplication,
 			"/"       : self.division,
@@ -96,6 +96,22 @@ class VirtualMachine:
 				print("Error, used variable before initalization")
 				sys.exit(0)
 
+	def value_from_memory_below(self, address):
+		print("getting value from memory")
+		if address < 20000 or address >= 50000:
+			#global memory
+			if address in self.global_memory:
+				return self.global_memory[address]
+			else:
+				print("Error, used variable before initalization")
+				sys.exit(0)
+		else:
+			if address in self.function_memory[-2]:
+				return self.function_memory[-2][address]
+			else:
+				print("Error, used variable before initalization")
+				sys.exit(0)
+
 	def value_to_memory(self, address, value):
 		print("storing")
 		if address < 20000 or address >= 50000:
@@ -136,49 +152,49 @@ class VirtualMachine:
 			self.value_to_memory(quad[3], False)
 
 	def greater_than(self, quad):
-		print("method")
+		print("greater_than")
 		if self.value_from_memory(quad[1]) > self.value_from_memory(quad[2]):
 			self.value_to_memory(quad[3], True)
 		else:
 			self.value_to_memory(quad[3], False)
 
 	def less_equal(self, quad):
-		print("method")
+		print("less_equal")
 		if self.value_from_memory(quad[1]) <= self.value_from_memory(quad[2]):
 			self.value_to_memory(quad[3], True)
 		else:
 			self.value_to_memory(quad[3], False)
 
 	def greater_equal(self, quad):
-		print("method")
+		print("greater_equal")
 		if self.value_from_memory(quad[1]) >= self.value_from_memory(quad[2]):
 			self.value_to_memory(quad[3], True)
 		else:
 			self.value_to_memory(quad[3], False)
 
 	def different(self, quad):
-		print("method")
+		print("different")
 		if self.value_from_memory(quad[1]) != self.value_from_memory(quad[2]):
 			self.value_to_memory(quad[3], True)
 		else:
 			self.value_to_memory(quad[3], False)
 
 	def same(self, quad):
-		print("method")
+		print("same")
 		if self.value_from_memory(quad[1]) == self.value_from_memory(quad[2]):
 			self.value_to_memory(quad[3], True)
 		else:
 			self.value_to_memory(quad[3], False)
 
 	def compare_and(self, quad):
-		print("method")
+		print("compare_and")
 		if self.value_from_memory(quad[1]) and self.value_from_memory(quad[2]):
 			self.value_to_memory(quad[3], True)
 		else:
 			self.value_to_memory(quad[3], False)
 
 	def compare_or(self, quad):
-		print("method")
+		print("compare_or")
 		if self.value_from_memory(quad[1]) or self.value_from_memory(quad[2]):
 			self.value_to_memory(quad[3], True)
 		else:
@@ -238,18 +254,24 @@ class VirtualMachine:
 
 	def era(self, quad):
 		print("era")
+		self.function_memory.append(dict())
 
 	def param(self, quad):
 		print("param")
+		#('PARAM', ('cte', 10), None, 20000)
+		self.value_to_memory(quad[3], self.value_from_memory_below(quad[1]))
 
 	def gosub(self, quad):
 		print("gosub")
+		self.iterators.append(quad[1] - 1)
 
 	def return_value(self, quad):
 		print("return_value")
 
 	def end_proc(self, quad):
 		print("end_proc")
+		self.function_memory.pop()
+		self.iterators.pop()
 
 	def ver(self, quad):
 		print("verify")

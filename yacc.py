@@ -12,6 +12,7 @@ from sparky_type import SparkyType
 from virtualMachine import VirtualMachine
 import math
 import sys
+import pprint
 
 program = Program()
 
@@ -460,7 +461,8 @@ def p_fun4(p):
     program.current_function.return_type = program.current_type
     program.new_var()
     program.current_var_name = program.current_function.address
-    program.current_var.address =  program.globalMemory.get_next_address(program.current_function.return_type)
+    t = program.current_function.return_type
+    program.current_var.address =  program.globalMemory.get_next_address(t.type, t.row, t.col)
     program.current_var.s_type = program.current_type
     program.varTable.set(program.current_var_name, program.current_var)
     program.new_var()
@@ -1078,7 +1080,14 @@ def p_var_cte1(p):
         if program.current_attribute == "":
             #id
 
-            if not program.pIDs[-1][1] and not program.pIDs[-1][2]:
+            if len(program.pIDs[-1]) > 3:
+                v_id = program.pIDs[-1][3]
+                #program.VP.append(program.varTable[v_id].address)
+                t = SparkyType()
+                t.type = program.varTable[v_id].s_type.type
+                program.pType.append(t)
+
+            elif not program.pIDs[-1][1] and not program.pIDs[-1][2]:
                 address = program.current_function.varTable[program.current_id].address
                 program.VP.append(address)
                 t = SparkyType()
@@ -1244,6 +1253,8 @@ def p_call_f1(p):
     'call_f1    :'
     program.called_function = program.funDir[program.pIDs[-1][0]]
     # program.funDir[program.pIDs.pop()]
+    x = program.pIDs.pop()
+    program.pIDs.append((x[0], x[1], x[2], program.called_function.address))
     program.current_param_num = 0
     program.current_quad = ("ERA", program.called_function.address, None, None)
     program.add_quad()
@@ -1257,17 +1268,19 @@ def p_call_func_optional(p):
 
 def p_call_f3(p):
     'call_f3    :'
-    program.pIDs.pop()
     era_return = program.pEras.pop()
-    program.current_quad = ("GOSUB", program.era_return[1], None, None)
+    program.current_quad = ("GOSUB", era_return[1], None, None)
     program.add_quad()
     if era_return[0].type == "void":
         print("ERROR Type MISMATCH")
         # pide memoria para tipo temporal
-    address = program.current_function.funMemory.get_next_address(era_return[0])
-    program.VP.append(addres)
-    program.current_quad = ("=", program.VarTable[program.era_return[1]].address, None, address)
+    address = program.current_function.tempMemory.get_next_address(era_return[0].type, era_return[0].row, era_return[0].col)
+    program.current_quad = ("=", program.varTable[era_return[1]].address, None, address)
     program.add_quad()
+    for x in program.VP:
+        print(x)
+    print(program.varTable[era_return[1]].address)
+    program.VP.append(address)
 
 
 #no need for comment since lexer ignores it

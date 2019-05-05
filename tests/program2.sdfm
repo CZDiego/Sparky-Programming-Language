@@ -1,16 +1,13 @@
-function uno(a : Float, b : Float){
-	var c : Int;
-	c = 1;
-	print("holi");
+function uno( a : Int) -> Int{
+	return a * 128;
 }
 
 
 
 main(){
+	var a : Int;
+	a = a + a;
+	a = uno(100);
 
-	var b : Float;
-	var C : Float;
-	b = 1;
-	uno(C, C);
 
 }
