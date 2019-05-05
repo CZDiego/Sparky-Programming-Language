@@ -404,12 +404,9 @@ def p_let3(p):
 def p_main(p):
     'main   : main0 MAIN LP RP function_block'
 
-    for cla in program.ClassDir.directory:
-        print("class: " + cla)
-        for var_key in program.ClassDir[cla].funDir.directory:
-             print("var: " + var_key)
-             print("address: " + str(program.ClassDir[cla].funDir[var_key].address))
-
+    for cla in program.funDir.directory:
+        print("fun: " + cla)
+    print(program.funDir["factorial"].varTable["n"].address)
 
 def p_main0(p):
     'main0   :'
@@ -434,7 +431,6 @@ def p_function_a(p):
 def p_fun0(p):
     'fun0   :'
     program.new_function()
-    program.new_params()
     program.current_function.address = program.BASE
 
 
@@ -454,7 +450,6 @@ def p_fun1(p):
 
 def p_fun3(p):
     'fun3   :'
-    program.current_function.add_params(program.current_params)
 
 def p_fun4(p):
     'fun4   :'
@@ -462,22 +457,22 @@ def p_fun4(p):
     program.new_var()
     program.current_var_name = program.current_function.address
     t = program.current_function.return_type
-    program.current_var.address =  program.globalMemory.get_next_address(t.type, t.row, t.col)
+    program.current_var.address = program.globalMemory.get_next_address(t.type, t.row, t.col)
     program.current_var.s_type = program.current_type
     program.varTable.set(program.current_var_name, program.current_var)
-    program.new_var()
     #pide memoria global con nombre
 
 def p_fun5(p):
     'fun5   :'
-    program.new_type()
-    program.current_type.type = "void"
-    program.current_function.return_type = program.current_type
+    program.new_var()
+    program.current_function.return_type.type = "void"
+    print(program.current_function.varTable.directory)
 
 def p_fun6(p):
     'fun6   :'
     program.current_quad = ("ENDPROC", None, None, None)
     program.add_quad()
+    program.current_scope = "global"
 
 # ################
 #  ------------------------------------------------------------------------
@@ -505,7 +500,7 @@ def p_param0(p):
 def p_param1(p):
     'param1 :'
     program.current_var_name = p[-1]
-    if program.current_var_name in program.current_params:
+    if program.current_var_name in program.current_function.varTable.directory:
         print('\033[91m' + "ERROR:" + '\033[0m' + "Function already has a parameter with that name.")
 
 def p_param2(p):
