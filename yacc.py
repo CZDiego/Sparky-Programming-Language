@@ -1072,7 +1072,7 @@ def p_var_cte1(p):
         if program.current_attribute == "":
             #id
 
-            if len(program.pIDs[-1]) > 3:
+            if len(program.pIDs[-1]) > 3:#function
                 v_id = program.pIDs[-1][3]
                 #program.VP.append(program.varTable[v_id].address)
                 t = SparkyType()
@@ -1185,7 +1185,7 @@ def p_array3(p):
         program.VP.append(("pointer", result))
         
         t = SparkyType()
-        "t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type"
+        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         #t.row = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         #t.col = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         program.pType.append(t)
