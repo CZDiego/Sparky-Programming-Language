@@ -286,7 +286,6 @@ def p_var2(p):
             program.current_object.s_type = s_type;
             program.current_object.varTable.directory.update(deepcopy(program.ClassDir[s_type.type].varTable.directory))
             for key in program.ClassDir[program.current_var.s_type.type].varTable.directory:
-                # TODO: If v_type is matrix or array
                 v_type      = program.current_object.varTable[key].s_type
                 old_memo    = program.current_object.varTable[key].address
                 address     = program.current_function.funMemory.get_next_address(v_type)

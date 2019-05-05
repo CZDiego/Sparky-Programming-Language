@@ -1,7 +1,7 @@
 class P{
     var age : Int;
 	var name : Float;
-
+    var x : [10]Int;
 	init(){
 
 	}
