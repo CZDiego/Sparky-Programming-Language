@@ -8,12 +8,17 @@ class A{
 	}
 }
 
-function z(){
+function z() -> Int{
+
 	print("a");
+	return 199;
 }
 
 main(){
+	var x : Int;
 	var a : A;
 	print("main");
+	x = z();
+	print(x);
 	a.foo();
 }
