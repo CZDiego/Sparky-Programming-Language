@@ -169,6 +169,7 @@ def p_var_class_b(p):
 
 def p_var_c1(p):
     'var_c1    :'
+
     if program.current_scope == "global":
         if p[-1] in program.current_class.varTable.directory:
             print("ERROR VARIABLE DECLARADA ANTERIORMENTE")
@@ -185,11 +186,10 @@ def p_var_c1(p):
 def p_var_c2(p):
     'var_c2    :'
     if program.current_scope == "global":
-        program.current_var.address = -1
         program.current_var.s_type = program.current_type
+        program.current_var.address = program.current_class.claMemory.get_next_address(program.current_var.s_type)
         if program.current_var.s_type.is_object():
                 print("ERROR: Object class does not support objects")
-
         program.current_class.varTable.set(program.current_var_name, program.current_var)
 
     if program.current_scope == "function":
@@ -405,7 +405,9 @@ def p_main(p):
     for cla in program.ClassDir.directory:
         print("class: " + cla)
         for func in program.ClassDir.directory[cla].funDir.directory:
-            print(func)
+            print("func: " + func)
+        for var in program.ClassDir[cla].varTable.directory:
+            print("var: " + var +"\naddress: "+ str(program.ClassDir[cla].varTable[var].address))
 
 def p_main0(p):
     'main0   :'
@@ -465,7 +467,6 @@ def p_fun5(p):
     'fun5   :'
     program.new_var()
     program.current_function.return_type.type = "void"
-    print(program.current_function.varTable.directory)
 
 def p_fun6(p):
     'fun6   :'
@@ -713,6 +714,21 @@ def p_assignement1(p):
             program.VP.append(program.current_function.varTable[program.pIDs[-1][0]].address)
             program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
             program.pOper.append("=")
+    elif program.current_class_name != "":
+        if program.pIDs[-1][0] in program.current_class.varTable:
+            t = program.current_class.varTable[program.pIDs[-1][0]].s_type
+            if t.row > 0:
+                print("array or matrix")
+                program.pOper.append("=")
+                # program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
+                # print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
+            elif t.is_object():
+                # id is object
+                print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
+            else:
+                program.VP.append(program.current_class.varTable[program.pIDs[-1][0]].address)
+                program.pType.append(program.current_class.varTable[program.pIDs[-1][0]].s_type)
+                program.pOper.append("=")
 
     elif program.pIDs[-1][0] in program.varTable:
         print("Global")
@@ -1078,11 +1094,18 @@ def p_var_cte1(p):
                 program.pType.append(t)
 
             elif not program.pIDs[-1][1] and not program.pIDs[-1][2]:
-                address = program.current_function.varTable[program.pIDs[-1][0]].address
-                program.VP.append(address)
-                t = SparkyType()
-                t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
-                program.pType.append(t)
+                if program.pIDs[-1][0] in program.current_function.varTable.directory:
+                    address = program.current_function.varTable[program.pIDs[-1][0]].address
+                    program.VP.append(address)
+                    t = SparkyType()
+                    t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
+                    program.pType.append(t)
+                else:
+                    address = program.current_class.varTable[program.pIDs[-1][0]].address
+                    program.VP.append(address)
+                    t = SparkyType()
+                    t.type = program.current_class.varTable[program.pIDs[-1][0]].s_type.type
+                    program.pType.append(t)
             #elif program.current_id_is_matrix:
 
 
