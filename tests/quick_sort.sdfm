@@ -1,0 +1,32 @@
+main(){
+
+    var lista : [13]Int;
+    var size : Int;
+    var i : Int;
+    lista[0] = 100;
+    lista[1] = 56;
+    lista[2] = 0;
+    lista[3] = 1;
+    lista[4] = -45;
+    lista[5] = 2;
+    lista[6] = 46;
+    lista[7] = 5;
+    lista[8] = 9;
+    lista[9] = 6;
+    lista[10] = 67;
+    lista[11] = 23;
+    lista[12] = 5;
+    size = 13;
+
+    print("Lista Desordenada");
+    i = 0;
+
+        print(lista[i]);
+        if(i<(size-1)){
+         print(",");
+        }
+       i = i + 1;
+
+
+    print();
+}

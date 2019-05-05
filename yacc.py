@@ -404,9 +404,9 @@ def p_let3(p):
 def p_main(p):
     'main   : main0 MAIN LP RP function_block'
 
-    for cla in program.funDir.directory:
-        print("fun: " + cla)
-    print(program.funDir["factorial"].varTable["n"].address)
+    #for cla in program.funDir.directory:
+    #    print("fun: " + cla)
+    #print(program.funDir["factorial"].varTable["n"].address)
 
 def p_main0(p):
     'main0   :'
@@ -705,7 +705,7 @@ def p_assignement1(p):
         if t.row > 0:
             print("array or matrix")
             program.pOper.append("=")
-            program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
+            #program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
             #print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
         elif t.is_object():
             #id is object
