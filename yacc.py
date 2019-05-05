@@ -404,6 +404,8 @@ def p_main(p):
 
     for cla in program.ClassDir.directory:
         print("class: " + cla)
+        for func in program.ClassDir.directory[cla].funDir.directory:
+            print("func: " + func)
         for var in program.ClassDir[cla].varTable.directory:
             print("var: " + var +"\naddress: "+ str(program.ClassDir[cla].varTable[var].address))
 
@@ -681,7 +683,7 @@ def p_obj1(p):
     'obj1 :'
     #program.current_id = p[-1]
     program.pOper.append("$")
-    program.pIDs.append((p[-1],False, False))
+    program.pIDs.append((p[-1],False, False, None))
 
 def p_obj2(p):
     'obj2 :'
@@ -701,7 +703,7 @@ def p_assignement1(p):
         #is_object
         t = program.current_function.varTable[program.pIDs[-1][0]].s_type
         if t.row > 0:
-            print("array or matrix")
+            #print("array or matrix")
             program.pOper.append("=")
             #program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
             #print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
@@ -733,7 +735,6 @@ def p_assignement1(p):
     else:
         print("ERROR variable no declarada")
     #program.current_id = ""
-    program.current_attribute = ""
     program.pIDs.pop()
 
 def p_assignement2(p):
@@ -1082,11 +1083,11 @@ def p_var_cte1(p):
         print("func")
     else:
         #NOT FUNC
-        if program.current_attribute == "":
+        if program.pIDs[-1][3] is None:
             #id
 
-            if len(program.pIDs[-1]) > 3:#function
-                v_id = program.pIDs[-1][3]
+            if len(program.pIDs[-1]) > 4:#function
+                v_id = program.pIDs[-1][4]
                 #program.VP.append(program.varTable[v_id].address)
                 t = SparkyType()
                 t.type = program.varTable[v_id].s_type.type
@@ -1166,7 +1167,7 @@ def p_array1(p):
 
     #changing
     x = program.pIDs.pop()
-    program.pIDs.append((x[0], True, False))
+    program.pIDs.append((x[0], True, False, None))
 
     var = program.current_function.varTable[program.pIDs[-1][0]]
     row_type = program.pType[-1].type
@@ -1180,7 +1181,7 @@ def p_array2(p):
     'array2 :'
     #changing
     x = program.pIDs.pop()
-    program.pIDs.append((x[0], False, True))
+    program.pIDs.append((x[0], False, True, None))
     var = program.current_function.varTable[program.pIDs[-1][0]]
 
     col_type = program.pType[-1].type
@@ -1255,8 +1256,8 @@ def p_attribute(p):
 
 def p_att1(p):
     'att1   :'
-    #program.current_id_has_attr = True
-    program.current_attribute = p[-1]
+    x = program.pIDs.pop()
+    program.pIDs.append((x[0], x[1], x[2], p[-1]))
 
 
 #  ################
@@ -1267,15 +1268,31 @@ def p_call_func(p):
 
 def p_call_f1(p):
     'call_f1    :'
+    #TODO : checar si la función existe en la funcDir Neccesaria o en clase
     program.pOper.append("$")
-    program.called_function = program.funDir[program.pIDs[-1][0]]
-    # program.funDir[program.pIDs.pop()]
-    x = program.pIDs.pop()
-    program.pIDs.append((x[0], x[1], x[2], program.called_function.address))
-    program.current_param_num = 0
-    program.current_quad = ("ERA", program.called_function.address, None, None)
-    program.add_quad()
-    program.pEras.append((program.called_function.return_type,program.called_function.address))
+    if program.pIDs[-1][3] is None:
+        program.called_function = program.funDir[program.pIDs[-1][0]]
+        # program.funDir[program.pIDs.pop()]
+        x = program.pIDs.pop()
+        program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
+        program.current_param_num = 0
+        program.current_quad = ("ERA", program.called_function.address, None, None)
+        program.add_quad()
+        program.pEras.append((program.called_function.return_type,program.called_function.address))
+    else:
+        #id . id ( * )
+        t = program.current_function.varTable["a"].s_type
+        current_id = program.pIDs[-1][0]
+        attribute = program.pIDs[-1][3]
+        program.called_function = program.ClassDir[t.type].funDir[attribute]
+        #program.called_function = program.funDir[program.pIDs[-1][0]]
+        x = program.pIDs.pop()
+        program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
+        program.current_param_num = 0
+        program.current_quad = ("ERA", program.called_function.address, None, None)
+        program.add_quad()
+        program.pEras.append((program.called_function.return_type,program.called_function.address))
+
 
 def p_call_func_optional(p):
     '''

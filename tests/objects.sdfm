@@ -1,0 +1,19 @@
+class A{
+	init(){
+
+	}
+
+	function foo(){
+		print("foo");
+	}
+}
+
+function z(){
+	print("a");
+}
+
+main(){
+	var a : A;
+	print("main");
+	a.foo();
+}
