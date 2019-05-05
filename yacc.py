@@ -510,7 +510,7 @@ def p_param2(p):
     'param2 :'
     program.current_var.s_type = program.current_type
     s_type = program.current_type
-    program.current_var.address = program.current_function.funMemory.get_next_address(s_type, s_type.row, s_type.col)
+    program.current_var.address = program.current_function.funMemory.get_next_address(s_type.type, s_type.row, s_type.col)
     program.current_function.varTable.set(program.current_var_name, program.current_var)
     program.current_function.param_key.append((s_type, program.current_var.address))
 
@@ -732,16 +732,11 @@ def p_assignement1(p):
 
 def p_assignement2(p):
     'assignement2 :'
-    print("assign")
-
     right_type = program.pType.pop()
-    print(right_type.type)
     right_operand = program.VP.pop()
     left_type = program.pType.pop()
-    print(left_type.type)
     left_operand = program.VP.pop()
     operator = program.pOper.pop()
-    print(operator, left_type.type, right_type.type)
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
         print("Error Type Mismatch")
@@ -839,7 +834,7 @@ def p_call_function(p):
 def p_call_f2(p):
     'call_f2    :'
     program.pIDs.pop()
-    program.pEras.pop()
+    era_return = program.pEras.pop()
     program.current_quad = ("GOSUB", era_return[1], None, None)
     program.add_quad()
 
@@ -863,6 +858,7 @@ def p_call_param1(p):
     fun_param_type = program.called_function.param_key[program.current_param_num][0]
     if fun_param_type.check_type(popped_type):
         program.current_quad = ("PARAM", program.VP.pop(), None, program.called_function.param_key[program.current_param_num][1])
+        #print(program.called_function.param_key[program.current_param_num][0].type)
         program.add_quad()
         program.current_param_num += 1
     else:
@@ -1086,7 +1082,7 @@ def p_var_cte1(p):
                 address = program.current_function.varTable[program.current_id].address
                 program.VP.append(address)
                 t = SparkyType()
-                t.type = "Int"
+                t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
                 program.pType.append(t)
             #elif program.current_id_is_matrix:
 
@@ -1188,7 +1184,7 @@ def p_array3(p):
         program.VP.append(("pointer", result))
         
         t = SparkyType()
-        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
+        "t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type"
         #t.row = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         #t.col = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         program.pType.append(t)
@@ -1251,7 +1247,7 @@ def p_call_f1(p):
     program.current_param_num = 0
     program.current_quad = ("ERA", program.called_function.address, None, None)
     program.add_quad()
-    program.pEras.append(program.called_function.return_type, program.called_function.address)
+    program.pEras.append((program.called_function.return_type,program.called_function.address))
 
 def p_call_func_optional(p):
     '''
@@ -1340,9 +1336,9 @@ else:
         print("pIDs")
         for x in program.pIDs:
             print(x)
-        vm = VirtualMachine()
-        vm.quads = program.Quads
-        vm.execute()
+        #vm = VirtualMachine()
+        #vm.quads = program.Quads
+        #vm.execute()
 
     if result is not None:
         print(result)

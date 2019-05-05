@@ -1,21 +1,16 @@
-function uno(){
+function uno(a : Float, b : Float){
+	var c : Int;
+	c = 1;
 	print("holi");
 }
 
+
+
 main(){
 
-	var a : Int;
 	var b : Float;
-	var c : Bool;
-	var z : [10]Bool;
-	var y : [8]Int;
-	a = 10;
-
-	z[6] = true;
-
-	y[6] = 10;
-
-	print(z[6]);
-	print(y[6]);
+	var C : Float;
+	b = 1;
+	uno(C, C);
 
 }
