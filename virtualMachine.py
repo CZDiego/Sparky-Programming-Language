@@ -38,8 +38,10 @@ class VirtualMachine:
 			"INPUT"   : self.input,
 			"GOTO"    : self.goto,
 			"GOTOF"   : self.gotof,
+			"ERAO"	  : self.erao,
 			"ERA"     : self.era, 
 			"PARAM"   : self.param,
+			"PARAMO"  : self.paramo,
 			"GOSUB"   : self.gosub,
 			"RETURN"  : self.return_value,
 			"ENDPROC" : self.end_proc,
@@ -235,12 +237,20 @@ class VirtualMachine:
 		if not self.value_from_memory(quad[1]):
 			self.iterators[-1] = quad[3] - 1
 
+	def erao(self, quad):
+		print("ERAO")
+
 	def era(self, quad):
 		self.activation_record.append(dict())
 		
+	def paramo(selfs,quad):
+		print("PARAMO")
 
 	def param(self, quad):
 		self.activation_record[-1][quad[3]] = self.value_from_memory(quad[1])
+
+	def gosubo(self, quad):
+		print("SUBO")
 
 	def gosub(self, quad):
 		self.function_memory.append(dict())

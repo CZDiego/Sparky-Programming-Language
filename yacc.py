@@ -971,6 +971,13 @@ def p_call_f2(p):
     era_return = program.pEras.pop()
     program.current_quad = ("GOSUB", era_return[1], None, None)
     program.add_quad()
+    if era_return[3][0]:
+        program.current_quad = ("GOSUBO", era_return[3][0], None, None)
+        program.add_quad()
+        for paramo in era_return[3][2]:
+            print(paramo)
+            program.current_quad = paramo
+            program.add_quad()
 
 def p_call_params(p):
     '''
@@ -1481,20 +1488,29 @@ def p_call_f1(p):
         program.current_param_num = 0
         program.current_quad = ("ERA", program.called_function.address, None, None)
         program.add_quad()
-        program.pEras.append((program.called_function.return_type,program.called_function.address, False))
+        program.pEras.append((program.called_function.return_type, program.called_function.address, False, (False,)))
     else:
         #id . id ( * )
-        t = program.current_function.varTable[program.pIDs[-1][0]].s_type
         current_id = program.pIDs[-1][0]
         attribute = program.pIDs[-1][3]
-        program.called_function = program.ClassDir[t.type].funDir[attribute]
+        s_type = program.current_function.varTable[current_id].s_type
+        program.current_quad = ("ERAO", current_id, None, None)
+        program.add_quad()
+        paramo_list = []
+        for address in program.current_function.varTable.objects[current_id].memMap:
+            old_memo = program.current_function.varTable.objects[current_id].memMap[address]
+            program.current_quad = ("PARAMO", address, None, old_memo)
+            program.add_quad()
+            paramo_list.append(("=", old_memo, None, address))
+        # Termina PARAMOs
+        program.called_function = program.ClassDir[s_type.type].funDir[attribute]
         #program.called_function = program.funDir[program.pIDs[-1][0]]
         x = program.pIDs.pop()
         program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
         program.current_param_num = 0
         program.current_quad = ("ERA", program.called_function.address, None, None)
         program.add_quad()
-        program.pEras.append((program.called_function.return_type,program.called_function.address, True))
+        program.pEras.append((program.called_function.return_type, program.called_function.address, True, (True, current_id, paramo_list)))
 
 
 def p_call_func_optional(p):
@@ -1519,6 +1535,14 @@ def p_call_f3(p):
     program.current_quad = ("=", program.varTable[era_return[1]].address, None, address)
     program.add_quad()
     program.VP.append(address)
+
+    if era_return[3][0]:
+        program.current_quad = ("GOSUBO", era_return[3][1], None, None)
+        program.add_quad()
+        for paramo in era_return[3][2]:
+            print(paramo)
+            program.current_quad = paramo
+            program.add_quad()
 
     if era_return[2]:
         t = SparkyType()
