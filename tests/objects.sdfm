@@ -1,3 +1,7 @@
+let c : Int = 10;
+let f : Float = 10.8;
+let b : Bool = true;
+
 class Person{
 	var age : Int;
 	var price : Int;
@@ -6,27 +10,27 @@ class Person{
 
 	}
 
-	function foo(){
+	function hola(){
+		let x : Int = 27;
+		print(x);
 		print("foo");
+		print(x);
 	}
+}
+
+function gogo(){
+	let k : Int = 89;
+	print(k);
+	//print(k);
 }
 
 
 main(){
+	
 	var diego : Person;
-	var sergio : Person;
+	print("diego");
 
-	diego.age = 5;
-	sergio.age = 22;
-	diego.price = 1999;
+	gogo();
 
-	print(diego.age);
-	print(diego.price);
-
-
-	diego.age = 23;
-
-	print(diego.age + sergio.age);
-
-	print(diego);
+	diego.hola();
 }

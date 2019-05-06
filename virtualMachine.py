@@ -8,6 +8,8 @@ import sys
 import time
 from datetime import timedelta
 
+error_message = '\033[91m' + "ERROR: " + '\033[0m' 
+
 class VirtualMachine:
 	def __init__(self):
 		self.quads             = []
@@ -91,13 +93,13 @@ class VirtualMachine:
 			if address in self.global_memory:
 				return self.global_memory[address]
 			else:
-				print("Error, used variable before initalization")
+				print(error_message + "Error, used variable before initalization")
 				sys.exit(0)
 		else:
 			if address in self.function_memory[-1]:
 				return self.function_memory[-1][address]
 			else:
-				print("Error, used variable before initalization")
+				print(error_message + "Error, used variable before initalization")
 				sys.exit(0)
 
 	def value_to_memory(self, address, value):
@@ -203,7 +205,7 @@ class VirtualMachine:
 			elif user_input.lower() == "false":
 				self.value_to_memory(quad[3], False)
 			else:
-				print("Invalid value for input Bool")
+				print(error_message + "Invalid value for input Bool")
 				sys.exit(0)
 
 
@@ -212,7 +214,7 @@ class VirtualMachine:
 				val = float(user_input)
 				self.value_to_memory(quad[3], val)
 			except ValueError:
-				print("Invalid value for input Float")
+				print(error_message + "Invalid value for input Float")
 				sys.exit(0)
 
 		elif quad[1] == "Int":
@@ -220,7 +222,7 @@ class VirtualMachine:
 				val = int(user_input)
 				self.value_to_memory(quad[3], val)
 			except ValueError:
-				print("Invalid value for input Int")
+				print(error_message + "Invalid value for input Int")
 				sys.exit(0)
 
 
@@ -261,7 +263,7 @@ class VirtualMachine:
 		upper_limit = quad[2]
 		value = self.value_from_memory(quad[3])
 		if value < bottom_limit or value > upper_limit:
-			print("Out of bounds")
+			print(error_message + "Out of bounds")
 			sys.exit(0)
 
 			

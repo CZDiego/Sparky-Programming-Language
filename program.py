@@ -27,6 +27,7 @@ class Program:
         self.pArray                 = []
         self.pIDs                   = []
         self.pEras                  = []
+        self.pendingQuads           = []
         self.current_quad           = ()
         self.current_param_num      = 0
         self.current_class          = Class()
