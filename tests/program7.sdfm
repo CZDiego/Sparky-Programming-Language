@@ -1,0 +1,18 @@
+function foo2( y : [10][10]Int){
+	y[5][7] = 87;
+}
+
+function foo(n : [10][10]Int){
+	
+	foo2(n);
+}
+
+main(){
+	var x : [10][10]Int;
+	var a : Int;
+	x[0][0] = 20;
+
+	foo(x);
+	print(x[5][7]);
+
+}

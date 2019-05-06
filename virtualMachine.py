@@ -57,8 +57,11 @@ class VirtualMachine:
 		self.iterators.append(0)
 
 		while True:
+			print("normal")
+			print(self.quads[self.iterators[-1]])
 			clean_quad = self.clean_quad(self.quads[self.iterators[-1]])
-			#print(clean_quad)
+			print("clean")
+			print(clean_quad)
 			self.funcs[clean_quad[0]](clean_quad)
 			self.iterators[-1] = self.iterators[-1] + 1
 
@@ -316,6 +319,7 @@ class VirtualMachine:
 			current_memory = len(self.function_memory) - 1
 			size = quad[2]
 			address = quad[1]
+			print(("reference", address, size, current_memory))
 			self.activation_record[-1][quad[3]] = ("reference", address, size, current_memory)
 			#25000 = ("reference",25000,18,0)
 
