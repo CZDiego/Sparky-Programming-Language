@@ -95,8 +95,6 @@ class VirtualMachine:
 	def value_from_memory(self, x):
 		#print(x)
 		if x.__class__.__name__ in ('tuple'):
-			print("trap")
-			print(self.value_from_memory_below(x[1], x[3]))
 			return self.value_from_memory_below(x[1], x[3])
 		else:
 			address = x
@@ -177,8 +175,6 @@ class VirtualMachine:
 			temp = self.value_from_memory(quad[1]) + self.value_from_memory(quad[2])
 			self.value_to_memory(quad[3], temp)
 		else:
-			print("QUAD")
-			print(quad[2])
 			#('reference', base, size, 0)
 			if quad[2][0] == "reference":
 				left = self.value_from_memory(quad[1])
