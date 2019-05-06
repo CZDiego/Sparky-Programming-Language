@@ -13,16 +13,20 @@ class Person{
 
 
 main(){
-	var x : Int;
 	var diego : Person;
 	var sergio : Person;
-	x = 50;
-	print(x);
 
 	diego.age = 5;
-	sergio.age = 10;
+	sergio.age = 22;
+	diego.price = 1999;
 
-	print(x + -4);
+	print(diego.age);
+	print(diego.price);
 
-	print(sergio.age);
+
+	diego.age = 23;
+
+	print(diego.age + sergio.age);
+
+	print(diego);
 }
