@@ -1,5 +1,9 @@
 function foo(n : [18]Int) -> Int{
 	n[15] = 19;
+	
+	print( "printin");
+	print (n[15]);
+	print("inside");
 	return 18;
 }
 

@@ -92,27 +92,31 @@ class VirtualMachine:
 			#pointer
 			return self.value_from_memory(tp[1]) # memory[tp[1]]
 
-	def value_from_memory(self, address):
-		#print(address)
-		if address < 20000 or address >= 80000:
-			#global memory
-			if address in self.global_memory:
-				return self.global_memory[address]
-			else:
-				print(error_message + "Error, used variable before initalization")
-				sys.exit(0)
-		elif address < 65000:
-			if address in self.function_memory[-1]:
-				return self.function_memory[-1][address]
-			else:
-				print(error_message + "Error, used variable before initalization")
-				sys.exit(0)
+	def value_from_memory(self, x):
+		#print(x)
+		if x.__class__.__name__ in ('tuple'):
+			return self.value_from_memory_below(x[1], x[3])
 		else:
-			if address in self.class_memory[-1]:
-				return self.class_memory[-1][address]
+			address = x
+			if address < 20000 or address >= 80000:
+				#global memory
+				if address in self.global_memory:
+					return self.global_memory[address]
+				else:
+					print(error_message + "Error, used variable before initalization")
+					sys.exit(0)
+			elif address < 65000:
+				if address in self.function_memory[-1]:
+					return self.function_memory[-1][address]
+				else:
+					print(error_message + "Error, used variable before initalization")
+					sys.exit(0)
 			else:
-				print(error_message + "Error, used variable before initalization")
-				sys.exit(0)
+				if address in self.class_memory[-1]:
+					return self.class_memory[-1][address]
+				else:
+					print(error_message + "Error, used variable before initalization")
+					sys.exit(0)
 
 	def value_from_memory_below(self, address, memory):
 		if address < 20000 or address >= 80000:
