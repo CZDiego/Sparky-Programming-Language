@@ -89,6 +89,7 @@ def p_typeM(p):
     typeM    : type0 LC CTE_I RC LC CTE_I RC atomic type1
     | type0 LC CTE_I RC atomic type2
     | type0 ID type4
+    | type0 atomic
     '''
 #-----------------------------------------------------------------------
 # Neuro points type stage
@@ -507,7 +508,7 @@ def p_fun6(p):
 
 def p_params(p):
     '''
-    params   : param0 ID param1 COL type param2 params_a
+    params   : param0 ID param1 COL typeM param2 params_a
     | empty
     '''
 
@@ -548,7 +549,8 @@ def p_param2(p):
             program.current_object.memMap[address] = old_memo
             program.current_object.varTable[key].address = address
         program.current_function.varTable.objects[program.current_var_name] = program.current_object
-        program.current_function.param_key.append((s_type, program.current_var_name))
+
+        program.current_function.param_key.append((s_type, program.current_object.memMap))
         program.new_object()
     else:
         program.current_var.address = program.current_function.funMemory.get_next_address(s_type)
@@ -913,8 +915,15 @@ def p_call_param1(p):
     if fun_param_type.check_type(popped_type):
         if popped_type.is_object():
             #aosdnasijdnsioadfj
-            print(program.pIDs.pop())
-            print("off")
+            id = program.VP.pop()
+            paramID = 0
+            for var in program.current_function.varTable.objects[id].memMap:
+                l = list(program.called_function.param_key[program.current_param_num][1].items())
+                togo = l[paramID][0]
+                program.current_quad = ("PARAM", var, None, togo)
+                program.add_quad()
+                paramID += 1
+            program.current_param_num += 1
         else:
             program.current_quad = ("PARAM", program.VP.pop(), None, program.called_function.param_key[program.current_param_num][1])
             #print(program.called_function.param_key[program.current_param_num][0].type)

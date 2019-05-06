@@ -4,6 +4,8 @@
 # Luis Salomon Flores Ugalde | A00817435
 # Diego Contreras            | A00817441
 # ------------------------------------------------------------
+import collections
+
 from memory import MemoryMap
 from sparky_type import SparkyType
 from varTable import VarTable
@@ -15,7 +17,7 @@ class Object:
     def __init__(self): # Search object functions with type key
         self.s_type     = SparkyType()
         self.varTable   = VarTable()
-        self.memMap     = dict()
+        self.memMap     = collections.OrderedDict()
 
     # it will be program.Objects[key] = object
     def __set__(self, key, var):

@@ -11,19 +11,20 @@ class P{
 
 }
 
-class A : P{
+class A{
     var prime : Int;
     init(){
 
     }
 
-    function golucky(w : Int){
-        var z : P;
-        print("golucky");
+    function golucky(w : P, n : Int){
+        var z : Int;
+        print(n);
     }
 }
 
 main(){
 	var x : A;
-	x.golucky();
+	var b : P;
+	x.golucky(b,1);
 }
