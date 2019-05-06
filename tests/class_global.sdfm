@@ -17,8 +17,8 @@ class A : P{
 
     }
 
-    function golucky(){
-
+    function golucky(w : Int){
+        var z : P;
         print("golucky");
     }
 }

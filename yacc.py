@@ -194,8 +194,22 @@ def p_var_c2(p):
         program.current_class.varTable.set(program.current_var_name, program.current_var)
 
     if program.current_scope == "function":
-        program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
         program.current_var.s_type = program.current_type
+        if program.current_var.s_type.is_object():
+            program.new_object()
+            s_type = program.current_var.s_type
+            program.current_object.s_type = s_type;
+            program.current_object.varTable.directory.update(deepcopy(program.ClassDir[s_type.type].varTable.directory))
+            for key in program.ClassDir[program.current_var.s_type.type].varTable.directory:
+                v_type      = program.current_object.varTable[key].s_type
+                old_memo    = program.current_object.varTable[key].address
+                address     = program.current_function.funMemory.get_next_address(v_type)
+                program.current_object.memMap[address] = old_memo
+                program.current_object.varTable[key].address = address
+            program.current_function.varTable.objects[program.current_var_name] = program.current_object
+        else:
+            program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
+
         program.current_function.varTable.set(program.current_var_name, program.current_var)
 
     program.current_var = Var()
@@ -254,6 +268,7 @@ def p_var1(p):
         else:
             program.current_var_name = p[-1]
     if program.current_scope == "function":
+
         if p[-1] in program.current_function.varTable:
             print("ERROR VARIABLE DECLARADA ANTERIORMENTE")
         else:
@@ -448,7 +463,7 @@ def p_fun0(p):
 def p_fun1(p):
     'fun1   :'
     program.current_function_name = p[-1]
-    if program.current_scope == "global":
+    if program.current_scope == "global" and program.current_class_name == "":
         if program.current_function_name in program.funDir:
             print('\033[91m' + "ERROR:" + '\033[0m' + "Function already declared before.")
         else:
@@ -518,9 +533,27 @@ def p_param2(p):
     'param2 :'
     program.current_var.s_type = program.current_type
     s_type = program.current_type
-    program.current_var.address = program.current_function.funMemory.get_next_address(s_type)
+    #program.current_var.address = program.current_function.funMemory.get_next_address(s_type)
+    #program.current_function.varTable.set(program.current_var_name, program.current_var)
+    #program.current_function.param_key.append((s_type, program.current_var.address))
+    if s_type.is_object():
+        program.new_object()
+        program.current_object.s_type = s_type
+        program.current_object.varTable.directory.update(deepcopy(program.ClassDir[s_type.type].varTable.directory))
+        for key in program.ClassDir[program.current_var.s_type.type].varTable.directory:
+            v_type = program.current_object.varTable[key].s_type
+            old_memo = program.current_object.varTable[key].address
+            address = program.current_function.funMemory.get_next_address(v_type)
+            program.current_object.memMap[address] = old_memo
+            program.current_object.varTable[key].address = address
+        program.current_function.varTable.objects[program.current_var_name] = program.current_object
+        program.current_function.param_key.append((s_type, program.current_var_name))
+        program.new_object()
+    else:
+        program.current_var.address = program.current_function.funMemory.get_next_address(s_type)
+        program.current_function.param_key.append((s_type, program.current_var.address))
+
     program.current_function.varTable.set(program.current_var_name, program.current_var)
-    program.current_function.param_key.append((s_type, program.current_var.address))
 
 # ################
 #  ------------------------------------------------------------------------
@@ -877,10 +910,15 @@ def p_call_param1(p):
     popped_type = program.pType.pop()
     fun_param_type = program.called_function.param_key[program.current_param_num][0]
     if fun_param_type.check_type(popped_type):
-        program.current_quad = ("PARAM", program.VP.pop(), None, program.called_function.param_key[program.current_param_num][1])
-        #print(program.called_function.param_key[program.current_param_num][0].type)
-        program.add_quad()
-        program.current_param_num += 1
+        if popped_type.is_object():
+            #aosdnasijdnsioadfj
+            print(program.pIDs.pop())
+            print("off")
+        else:
+            program.current_quad = ("PARAM", program.VP.pop(), None, program.called_function.param_key[program.current_param_num][1])
+            #print(program.called_function.param_key[program.current_param_num][0].type)
+            program.add_quad()
+            program.current_param_num += 1
     else:
         print("ERROR : Parameter given is of wrong type")
 
@@ -1397,21 +1435,41 @@ else:
         print("pIDs")
         for x in program.pIDs:
             print(x)
+
         for cla in program.ClassDir.directory:
-            print("class: " + cla)
-            for func in program.ClassDir.directory[cla].funDir.directory:
-                print("func: " + func)
+            print("Class: " + cla + "{")
             for var in program.ClassDir[cla].varTable.directory:
-                print("var: " + var + "\naddress: " + str(program.ClassDir[cla].varTable[var].address))
+                if program.ClassDir[cla].varTable[var].s_type.is_object():
+                    print("object: " + var)
+                    for o_var in program.ClassDir[cla].varTable.objects[var].varTable.directory:
+                        print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable.objects[var].varTable[o_var].address)))
+                else:
+                    print('{:.40s} {}'.format('  var: ' + var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable[var].address)))
+            for fun in program.ClassDir[cla].funDir.directory:
+                print()
+                print("function: " + fun+"{")
+                for var in program.ClassDir[cla].funDir[fun].varTable.directory:
+                    if program.ClassDir[cla].funDir[fun].varTable[var].s_type.is_object():
+                        print("object: " + var)
+                        for o_var in program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable.directory:
+                            print('{:.40s} {}'.format('\tvar: ' + o_var + (' ' + '.' * 10), "address: " + str(
+                                program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable[o_var].address)))
+                    else:
+                        print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10),
+                                                  "address: " + str(program.ClassDir[cla].funDir[fun].varTable[var].address)))
+                print("}")
+            print("}"+ "class "+ cla + " END")
         for fun in program.funDir.directory:
-            print("fun: " + fun)
+            print()
+            print("function: " + fun+"{")
             for var in program.funDir[fun].varTable.directory:
                 if program.funDir[fun].varTable[var].s_type.is_object():
                     print("object: " + var)
                     for o_var in program.funDir[fun].varTable.objects[var].varTable.directory:
-                        print("\tvar: " + o_var + "\n\taddress: " + str(program.funDir[fun].varTable.objects[var].varTable[o_var].address))
+                        print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable.objects[var].varTable[o_var].address)))
                 else:
-                    print("var: " + var + "\naddress: " + str(program.funDir[fun].varTable[var].address))
+                    print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable[var].address)))
+            print("}")
         vm = VirtualMachine()
         vm.quads = program.Quads
         vm.execute()
