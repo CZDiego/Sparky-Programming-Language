@@ -1,7 +1,7 @@
 class P{
     var age : Int;
 	var name : Float;
-
+    var x : [10]Int;
 	init(){
 
 	}
@@ -11,19 +11,20 @@ class P{
 
 }
 
-class A : P{
+class A{
     var prime : Int;
     init(){
 
     }
 
-    function golucky(){
-
-        print("golucky");
+    function golucky(w : P, n : Int){
+        var z : Int;
+        print(n);
     }
 }
 
 main(){
 	var x : A;
-	x.golucky();
+	var b : P;
+	x.golucky(b,1);
 }
