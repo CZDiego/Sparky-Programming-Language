@@ -46,7 +46,7 @@ class VirtualMachine:
 		}
 
 	def execute(self):
-		print("executing...")
+		print('\033[94m' + "executing..." + '\033[0m' )
 		self.start_time = time.monotonic()
 		self.iterators.append(0)
 

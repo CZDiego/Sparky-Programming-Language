@@ -89,7 +89,6 @@ def p_typeM(p):
     typeM    : type0 LC CTE_I RC LC CTE_I RC atomic type1
     | type0 LC CTE_I RC atomic type2
     | type0 ID type4
-    | type0 atomic
     '''
 #-----------------------------------------------------------------------
 # Neuro points type stage
@@ -508,7 +507,7 @@ def p_fun6(p):
 
 def p_params(p):
     '''
-    params   : param0 ID param1 COL typeM param2 params_a
+    params   : param0 ID param1 COL params_b param2 params_a
     | empty
     '''
 
@@ -516,6 +515,13 @@ def p_params_a(p):
     '''
     params_a   : COMMA params
     | empty
+    '''
+    
+
+def p_params_b(p):
+    '''
+    params_b   : typeM
+    | type
     '''
 #  -----------------------------------------------------------------------
 #  Neuro points for params in function
@@ -1192,6 +1198,10 @@ def p_var_cte1(p):
         else:
             #TODO: CHECAR SI ES FUNCIÓN
             print("id with attribute")
+            attribute_address = program.current_function.varTable.objects[program.pIDs[-1][0]].varTable[program.pIDs[-1][3]].address
+            attribute_type = program.current_function.varTable.objects[program.pIDs[-1][0]].varTable[program.pIDs[-1][3]].s_type
+            program.VP.append(attribute_address)
+            program.pType.append(attribute_type)
             #id.id
             #id[1].id
             #id[1][2].id

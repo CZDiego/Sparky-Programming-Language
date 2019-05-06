@@ -20,6 +20,9 @@ main(){
 	print(x);
 
 	diego.age = 5;
+	sergio.age = 10;
 
 	print(x + -4);
+
+	print(sergio.age);
 }
