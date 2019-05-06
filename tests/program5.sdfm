@@ -1,16 +1,21 @@
 function foo(n : [18]Int) -> Int{
 	n[15] = 19;
+	n[14] = n[0] / n[0];
 	
-	print( "printin");
-	print (n[15]);
-	print("inside");
 	return 18;
 }
 
 main(){
 	var a : [100]Int;
 	var x : [18]Int;
-	x[0] = 18;
+	x[0] = 20;
+
+	print("foo");
 	print(foo(x));
+
+	print("quince");
 	print(x[15]);
+
+	print("catorce");
+	print(x[14]);
 }
