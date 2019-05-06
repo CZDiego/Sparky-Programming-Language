@@ -1,24 +1,9 @@
-class A{
-	init(){
 
-	}
-
-	function foo(){
-		print("foo");
-	}
-}
-
-function z() -> Int{
-
-	print("a");
-	return 199;
-}
 
 main(){
 	var x : Int;
-	var a : A;
-	print("main");
-	x = z();
+	x = 50;
 	print(x);
-	a.foo();
+
+	print(x + -4);
 }
