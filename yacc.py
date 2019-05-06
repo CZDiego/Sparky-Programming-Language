@@ -677,7 +677,6 @@ def p_return1(p):
     'return1 : '
     result = program.VP.pop()
     result_type = program.pType.pop()
-    print(program.varTable[program.current_function.address].address)
     if result_type.check_type(program.current_function.return_type):
         program.current_quad = ("RETURN", result, None, program.varTable[program.current_function.address].address)
         program.add_quad()
@@ -752,6 +751,7 @@ def p_assignement1(p):
 
 def p_assignement2(p):
     'assignement2 :'
+
     right_type = program.pType.pop()
     right_operand = program.VP.pop()
     left_type = program.pType.pop()
@@ -1064,6 +1064,13 @@ def p_factor(p):
     | factor_a var_cte
     '''
 
+def p_factor_a(p):
+    '''
+    factor_a    : MINUS factor3
+    | NOT factor3
+    | empty factor4
+    '''
+
 #-----------------------------------------------------------------------
 # Neuro points factor stage
 #################
@@ -1075,19 +1082,23 @@ def p_factor2(p):
     'factor2   :'
     p = program.pOper.pop()
 
-def p_factor_a(p):
-    '''
-    factor_a    : MINUS
-    | NOT
-    | empty
-    '''
+def p_factor3(p):
+    'factor3 : '
+    #TODO: FONDO FALSO?
+    program.pOper.append("$")
+    program.pOper.append(p[-1])
+
+def p_factor4(p):
+    'factor4 : '
+    #TODO: FONDO FALSO?
+    program.pOper.append("$")
 
 def p_var_cte(p):
     '''
-    var_cte : obj call_func_optional var_cte1
-    | CTE_I var_cte2
-    | CTE_F var_cte3
-    | CTE_B var_cte4
+    var_cte : obj call_func_optional var_cte1 var_cte5
+    | CTE_I var_cte2 var_cte5
+    | CTE_F var_cte3 var_cte5
+    | CTE_B var_cte4 var_cte5
     '''
 
 def p_var_cte1(p):
@@ -1098,7 +1109,6 @@ def p_var_cte1(p):
         #NOT FUNC
         if program.pIDs[-1][3] is None:
             #id
-
             if len(program.pIDs[-1]) > 4:#function
                 v_id = program.pIDs[-1][4]
                 #program.VP.append(program.varTable[v_id].address)
@@ -1123,6 +1133,7 @@ def p_var_cte1(p):
 
 
         else:
+            #TODO: CHECAR SI ES FUNCIÓN
             print("id with attribute")
             #id.id
             #id[1].id
@@ -1152,9 +1163,33 @@ def p_var_cte4(p):
     'var_cte4   :'
     #buscarla en memoria global, si no, meterla
     program.VP.append(("cte", bool(p[-1])))
+    if p[-1] == "true":
+        program.VP.append(("cte", True))
+    else:
+        program.VP.append(("cte", False))
     t = SparkyType()
     t.type = "Bool"
     program.pType.append(t)
+
+def p_var_cte5(p):
+    'var_cte5   :'
+    if len(program.pOper) > 0:
+        operator = program.pOper[-1]
+        if operator == "-" or operator == "!":
+            operator = program.pOper.pop()
+            result = program.VP.pop()
+            t = program.pType.pop()
+            res_address = program.current_function.tempMemory.get_next_address(t)
+            program.current_quad = (operator, result, None, res_address)
+            program.add_quad()
+            program.VP.append(res_address)
+            program.pType.append(t)
+
+    program.pOper.pop()
+
+
+
+
 
 def p_array(p):
     '''
@@ -1286,14 +1321,12 @@ def p_call_f1(p):
     if program.pIDs[-1][3] is None:
         program.called_function = program.funDir[program.pIDs[-1][0]]
         # program.funDir[program.pIDs.pop()]
-        print(program.called_function.address)
-        print(program.varTable[program.called_function.address].address)
         x = program.pIDs.pop()
         program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
         program.current_param_num = 0
         program.current_quad = ("ERA", program.called_function.address, None, None)
         program.add_quad()
-        program.pEras.append((program.called_function.return_type,program.called_function.address))
+        program.pEras.append((program.called_function.return_type,program.called_function.address, False))
     else:
         #id . id ( * )
         t = program.current_function.varTable[program.pIDs[-1][0]].s_type
@@ -1306,7 +1339,7 @@ def p_call_f1(p):
         program.current_param_num = 0
         program.current_quad = ("ERA", program.called_function.address, None, None)
         program.add_quad()
-        program.pEras.append((program.called_function.return_type,program.called_function.address))
+        program.pEras.append((program.called_function.return_type,program.called_function.address, True))
 
 
 def p_call_func_optional(p):
@@ -1325,11 +1358,14 @@ def p_call_f3(p):
         print("ERROR Type MISMATCH")
         # pide memoria para tipo temporal
     address = program.current_function.tempMemory.get_next_address(era_return[0])
-    print(program.varTable[era_return[1]].address)
-
     program.current_quad = ("=", program.varTable[era_return[1]].address, None, address)
     program.add_quad()
     program.VP.append(address)
+
+    if era_return[2]:
+        t = SparkyType()
+        t.type = "Int"
+        program.pType.append(t)
 
 
 #no need for comment since lexer ignores it
