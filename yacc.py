@@ -696,6 +696,7 @@ def p_obj1(p):
     #program.current_id = p[-1]
     program.pOper.append("$")
     program.pIDs.append((p[-1],False, False, None))
+    #pIDS = (nombre, is_array, is_matrix, has_atribute)
 
 def p_obj2(p):
     'obj2 :'
@@ -717,11 +718,19 @@ def p_assignement1(p):
         if t.row > 0:
             #print("array or matrix")
             program.pOper.append("=")
-            #program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
-            #print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
         elif t.is_object():
             #id is object
-            print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
+            #TODO: CHECAR QUE OBJETO EXISTA
+            if not program.pIDs[-1][3] is None:
+                attribute_address = program.current_function.varTable.objects[program.pIDs[-1][0]].varTable[program.pIDs[-1][3]].address
+                attribute_type = program.current_function.varTable.objects[program.pIDs[-1][0]].varTable[program.pIDs[-1][3]].s_type
+
+                program.VP.append(attribute_address)
+                program.pType.append(attribute_type)
+                program.pOper.append("=")
+            else:
+                print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO OBJECT")
+
         else:
             program.VP.append(program.current_function.varTable[program.pIDs[-1][0]].address)
             program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
@@ -1110,13 +1119,14 @@ def p_var_cte1(p):
         if program.pIDs[-1][3] is None:
             #id
             if len(program.pIDs[-1]) > 4:#function
+                #todo: checar que sea función
                 v_id = program.pIDs[-1][4]
                 #program.VP.append(program.varTable[v_id].address)
                 t = SparkyType()
                 t.type = program.varTable[v_id].s_type.type
                 program.pType.append(t)
-
             elif not program.pIDs[-1][1] and not program.pIDs[-1][2]:
+                #not array and not matrix
                 if program.pIDs[-1][0] in program.current_function.varTable.directory:
                     address = program.current_function.varTable[program.pIDs[-1][0]].address
                     program.VP.append(address)

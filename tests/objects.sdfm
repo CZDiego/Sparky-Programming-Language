@@ -1,9 +1,25 @@
+class Person{
+	var age : Int;
+	var price : Int;
+
+	init(){
+
+	}
+
+	function foo(){
+		print("foo");
+	}
+}
 
 
 main(){
 	var x : Int;
+	var diego : Person;
+	var sergio : Person;
 	x = 50;
 	print(x);
+
+	diego.age = 5;
 
 	print(x + -4);
 }
