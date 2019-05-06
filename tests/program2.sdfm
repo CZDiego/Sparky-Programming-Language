@@ -1,7 +1,4 @@
 function factorial( n : Int) -> Int{
-	var z : Int;
-	z = 1;
-	print(n);
 	if n == 1{
 		return 1;
 	}

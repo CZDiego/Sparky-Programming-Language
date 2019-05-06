@@ -16,6 +16,7 @@ class VirtualMachine:
 		self.iterators         = []
 		self.global_memory     = dict()
 		self.function_memory   = [dict()]
+		self.class_memory      = []
 		self.activation_record = []
 		self.start_time        = 0
 		self.end_time          = 0
@@ -40,8 +41,9 @@ class VirtualMachine:
 			"GOTOF"   : self.gotof,
 			"ERAO"	  : self.erao,
 			"ERA"     : self.era, 
-			"PARAM"   : self.param,
 			"PARAMO"  : self.paramo,
+			"PARAM"   : self.param,
+			"GOSUBO"  : self.gosubo,
 			"GOSUB"   : self.gosub,
 			"RETURN"  : self.return_value,
 			"ENDPROC" : self.end_proc,
@@ -90,25 +92,33 @@ class VirtualMachine:
 			return self.value_from_memory(tp[1]) # memory[tp[1]]
 
 	def value_from_memory(self, address):
-		if address < 20000 or address >= 50000:
+		if address < 20000 or address >= 80000:
 			#global memory
 			if address in self.global_memory:
 				return self.global_memory[address]
 			else:
 				print(error_message + "Error, used variable before initalization")
 				sys.exit(0)
-		else:
+		elif address < 65000:
 			if address in self.function_memory[-1]:
 				return self.function_memory[-1][address]
 			else:
 				print(error_message + "Error, used variable before initalization")
 				sys.exit(0)
+		else:
+			if address in self.class_memory[-1]:
+				return self.class_memory[-1][address]
+			else:
+				print(error_message + "Error, used variable before initalization")
+				sys.exit(0)
 
 	def value_to_memory(self, address, value):
-		if address < 20000 or address >= 50000:
+		if address < 20000 or address >= 80000:
 			self.global_memory[address] = value
-		else:
+		elif address < 65000:
 			self.function_memory[-1][address] = value
+		else:
+			self.class_memory[-1][address] = value
 		
 
 	def equals(self, quad):
@@ -239,18 +249,21 @@ class VirtualMachine:
 
 	def erao(self, quad):
 		print("ERAO")
+		self.class_memory.append(dict())
 
 	def era(self, quad):
 		self.activation_record.append(dict())
 		
-	def paramo(selfs,quad):
+	def paramo(self,quad):
 		print("PARAMO")
+		self.class_memory[-1][quad[3]] = self.value_from_memory(quad[1])
 
 	def param(self, quad):
 		self.activation_record[-1][quad[3]] = self.value_from_memory(quad[1])
 
 	def gosubo(self, quad):
-		print("SUBO")
+		print("GOSUBO")
+		self.class_memory.pop()
 
 	def gosub(self, quad):
 		self.function_memory.append(dict())
@@ -279,7 +292,6 @@ class VirtualMachine:
 			
 
 	def end(self, quad):
-		print("end")
 		self.end_time = time.monotonic()
 		print("Execution time: " + str((timedelta(seconds=self.end_time - self.start_time))))
 		sys.exit(0)
