@@ -16,6 +16,7 @@ class Var:
 		self.private   = "public"
 		self.address   = 0
 		self.constant  = False
+		self.is_param  = False
 
 	def deepcopy(self):
 		return deepcopy(self)

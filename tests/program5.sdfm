@@ -1,0 +1,12 @@
+function foo(n : [18]Int) -> Int{
+	n[15] = 19;
+	return 18;
+}
+
+main(){
+	var a : [100]Int;
+	var x : [18]Int;
+	x[0] = 18;
+	print(foo(x));
+	print(x[15]);
+}

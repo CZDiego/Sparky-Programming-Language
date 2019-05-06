@@ -58,6 +58,7 @@ class VirtualMachine:
 
 		while True:
 			clean_quad = self.clean_quad(self.quads[self.iterators[-1]])
+			#print(clean_quad)
 			self.funcs[clean_quad[0]](clean_quad)
 			self.iterators[-1] = self.iterators[-1] + 1
 
@@ -87,11 +88,12 @@ class VirtualMachine:
 			else:
 				self.global_memory[80002] = tp[1]
 				return 80002
-		else:
+		elif tp[0] == "pointer":
 			#pointer
 			return self.value_from_memory(tp[1]) # memory[tp[1]]
 
 	def value_from_memory(self, address):
+		#print(address)
 		if address < 20000 or address >= 80000:
 			#global memory
 			if address in self.global_memory:
@@ -112,6 +114,27 @@ class VirtualMachine:
 				print(error_message + "Error, used variable before initalization")
 				sys.exit(0)
 
+	def value_from_memory_below(self, address, memory):
+		if address < 20000 or address >= 80000:
+			#global memory
+			if address in self.global_memory:
+				return self.global_memory[address]
+			else:
+				print(error_message + "Error, used variable before initalization")
+				sys.exit(0)
+		elif address < 65000:
+			if address in self.function_memory[memory]:
+				return self.function_memory[memory][address]
+			else:
+				print(error_message + "Error, used variable before initalization")
+				sys.exit(0)
+		else:
+			if address in self.class_memory[memory]:
+				return self.class_memory[memory][address]
+			else:
+				print(error_message + "Error, used variable before initalization")
+				sys.exit(0)
+
 	def value_to_memory(self, address, value):
 		if address < 20000 or address >= 80000:
 			self.global_memory[address] = value
@@ -119,10 +142,21 @@ class VirtualMachine:
 			self.function_memory[-1][address] = value
 		else:
 			self.class_memory[-1][address] = value
+
+	def value_to_memory_below(self, address, value, memory):
+		if address < 20000 or address >= 80000:
+			self.global_memory[address] = value
+		elif address < 65000:
+			self.function_memory[memory][address] = value
+		#else:
+			#self.class_memory[memory][address] = value
 		
 
 	def equals(self, quad):
-		self.value_to_memory(quad[3], self.value_from_memory(quad[1]))
+		if not quad[3].__class__.__name__ in ('tuple'):
+			self.value_to_memory(quad[3], self.value_from_memory(quad[1]))
+		else:
+			self.value_to_memory_below(quad[3][1], self.value_from_memory(quad[1]), quad[3][3])
 
 	def multiplication(self, quad):
 		temp = self.value_from_memory(quad[1]) * self.value_from_memory(quad[2])
@@ -133,8 +167,16 @@ class VirtualMachine:
 		self.value_to_memory(quad[3], temp)
 
 	def plus(self, quad):
-		temp = self.value_from_memory(quad[1]) + self.value_from_memory(quad[2])
-		self.value_to_memory(quad[3], temp)
+		if not quad[2].__class__.__name__ in ('tuple'):
+			temp = self.value_from_memory(quad[1]) + self.value_from_memory(quad[2])
+			self.value_to_memory(quad[3], temp)
+		else:
+			#('reference', base, size, 0)
+			left = self.value_from_memory(quad[1])
+			right = quad[2][1]
+			temp = left + right
+			#print("below", temp , quad[2][2], quad[2][3])
+			self.value_to_memory(quad[3], ("below", temp , quad[2][2], quad[2][3]))
 
 	def minus(self, quad):
 		#minus unario
@@ -259,7 +301,15 @@ class VirtualMachine:
 		self.class_memory[-1][quad[3]] = self.value_from_memory(quad[1])
 
 	def param(self, quad):
-		self.activation_record[-1][quad[3]] = self.value_from_memory(quad[1])
+		if quad[2] is None:
+			self.activation_record[-1][quad[3]] = self.value_from_memory(quad[1])
+		else:
+			#magia
+			current_memory = len(self.function_memory) - 1
+			size = quad[2]
+			address = quad[1]
+			self.activation_record[-1][quad[3]] = ("reference", address, size, current_memory)
+			#25000 = ("reference",25000,18,0)
 
 	def gosubo(self, quad):
 		print("GOSUBO")

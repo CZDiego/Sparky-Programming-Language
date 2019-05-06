@@ -577,6 +577,7 @@ def p_param1(p):
 
 def p_param2(p):
     'param2 :'
+    program.current_var.is_param = True
     program.current_var.s_type = program.current_type
     s_type = program.current_type
     #program.current_var.address = program.current_function.funMemory.get_next_address(s_type)
@@ -800,13 +801,16 @@ def p_assignement1(p):
     global error
     # OBJ = . EXPRESSION ;
     #buscar que exista en tabla de variables local y asi
+
     if program.pIDs[-1][0] in program.current_function.varTable:
+        
         #id = . expression
         #is_object
         t = program.current_function.varTable[program.pIDs[-1][0]].s_type
         if t.row > 0:
-            #print("array or matrix")
+            print("array or matrix")
             program.pOper.append("=")
+
         elif t.is_object():
             #id is object
             #TODO: CHECAR QUE OBJETO EXISTA
@@ -828,6 +832,7 @@ def p_assignement1(p):
             program.pOper.append("=")
     elif program.current_class_name != "":
         if program.pIDs[-1][0] in program.current_class.varTable:
+            var = program.current_class.varTable[program.pIDs[-1][0]]
             t = program.current_class.varTable[program.pIDs[-1][0]].s_type
             if t.row > 0:
                 print("array or matrix")
@@ -851,11 +856,12 @@ def p_assignement1(p):
          
         #sys.exit(0)
     #program.current_id = ""
-    program.pIDs.pop()
+    
 
 def p_assignement2(p):
     'assignement2 :'
-
+    var = program.current_function.varTable[program.pIDs[-1][0]]
+    program.pIDs.pop()
     right_type = program.pType.pop()
     right_operand = program.VP.pop()
     left_type = program.pType.pop()
@@ -868,8 +874,11 @@ def p_assignement2(p):
          
         #sys.exit(0)
     else:
-
+        #if var.is_param:
+        #    program.current_quad = (operator, right_operand, None, ("pointer", left_operand))
+        #else:
         program.current_quad = (operator, right_operand, None, left_operand)
+        
         program.add_quad()
 
 def p_print(p):
@@ -997,6 +1006,7 @@ def p_call_param1(p):
 
     popped_type = program.pType.pop()
     fun_param_type = program.called_function.param_key[program.current_param_num][0]
+    
     if fun_param_type.check_type(popped_type):
         if popped_type.is_object():
             #aosdnasijdnsioadfj
@@ -1010,10 +1020,22 @@ def p_call_param1(p):
                 paramID += 1
             program.current_param_num += 1
         else:
-            program.current_quad = ("PARAM", program.VP.pop(), None, program.called_function.param_key[program.current_param_num][1])
-            #print(program.called_function.param_key[program.current_param_num][0].type)
-            program.add_quad()
-            program.current_param_num += 1
+            print("not object ")
+            if popped_type.row is 0:
+                program.current_quad = ("PARAM", program.VP.pop(), None, program.called_function.param_key[program.current_param_num][1])
+                #print(program.called_function.param_key[program.current_param_num][0].type)
+                program.add_quad()
+                program.current_param_num += 1
+            else:
+                total = 1;
+                if popped_type.col > 0:
+                    total = popped_type.row * popped_type.col;
+                else:
+                    total = popped_type.row
+                program.current_quad = ("PARAM", program.VP.pop(), total, program.called_function.param_key[program.current_param_num][1])
+                #print(program.called_function.param_key[program.current_param_num][0].type)
+                program.add_quad()
+                program.current_param_num += 1
     else:
         print(error_message + "Parameter given is of wrong type")
          
@@ -1257,28 +1279,49 @@ def p_var_cte1(p):
                 v_id = program.pIDs[-1][4]
                 #program.VP.append(program.varTable[v_id].address)
                 t = SparkyType()
-                t.type = program.varTable[v_id].s_type.type
+                t = program.varTable[v_id].s_type
                 program.pType.append(t)
             elif not program.pIDs[-1][1] and not program.pIDs[-1][2]:
-                #not array and not matrix
-                if program.pIDs[-1][0] in program.current_function.varTable.directory:
-                    if program.current_function.varTable[program.pIDs[-1][0]].s_type.is_object():
-                        print(error_message + "cannot print object")
-                        global error
-                         
-                        #sys.exit(0)
-                    else:
-                        address = program.current_function.varTable[program.pIDs[-1][0]].address
-                        program.VP.append(address)
-                        t = SparkyType()
-                        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
-                        program.pType.append(t)
-                else:
-                    address = program.current_class.varTable[program.pIDs[-1][0]].address
+                #checar que no sea array de verdad
+                #todo: checar global
+                if program.current_scope == "function":
+                    tp = program.current_function.varTable[program.pIDs[-1][0]].s_type
+                    print(tp.type)
+                    print(tp.row)
+                    print(tp.col)
+                    address = program.current_function.varTable[program.pIDs[-1][0]].address
                     program.VP.append(address)
                     t = SparkyType()
-                    t.type = program.current_class.varTable[program.pIDs[-1][0]].s_type.type
+                    t = program.current_function.varTable[program.pIDs[-1][0]].s_type
                     program.pType.append(t)
+                else:
+
+                 #not array and not matrix
+                    if program.pIDs[-1][0] in program.current_function.varTable.directory:
+                        if program.current_function.varTable[program.pIDs[-1][0]].s_type.is_object():
+                            print(error_message + "cannot print object")
+                            global error
+                             
+                            #sys.exit(0)
+                        else:
+                            address = program.current_function.varTable[program.pIDs[-1][0]].address
+                            program.VP.append(address)
+                            t = SparkyType()
+                            t = program.current_function.varTable[program.pIDs[-1][0]].s_type
+                            program.pType.append(t)
+                    else:
+                        address = program.current_class.varTable[program.pIDs[-1][0]].address
+                        program.VP.append(address)
+                        t = SparkyType()
+                        t = program.current_class.varTable[program.pIDs[-1][0]].s_type
+                        program.pType.append(t)
+            else:
+                print("array or matrix")
+                if program.pIDs[-1][1]:
+                    print("casilla")
+                else:
+                    print("array")
+
             #elif program.current_id_is_matrix:
 
 
@@ -1287,7 +1330,7 @@ def p_var_cte1(p):
                 v_id = program.pIDs[-1][4]
                 #program.VP.append(program.varTable[v_id].address)
                 t = SparkyType()
-                t.type = program.varTable[v_id].s_type
+                t = program.varTable[v_id].s_type
                 program.pType.append(t)
             else:
 
@@ -1386,7 +1429,9 @@ def p_array1(p):
          
         #sys.exit(0)
     else:
+        
         program.current_quad = ("VER", 0, var.s_type.row - 1, program.VP[-1])
+        
         program.add_quad()
 
 def p_array2(p):
@@ -1411,6 +1456,7 @@ def p_array3(p):
     current_array = program.pArray.pop()
     base_address = program.current_function.varTable[current_array].address
     total_rows = program.current_function.varTable[current_array].s_type.row
+    var = program.current_function.varTable[program.pIDs[-1][0]]
 
     if program.pIDs[-1][1]:
         rows = program.VP.pop()
@@ -1418,7 +1464,10 @@ def p_array3(p):
         t = SparkyType()
         t.type = "Int"
         result = program.current_function.tempMemory.get_next_address(t)
-        program.current_quad = ("+", rows, ("cte", base_address), result)
+        if var.is_param:
+            program.current_quad = ("+", rows, ("pointer", base_address), result)
+        else:
+            program.current_quad = ("+", rows, ("cte", base_address), result)
         program.add_quad()
         program.VP.append(("pointer", result))
         
@@ -1445,7 +1494,11 @@ def p_array3(p):
         program.add_quad()
 
         result3 = program.current_function.tempMemory.get_next_address(t)
-        program.current_quad = ("+", result2, ("cte", base_address), result3)
+        if var.is_param:
+            program.current_quad = ("+", result2, ("pointer", base_address), result3)
+        else:
+            program.current_quad = ("+", result2, ("cte", base_address), result3)
+        #program.current_quad = ("+", result2, ("cte", base_address), result3)
         program.add_quad()
 
         program.VP.append(("pointer", result3))
