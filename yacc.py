@@ -296,6 +296,7 @@ def p_var2(p):
     if program.current_scope == "function":
         program.current_var.s_type = program.current_type
         if program.current_var.s_type.is_object():
+            program.current_var.address = program.current_var_name
             program.new_object()
             s_type = program.current_var.s_type
             program.current_object.s_type = s_type;
