@@ -677,7 +677,6 @@ def p_return1(p):
     'return1 : '
     result = program.VP.pop()
     result_type = program.pType.pop()
-    print(program.varTable[program.current_function.address].address)
     if result_type.check_type(program.current_function.return_type):
         program.current_quad = ("RETURN", result, None, program.varTable[program.current_function.address].address)
         program.add_quad()
@@ -1065,6 +1064,13 @@ def p_factor(p):
     | factor_a var_cte
     '''
 
+def p_factor_a(p):
+    '''
+    factor_a    : MINUS factor3
+    | NOT factor3
+    | empty factor4
+    '''
+
 #-----------------------------------------------------------------------
 # Neuro points factor stage
 #################
@@ -1076,19 +1082,23 @@ def p_factor2(p):
     'factor2   :'
     p = program.pOper.pop()
 
-def p_factor_a(p):
-    '''
-    factor_a    : MINUS
-    | NOT
-    | empty
-    '''
+def p_factor3(p):
+    'factor3 : '
+    #TODO: FONDO FALSO?
+    program.pOper.append("$")
+    program.pOper.append(p[-1])
+
+def p_factor4(p):
+    'factor4 : '
+    #TODO: FONDO FALSO?
+    program.pOper.append("$")
 
 def p_var_cte(p):
     '''
-    var_cte : obj call_func_optional var_cte1
-    | CTE_I var_cte2
-    | CTE_F var_cte3
-    | CTE_B var_cte4
+    var_cte : obj call_func_optional var_cte1 var_cte5
+    | CTE_I var_cte2 var_cte5
+    | CTE_F var_cte3 var_cte5
+    | CTE_B var_cte4 var_cte5
     '''
 
 def p_var_cte1(p):
@@ -1099,7 +1109,6 @@ def p_var_cte1(p):
         #NOT FUNC
         if program.pIDs[-1][3] is None:
             #id
-
             if len(program.pIDs[-1]) > 4:#function
                 v_id = program.pIDs[-1][4]
                 #program.VP.append(program.varTable[v_id].address)
@@ -1154,9 +1163,33 @@ def p_var_cte4(p):
     'var_cte4   :'
     #buscarla en memoria global, si no, meterla
     program.VP.append(("cte", bool(p[-1])))
+    if p[-1] == "true":
+        program.VP.append(("cte", True))
+    else:
+        program.VP.append(("cte", False))
     t = SparkyType()
     t.type = "Bool"
     program.pType.append(t)
+
+def p_var_cte5(p):
+    'var_cte5   :'
+    if len(program.pOper) > 0:
+        operator = program.pOper[-1]
+        if operator == "-" or operator == "!":
+            operator = program.pOper.pop()
+            result = program.VP.pop()
+            t = program.pType.pop()
+            res_address = program.current_function.tempMemory.get_next_address(t)
+            program.current_quad = (operator, result, None, res_address)
+            program.add_quad()
+            program.VP.append(res_address)
+            program.pType.append(t)
+
+    program.pOper.pop()
+
+
+
+
 
 def p_array(p):
     '''
@@ -1288,8 +1321,6 @@ def p_call_f1(p):
     if program.pIDs[-1][3] is None:
         program.called_function = program.funDir[program.pIDs[-1][0]]
         # program.funDir[program.pIDs.pop()]
-        print(program.called_function.address)
-        print(program.varTable[program.called_function.address].address)
         x = program.pIDs.pop()
         program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
         program.current_param_num = 0

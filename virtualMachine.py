@@ -31,6 +31,7 @@ class VirtualMachine:
 			"=="      : self.same,
 			"&&"      : self.compare_and,
 			"||"      : self.compare_or,
+			"!"       : self.operator_not,
 			"PRINT"   : self.print,
 			"INPUT"   : self.input,
 			"GOTO"    : self.goto,
@@ -122,8 +123,13 @@ class VirtualMachine:
 		self.value_to_memory(quad[3], temp)
 
 	def minus(self, quad):
-		temp = self.value_from_memory(quad[1]) - self.value_from_memory(quad[2])
-		self.value_to_memory(quad[3], temp)
+		#minus unario
+		if quad[2] is None:
+			temp = self.value_from_memory(quad[1]) * -1
+			self.value_to_memory(quad[3], temp)
+		else:
+			temp = self.value_from_memory(quad[1]) - self.value_from_memory(quad[2])
+			self.value_to_memory(quad[3], temp)
 
 	def less_than(self, quad):
 		if self.value_from_memory(quad[1]) < self.value_from_memory(quad[2]):
@@ -172,6 +178,12 @@ class VirtualMachine:
 			self.value_to_memory(quad[3], True)
 		else:
 			self.value_to_memory(quad[3], False)
+
+	def operator_not(self, quad):
+		if self.value_from_memory(quad[1]):
+			self.value_to_memory(quad[3], False)
+		else:
+			self.value_to_memory(quad[3], True)
 
 	def print(self, quad):
 		if isinstance(quad[1], str):
