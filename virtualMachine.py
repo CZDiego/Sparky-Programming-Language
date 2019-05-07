@@ -101,19 +101,20 @@ class VirtualMachine:
 				if address in self.global_memory:
 					return self.global_memory[address]
 				else:
-					print(error_message + "Error, used variable before initalization")
+					print(error_message + "Used variable before initalization")
 					sys.exit(0)
 			elif address < 65000:
+				
 				if address in self.function_memory[-1]:
 					return self.function_memory[-1][address]
 				else:
-					print(error_message + "Error, used variable before initalization")
+					print(error_message + "Used variable before initalization")
 					sys.exit(0)
 			else:
 				if address in self.class_memory[-1]:
 					return self.class_memory[-1][address]
 				else:
-					print(error_message + "Error, used variable before initalization")
+					print(error_message + "Used variable before initalization")
 					sys.exit(0)
 
 	def value_from_memory_below(self, address, memory):
@@ -122,19 +123,19 @@ class VirtualMachine:
 			if address in self.global_memory:
 				return self.global_memory[address]
 			else:
-				print(error_message + "Error, used variable before initalization")
+				print(error_message + "Used variable before initalization")
 				sys.exit(0)
 		elif address < 65000:
 			if address in self.function_memory[memory]:
 				return self.function_memory[memory][address]
 			else:
-				print(error_message + "Error, used variable before initalization")
+				print(error_message + "Used variable before initalization")
 				sys.exit(0)
 		else:
 			if address in self.class_memory[memory]:
 				return self.class_memory[memory][address]
 			else:
-				print(error_message + "Error, used variable before initalization")
+				print(error_message + "Used variable before initalization")
 				sys.exit(0)
 
 	def value_to_memory(self, address, value):
