@@ -798,10 +798,8 @@ def p_obj(p):
 
 def p_obj1(p):
     'obj1 :'
-    #program.current_id = p[-1]
     program.pOper.append("$")
     program.pIDs.append((p[-1],False, False, None))
-    #pIDS = (nombre, is_array, is_matrix, has_atribute)
 
 def p_obj2(p):
     'obj2 :'
@@ -1574,7 +1572,9 @@ def p_array3(p):
         program.VP.append(("pointer", result))
         
         t = SparkyType()
-        t = program.current_function.varTable[program.pIDs[-1][0]].s_type
+        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
+        t.row = 0
+        t.col = 0
         #t.row = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         #t.col = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         program.pType.append(t)

@@ -1,5 +1,7 @@
-function modify_array(n : [18]Float){
-	input(n[15]);
+function modify_array(n : Float){
+	print("inside");
+	print(n);
+	print("finish");
 }
 
 main(){
@@ -7,9 +9,13 @@ main(){
 	var x : Int;
 
 	print("main");
-	i[0] = 19;
 
-	modify_array(i);
+	i[0] = 19;
+	i[5] = 1000;
+	i[15] = i[0] + i[5];
+	print("main");
+	
+	modify_array(i[5]);
 
 	print(i[0]);
 	print(i[15]);
