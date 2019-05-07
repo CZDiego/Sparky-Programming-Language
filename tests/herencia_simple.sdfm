@@ -1,0 +1,40 @@
+class Person{
+	var age : Int;
+
+	init(){
+
+	}
+
+
+}
+
+class Student : Person{
+	var student_number : Int;
+	var graduated : Bool;
+
+	init(){
+
+	}
+
+	function grad(){
+		if student_number > 0{
+			print("x!!");
+		}else{
+			print("not x yet");
+		}
+	}
+
+
+}
+
+main(){
+	var diego : Student;
+	
+	diego.age = 23;
+	diego.student_number = 817441;
+	diego.graduated = false;
+
+	print(diego.age);
+	print(diego.student_number);
+	print(diego.graduated);
+}

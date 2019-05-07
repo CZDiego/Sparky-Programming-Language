@@ -1,0 +1,47 @@
+function fibonacci(n : Int) -> Int{
+
+    var t1 : Int;
+    var t2 : Int;
+    var nextTerm : Int;
+    var i : Int;
+
+    t1 = 0;
+    t2 = 1;
+    nextTerm = 0;
+    i = 1;
+
+    if n == 0{
+        return 0;
+    }
+
+    if n == 1{
+        return 1;   
+    }
+
+    while i < n{
+
+        nextTerm = t1 + t2;
+        t1 = t2;
+        t2 = nextTerm;
+
+        i = i + 1;
+    }
+
+    return nextTerm;
+
+    
+}
+
+main()
+{
+    var n : Int;
+    var x : Int;
+
+    print("Numero para calcular el fibonacci:");
+    input(n);
+
+    x = fibonacci(n);
+
+    print("result");
+    print(x);
+}

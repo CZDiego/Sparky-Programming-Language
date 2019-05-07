@@ -6,7 +6,6 @@
 # ------------------------------------------------------------
 import sys
 import time
-from datetime import timedelta
 
 error_message = '\033[91m' + "ERROR: " + '\033[0m' 
 
@@ -53,7 +52,7 @@ class VirtualMachine:
 
 	def execute(self):
 		print('\033[94m' + "executing..." + '\033[0m' )
-		self.start_time = time.monotonic()
+		self.start_time = time.time()
 		self.iterators.append(0)
 
 		while True:
@@ -361,7 +360,7 @@ class VirtualMachine:
 			
 
 	def end(self, quad):
-		self.end_time = time.monotonic()
-		print("Execution time: " + str((timedelta(seconds=self.end_time - self.start_time))))
+		self.end_time = time.time()
+		print("Execution time: " + str(self.end_time - self.start_time) + " seconds.")
 		sys.exit(0)
 
