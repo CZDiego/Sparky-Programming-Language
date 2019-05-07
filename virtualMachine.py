@@ -300,7 +300,6 @@ class VirtualMachine:
 			self.iterators[-1] = quad[3] - 1
 
 	def erao(self, quad):
-		print("ERAO")
 		self.class_memory.append(dict())
 
 	def era(self, quad):
@@ -308,6 +307,8 @@ class VirtualMachine:
 		
 	def paramo(self,quad):
 		print("PARAMO")
+		print(self.value_from_memory(quad[1]))
+		print(quad[3])
 		self.class_memory[-1][quad[3]] = self.value_from_memory(quad[1])
 
 	def param(self, quad):
@@ -330,7 +331,6 @@ class VirtualMachine:
 				#25000 = ("reference",25000,18,0)
 
 	def gosubo(self, quad):
-		print("GOSUBO")
 		self.class_memory.pop()
 
 	def gosub(self, quad):

@@ -4,7 +4,8 @@
 # Luis Salomon Flores Ugalde | A00817435
 # Diego Contreras            | A00817441
 # ------------------------------------------------------------
-
+import sys
+error_message = '\033[91m' + "ERROR: " + '\033[0m' 
 
 class MemoryMap:
 
@@ -64,14 +65,26 @@ class MemoryMap:
 
         if t.type == "Int":
             self.INT_LOC = self.INT_LOC + total_space
+            if self.INT_LOC > self.MAX_INT_LOC:
+                print(error_message + " Too many variables")
+                sys.exit(0)
             return self.INT_LOC - total_space
         elif t.type == "Float":
             self.FLOAT_LOC = self.FLOAT_LOC + total_space
+            if self.FLOAT_LOC > self.MAX_FLOAT_LOC:
+                print(error_message + " Too many variables")
+                sys.exit(0)
             return self.FLOAT_LOC - total_space
         elif t.type == "Bool":
             self.BOOL_LOC = self.BOOL_LOC + total_space
+            if self.BOOL_LOC > self.MAX_BOOL_LOC:
+                print(error_message + " Too many variables")
+                sys.exit(0)
             return self.BOOL_LOC - total_space
         elif t.is_object():
             self.OBJ_LOC = self.OBJ_LOC + total_space
+            if self.OBJ_LOC > self.MAX_OBJ_LOC:
+                print(error_message + " Too many variables")
+                sys.exit(0)
             return self.OBJ_LOC - total_space
 
