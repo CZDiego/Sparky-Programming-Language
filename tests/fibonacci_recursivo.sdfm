@@ -1,0 +1,22 @@
+function fibonacci(n : Int) -> Int{
+
+    if n == 1 || n == 0 {
+        return n;
+    }
+
+    return fibonacci(n-1) + fibonacci(n-2);
+}
+
+main()
+{
+    var n : Int;
+    var x : Int;
+
+    print("Numero para calcular el fibonacci:");
+    input(n);
+
+    x = fibonacci(n);
+
+    print("result");
+    print(x);
+}

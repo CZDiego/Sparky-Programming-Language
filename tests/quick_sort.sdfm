@@ -1,7 +1,70 @@
+function quickSort(lista : [13]Int, limite_izq : Int, limite_der : Int)
+{
+    var izq : Int;
+    var der : Int;
+    var temporal : Int;
+    var pivote : Int;
+
+    izq=limite_izq;
+    der = limite_der;
+    pivote = lista[(izq+der)/2];
+
+
+    //start 
+    while lista[izq] < pivote && izq < limite_der {
+        izq = izq + 1;
+    }
+
+    while pivote < lista[der] && der > limite_izq {
+        der = der - 1;
+    }
+
+
+    if izq <= der{
+
+        temporal= lista[izq];
+        lista[izq]=lista[der];
+        lista[der]=temporal;
+        izq = izq + 1;
+        der = der - 1;
+    }
+
+
+    while izq <= der {
+        while lista[izq] < pivote && izq < limite_der {
+            izq = izq + 1;
+        }
+
+        while pivote < lista[der] && der > limite_izq {
+            der = der - 1;
+        }
+
+
+        if izq <= der{
+
+            temporal= lista[izq];
+            lista[izq]=lista[der];
+            lista[der]=temporal;
+            izq = izq + 1;
+            der = der - 1;
+        }
+
+    }
+
+    if limite_izq < der{
+        quickSort(lista,limite_izq,der);
+    }
+
+    if limite_der>izq {
+        quickSort(lista,izq,limite_der);
+    }
+
+}
 
 main(){
-
+    
     var lista : [13]Int;
+    var a : Int;
     var size : Int;
     var i : Int;
     lista[0] = 100;
@@ -26,5 +89,17 @@ main(){
        i = i + 1;
     }
 
+    quickSort(lista, 0, size-1);
+
     print();
+
+    print("Lista ordenada");
+    i = 0;
+    while(i<size) {
+        print(lista[i]);
+       i = i + 1;
+    }
+
+
+
 }

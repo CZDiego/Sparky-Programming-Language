@@ -1,0 +1,17 @@
+function foo(n : [10][10]Int) -> Int{
+	n[5][7] = 87;
+	print("hoho");
+	print(n[5][7]);
+	print("hoho2");
+	return 18;
+}
+
+main(){
+	var x : [10][10]Int;
+	var a : Int;
+	x[0][0] = 20;
+
+	a = foo(x);
+	print(x[5][7]);
+
+}
