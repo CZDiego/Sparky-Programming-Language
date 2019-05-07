@@ -1,13 +1,17 @@
-function hola(){
-	
+function modify_array(n : [18]Float){
+	input(n[15]);
 }
 
 main(){
-	var i : [19]Int;
+	var i : [18]Float;
 	var x : Int;
-	print("main");
 
-	x = 1.5 / 18;
-	print(x);
+	print("main");
+	i[0] = 19;
+
+	modify_array(i);
+
+	print(i[0]);
+	print(i[15]);
 	
 }

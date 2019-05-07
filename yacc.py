@@ -972,13 +972,19 @@ def p_input(p):
 
 def p_input1(p):
     'input1 : '
+    global error
     x = program.pIDs.pop()
     if not x[1] and not x[2]:
         #id simple
-        address = program.current_function.varTable[x[0]].address
-        type = program.current_function.varTable[x[0]].s_type.type
-        program.current_quad = ("INPUT", type, None, address)
-        program.add_quad()
+        if x[0] in program.current_function.varTable:
+            address = program.current_function.varTable[x[0]].address
+            type = program.current_function.varTable[x[0]].s_type.type
+            program.current_quad = ("INPUT", type, None, address)
+            program.add_quad()
+        else:
+            print(error_message + "Variable not declared in line " + str(p.lexer.lineno) + ".")
+            error = True
+            sys.exit(0)
     else:
         address = program.VP.pop()
         s_type = program.pType.pop()
