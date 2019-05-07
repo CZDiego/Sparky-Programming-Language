@@ -1,0 +1,31 @@
+class Person {
+	var age : Int;
+	var height : Float;
+	var weight : Float;
+	var is_men : Bool;
+
+	init();	
+}
+
+function foo(p : Person){
+
+	print("age");
+	print(p.age);
+	print("height");
+	print(p.height);
+	print("weight");
+	print(p.weight);
+	print("is_men");
+	print(p.is_men);
+
+}
+
+main(){
+	var spiderman : Person;
+
+	spiderman.age = 22;
+	spiderman.height = 180;
+	spiderman.weight = 60;
+	spiderman.is_men = true;
+	foo(spiderman);
+}

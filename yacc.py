@@ -1158,6 +1158,8 @@ def p_condition2(p):
     program.current_quad = ("GOTO", None, None, None)
     program.add_quad()
 
+def p_condition5(p):
+    'condition5 : '
     exp_type = program.pType.pop()
     if exp_type.type != "Bool":
         print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
@@ -1187,7 +1189,7 @@ def p_condition4(p):
 #  -----------------------------------------------------------------------
 
 def p_elseif(p):
-    'elseif : ELSEIF expression condition2 block'
+    'elseif : ELSEIF condition2 expression condition5 block'
 
 def p_else(p):
     'else   : ELSE block'
@@ -1797,7 +1799,7 @@ else:
     finally:
         if not error:
             #print("VirtualMachine.execute()")
-            #program.print_quads()
+            program.print_quads()
             #print("pJumps")
             #for x in program.pJumps:
             #    print(x)
