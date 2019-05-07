@@ -127,10 +127,10 @@ def p_type4(p):
     if p[-1] not in program.ClassDir:
         print(error_message + " Object Class has not been declared in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
         
          
-        ##sys.exit(0)
+         
     program.current_type.type = p[-1]
 
 #################
@@ -153,22 +153,8 @@ def p_atomic(p):
 
 def p_var_class(p):
     '''
-    var_class   : VAR ID var_c1 COL type var_class_a var_c2 SEMICOL
+    var_class   : VAR ID var_c1 COL type var_c2 SEMICOL
     |  VAR ID var_c1 COL typeM var_c2 SEMICOL
-    '''
-
-#assignment in declaration
-def p_var_class_a(p):
-    '''
-    var_class_a   : IS var_class_b
-    | empty
-    '''
-# Possible name change to cte_vars
-def p_var_class_b(p):
-    '''
-    var_class_b   : CTE_I var_c4
-    | CTE_F var_c5
-    | CTE_B var_c6
     '''
 
 
@@ -181,22 +167,22 @@ def p_var_c1(p):
     global error
     if program.current_scope == "global":
         if p[-1] in program.current_class.varTable.directory:
-            print(error_message + "VARIABLE DECLARADA ANTERIORMENTE in line " + str(p.lexer.lineno) + ".")
+            print(error_message + "Variable already declared in line " + str(p.lexer.lineno) + ".")
             error = True
-            #sys.exit(0)
+            sys.exit(0)
 
              
-            ##sys.exit(0)
+             
         else:
             program.current_var_name = p[-1]
 
     if program.current_scope == "function":
         if p[-1] in program.current_function.varTable:
-            print(error_message + "VARIABLE DECLARADA ANTERIORMENTE in line " + str(p.lexer.lineno) + ".")
+            print(error_message + "Variable already declared in line " + str(p.lexer.lineno) + ".")
             error = True
-            #sys.exit(0)
+            sys.exit(0)
              
-            ##sys.exit(0)
+             
         else:
             program.current_var_name = p[-1]
 
@@ -207,12 +193,15 @@ def p_var_c2(p):
     if program.current_scope == "global":
         program.current_var.s_type = program.current_type
         program.current_var.address = program.current_class.claMemory.get_next_address(program.current_var.s_type)
+        if program.current_var.address is None:
+            error = True
+            sys.exit(0)
         if program.current_var.s_type.is_object():
                 print(error_message + "Object class does not support objects in line " + str(p.lexer.lineno) + ".")
                 error = True
-                #sys.exit(0)
+                sys.exit(0)
                  
-                ##sys.exit(0)
+                 
         program.current_class.varTable.set(program.current_var_name, program.current_var)
 
     if program.current_scope == "function":
@@ -226,37 +215,23 @@ def p_var_c2(p):
                 v_type      = program.current_object.varTable[key].s_type
                 old_memo    = program.current_object.varTable[key].address
                 address     = program.current_function.funMemory.get_next_address(v_type)
+                if address is None:
+                    error = True
+                    sys.exit(0)
                 program.current_object.memMap[address] = old_memo
                 program.current_object.varTable[key].address = address
             program.current_function.varTable.objects[program.current_var_name] = program.current_object
         else:
             program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
+            if program.current_var.address is None:
+                error = True
+                sys.exit(0)
 
         program.current_function.varTable.set(program.current_var_name, program.current_var)
 
     program.current_var = Var()
     program.current_var_name = ""
     program.new_type()
-
-def p_var_c4(p):
-    'var_c4   :'
-    program.current_value = ("cte", int(p[-1]))
-    program.current_type.type = "Float"
-
-def p_var_c5(p):
-    'var_c5   :'
-    program.current_value = ("cte", float(p[-1]))
-    program.current_type.type = "Float"
-
-
-def p_var_c6(p):
-    'var_c6   :'
-    if p[-1] == "true":
-        program.current_value = ("cte", True)
-    else:
-        program.current_value = ("cte", False)
-    program.current_type.type = "Bool"
-
 
 #################
 # -----------------------------------------------------------------------
@@ -268,13 +243,6 @@ def p_var(p):
     |  VAR ID var1 COL typeM var2 SEMICOL
     '''
     
-# Possible name change to cte_vars
-def p_var_b(p):
-    '''
-    var_b   : CTE_I var4
-    | CTE_F var5
-    | CTE_B var6
-    '''
 #-----------------------------------------------------------------------
 # Neuro points var stage
 #################
@@ -284,21 +252,21 @@ def p_var1(p):
     global error
     if program.current_scope == "global":
         if p[-1] in program.varTable:
-            print(error_message + "VARIABLE DECLARADA ANTERIORMENTE in line " + str(p.lexer.lineno) + ".")
+            print(error_message + "Variable already declared in line " + str(p.lexer.lineno) + ".")
             error = True
-            #sys.exit(0)
+            sys.exit(0)
              
-            ##sys.exit(0)
+             
         else:
             program.current_var_name = p[-1]
     if program.current_scope == "function":
 
         if p[-1] in program.current_function.varTable:
-            print(error_message + "VARIABLE DECLARADA ANTERIORMENTE in line " + str(p.lexer.lineno) + ".")
+            print(error_message + "Variable already declared in line " + str(p.lexer.lineno) + ".")
             error = True
-            #sys.exit(0)
+            sys.exit(0)
              
-            ##sys.exit(0)
+             
         else:
             program.current_var_name = p[-1]
     # current_var = new var()
@@ -317,8 +285,12 @@ def p_var1(p):
 
 def p_var2(p):
     'var2    :'
+    global error
     if program.current_scope == "global":
         program.current_var.address = program.globalMemory.get_next_address(program.current_type)
+        if program.current_var.address is None:
+            error = True
+            sys.exit(0)
         program.current_var.s_type = program.current_type
         program.varTable.set(program.current_var_name, program.current_var)
     if program.current_scope == "function":
@@ -333,11 +305,17 @@ def p_var2(p):
                 v_type      = program.current_object.varTable[key].s_type
                 old_memo    = program.current_object.varTable[key].address
                 address     = program.current_function.funMemory.get_next_address(v_type)
+                if address is None:
+                    error = True
+                    sys.exit(0)
                 program.current_object.memMap[address] = old_memo
                 program.current_object.varTable[key].address = address
             program.current_function.varTable.objects[program.current_var_name] = program.current_object
         else:
             program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
+            if program.current_var.address is None:
+                error = True
+                sys.exit(0)
 
         program.current_function.varTable.set(program.current_var_name, program.current_var)
 
@@ -394,7 +372,14 @@ def p_var6(p):
 #-----------------------------------------------------------------------
 
 def p_let(p):
-    'let    : LET ID let1 COL type let2 IS var_b SEMICOL let3'
+    'let    : LET ID let1 COL type let2 IS let_b SEMICOL let3'
+
+def p_let_b(p):
+    '''
+    let_b   : CTE_I var4
+    | CTE_F var5
+    | CTE_B var6
+    '''
 #-----------------------------------------------------------------------
 # Neuro points let stage
 #################
@@ -410,28 +395,35 @@ def p_let1(p):
         if p[-1] in program.varTable:
             print(error_message + " Variable already declared at line " + str(p.lexer.lineno) + ".")
             error = True
-            #sys.exit(0)
+            sys.exit(0)
              
-            ##sys.exit(0)
+             
     elif program.current_scope == "function":
         if p[-1] in program.current_function.varTable:
             print(error_message + " Variable already declared at line " + str(p.lexer.lineno) + ".")
             error = True
-            #sys.exit(0)
+            sys.exit(0)
              
-            ##sys.exit(0)
+             
 
 
 def p_let2(p):
     'let2   :'
+    global error
     program.current_var.s_type = program.current_type
     if program.current_scope == "global":
         program.current_var.address = program.globalMemory.get_next_address(program.current_type)
+        if program.current_var.address is None:
+            error = True
+            sys.exit(0)
         program.varTable.set(program.current_var_name, program.current_var)
     elif program.current_scope == "function":
-        print("function:")
-        print(program.current_function.address)
+        #print("function:")
+        #print(program.current_function.address)
         program.current_var.address = program.current_function.funMemory.get_next_address(program.current_type)
+        if program.current_var.address is None:
+            error = True
+            sys.exit(0)
         program.current_function.varTable.set(program.current_var_name, program.current_var)
     
     # ONLY WORKS FOR GLOBAL MEMORY
@@ -446,11 +438,11 @@ def p_let3(p):
     #CHECK MAYBE FAILS ON GLOBAL MEMORY
     result = program.semanticCube.checkResult("=", program.current_var.s_type.type, program.current_type.type)
     if result == "Error":
-        print(error_message + " Type Mismatch at line " + str(p.lexer.lineno) + ".")
+        print(error_message + " Type missmatch at line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
 
     #ya se salio, entonces... hacer el cuadruplo con
     if program.current_scope == "global":
@@ -513,18 +505,18 @@ def p_fun1(p):
         if program.current_function_name in program.funDir:
             print(error_message + "Function already declared before in line " + str(p.lexer.lineno) + ".")
             error = True
-            #sys.exit(0)
+            sys.exit(0)
              
-            ##sys.exit(0)
+             
         else:
             program.funDir.set(program.current_function_name, program.current_function)
     else:
         if program.current_function_name in program.current_class.funDir:
             print(error_message + "Function already declared before in class in line " + str(p.lexer.lineno) + ".")            
             error = True
-            #sys.exit(0)
+            sys.exit(0)
              
-            ##sys.exit(0)
+             
 
     program.current_scope = "function"
 
@@ -533,11 +525,15 @@ def p_fun3(p):
 
 def p_fun4(p):
     'fun4   :'
+    global error
     program.current_function.return_type = program.current_type
     program.new_var()
     program.current_var_name = program.current_function.address
     t = program.current_function.return_type
     program.current_var.address = program.globalMemory.get_next_address(t)
+    if program.current_var.address is None:
+        error = True
+        sys.exit(0)
     program.current_var.s_type = program.current_type
     program.varTable.set(program.current_var_name, program.current_var)
     #pide memoria global con nombre
@@ -591,12 +587,13 @@ def p_param1(p):
     if program.current_var_name in program.current_function.varTable.directory:
         print(error_message + "Function already has a parameter with that name in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
 
 def p_param2(p):
     'param2 :'
+    global error
     program.current_var.is_param = True
     program.current_var.s_type = program.current_type
     s_type = program.current_type
@@ -611,6 +608,9 @@ def p_param2(p):
             v_type = program.current_object.varTable[key].s_type
             old_memo = program.current_object.varTable[key].address
             address = program.current_function.funMemory.get_next_address(v_type)
+            if address is None:
+                error = True
+                sys.exit(0)
             program.current_object.memMap[address] = old_memo
             program.current_object.varTable[key].address = address
         program.current_function.varTable.objects[program.current_var_name] = program.current_object
@@ -619,6 +619,9 @@ def p_param2(p):
         program.new_object()
     else:
         program.current_var.address = program.current_function.funMemory.get_next_address(s_type)
+        if program.current_var.address is None:
+            error = True
+            sys.exit(0)
         program.current_function.param_key.append((s_type, program.current_var.address))
 
     program.current_function.varTable.set(program.current_var_name, program.current_var)
@@ -668,23 +671,17 @@ def p_class_a(p):
 
 def p_class_b(p):
     '''
-    class_b : class_e class_f class_b
-    | empty
-    '''
-
-def p_class_e(p):
-    '''
-    class_e : PRIVATE class3
+    class_b : class_f class_b
     | empty
     '''
 
 def p_class_f(p):
-    'class_f : var_class class4'
+    'class_f : var_class'
 
 # class_d = optional ->  recursive(optional(private)function)
 def p_class_d(p):
     '''
-    class_d : class_e function class5 class4 class_d
+    class_d : function class5 class_d
     | class6
     '''
 
@@ -698,11 +695,11 @@ def p_class1(p):
     program.new_class()
     program.class_stage = True
     if p[-1] in program.ClassDir:
-        print(error_message + ": Class Already declared in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Class already declared in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     else:
         program.current_class_name = p[-1]
 
@@ -710,23 +707,13 @@ def p_class2(p):
     'class2 :'
     global error
     if p[-1] not in program.ClassDir:
-        print(error_message + ": Father Class has not been declared in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Father class has not been declared in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     #  This is inheritance copy all as deepcopy
     program.inherit_class(p[-1])
-
-def p_class3(p):
-    'class3 :'
-    program.current_security = True
-    program.current_function.private = "private"
-
-def p_class4(p):
-    'class4 :'
-    program.current_security = False
-    program.current_function.private = "public"
 
 def p_class5(p):
     'class5 :'
@@ -751,11 +738,11 @@ def p_class9(p):
     'class9 :'
     global error
     if program.current_class_name in program.funDir:
-        print(error_message + ": Init function for class already declared in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Init function for class already declared in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     else:
         program.current_function.add_params(program.current_params)
         program.current_type.type = program.current_class_name
@@ -768,7 +755,7 @@ def p_class9(p):
 #-----------------------------------------------------------------------
 
 def p_init(p):
-    'init   : INIT class7 LP params RP class8 block class9'
+    'init   : INIT class7 LP RP class8 SEMICOL class9'
 
 def p_statement(p):
     '''
@@ -793,15 +780,17 @@ def p_return1(p):
         program.current_quad = ("RETURN", result, None, program.varTable[program.current_function.address].address)
         program.add_quad()
     else:
-        print(error_message + "type Mismatch!! in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
 
 
 def p_obj(p):
     'obj : ID obj1 array attribute obj2'
+
+
 
 #  -----------------------------------------------------------------------
 #  Neuro points for  obj
@@ -809,10 +798,8 @@ def p_obj(p):
 
 def p_obj1(p):
     'obj1 :'
-    #program.current_id = p[-1]
     program.pOper.append("$")
     program.pIDs.append((p[-1],False, False, None))
-    #pIDS = (nombre, is_array, is_matrix, has_atribute)
 
 def p_obj2(p):
     'obj2 :'
@@ -852,11 +839,11 @@ def p_assignment1(p):
                 else:
                     print(error_message + "Unkown attribute " + program.pIDs[-1][3] + " for object " + program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
                     error = True
-                    #sys.exit(0)
+                    sys.exit(0)
             else:
-                print(error_message + "YOU ARE TRYING TO ASSIGN VALUE TO OBJECT in line " + str(p.lexer.lineno) + ".")
+                print(error_message + "You are trying to assign value to object in line " + str(p.lexer.lineno) + ".")
                 error = True
-                #sys.exit(0)
+                sys.exit(0)
 
         else:
             program.VP.append(program.current_function.varTable[program.pIDs[-1][0]].address)
@@ -873,11 +860,11 @@ def p_assignment1(p):
                 # print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
             elif t.is_object():
                 # id is object
-                print(error_message + "YOU ARE TRYING TO ASSIGN VALUE TO OBJECT in line " + str(p.lexer.lineno) + ".")
+                print(error_message + "You are trying to assign value to object in line " + str(p.lexer.lineno) + ".")
                 error = True
-                #sys.exit(0)
+                sys.exit(0)
                  
-                ##sys.exit(0)
+                 
             else:
                 program.VP.append(program.current_class.varTable[program.pIDs[-1][0]].address)
                 program.pType.append(program.current_class.varTable[program.pIDs[-1][0]].s_type)
@@ -886,18 +873,42 @@ def p_assignment1(p):
     elif program.pIDs[-1][0] in program.varTable:
         print("Global")
     else:
-        print(error_message + "variable no declarada in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Variable not declared in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     #program.current_id = ""
     
 
 def p_assignment2(p):
     'assignment2 :'
     global error
-    var = program.current_function.varTable[program.pIDs[-1][0]]
+    #var = program.current_function.varTable[program.pIDs[-1][0]]
+    if program.pIDs[-1][0] in program.current_function.varTable:
+        var = program.current_function.varTable[program.pIDs[-1][0]]
+    elif program.current_class_name != "":
+        if program.pIDs[-1][0] in program.current_class.varTable:
+            var = program.current_class.varTable[program.pIDs[-1][0]]
+        elif program.pIDs[-1][0] in program.varTable:
+            var = program.varTable[program.pIDs[-1][0]]
+        else:
+            print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+            error = True
+            sys.exit(0)
+    elif program.pIDs[-1][0] in program.varTable:
+        var = program.varTable[program.pIDs[-1][0]]
+    else:
+        print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+        error = True
+        sys.exit(0)
+
+    if var.constant:
+        print(error_message + "Cannot assign value to a constant: "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+        error = True
+        sys.exit(0)
+
+    #se sale con el sys.exit(0)
     program.pIDs.pop()
     right_type = program.pType.pop()
     right_operand = program.VP.pop()
@@ -906,12 +917,11 @@ def p_assignment2(p):
     operator = program.pOper.pop()
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
-        print(error_message + "Type Mismatch in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
         
          
-        ##sys.exit(0)
     else:
         #if var.is_param:
         #    program.current_quad = (operator, right_operand, None, ("pointer", left_operand))
@@ -960,13 +970,19 @@ def p_input(p):
 
 def p_input1(p):
     'input1 : '
+    global error
     x = program.pIDs.pop()
     if not x[1] and not x[2]:
         #id simple
-        address = program.current_function.varTable[x[0]].address
-        type = program.current_function.varTable[x[0]].s_type.type
-        program.current_quad = ("INPUT", type, None, address)
-        program.add_quad()
+        if x[0] in program.current_function.varTable:
+            address = program.current_function.varTable[x[0]].address
+            type = program.current_function.varTable[x[0]].s_type.type
+            program.current_quad = ("INPUT", type, None, address)
+            program.add_quad()
+        else:
+            print(error_message + "Variable not declared in line " + str(p.lexer.lineno) + ".")
+            error = True
+            sys.exit(0)
     else:
         address = program.VP.pop()
         s_type = program.pType.pop()
@@ -989,11 +1005,11 @@ def p_loop2(p):
     global error
     exp_type = program.pType.pop()
     if exp_type.type != "Bool":
-        print(error_message + "TYPE MISMATCH in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
         
-        ##sys.exit(0)
+         
     else:
         result = program.VP.pop()
         program.add_pJump()
@@ -1020,7 +1036,7 @@ def p_call_f2(p):
     program.add_quad()
     if era_return[3][0]:
         for paramo in era_return[3][2]:
-            print(paramo)
+            #print(paramo)
             program.current_quad = paramo
             program.add_quad()
         program.current_quad = ("GOSUBO", era_return[3][0], None, None)
@@ -1043,9 +1059,9 @@ def p_call_param1(p):
     if (program.current_param_num + 1) > len(program.called_function.param_key):
         print(error_message + "Function has 1 more argument than expected in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
 
     popped_type = program.pType.pop()
     fun_param_type = program.called_function.param_key[program.current_param_num][0]
@@ -1082,9 +1098,9 @@ def p_call_param1(p):
     else:
         print(error_message + "Parameter given is of wrong type in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
 
 
 
@@ -1094,9 +1110,9 @@ def p_call_param2(p):
     if len(program.called_function.param_key) != program.current_param_num:
         print(error_message + "Function expecting another parameter in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
 
 def p_condition(p):
     'condition  : IF expression condition1 block condition_a condition_b condition4'
@@ -1123,11 +1139,11 @@ def p_condition1(p):
     program.pJumps.append("$")
     exp_type = program.pType.pop()
     if exp_type.type != "Bool":
-        print(error_message + "TYPE MISMATCH in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     else:
         result = program.VP.pop()
         program.add_pJump()
@@ -1144,11 +1160,11 @@ def p_condition2(p):
 
     exp_type = program.pType.pop()
     if exp_type.type != "Bool":
-        print(error_message + "TYPE MISMATCH in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     else:
         result = program.VP.pop()
         program.add_pJump()
@@ -1192,7 +1208,7 @@ def p_expression1(p):
     'expression1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "&&" or program.pOper[-1] == "||":
-            solveOperation()
+            solveOperation(p)
 
 def p_expression2(p):
     'expression2   :'
@@ -1223,7 +1239,7 @@ def p_comparison1(p):
     'comparison1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == ">=" or program.pOper[-1] == "<=" or program.pOper[-1] == ">" or program.pOper[-1] == "<" or program.pOper[-1] == "==" or program.pOper[-1] == "!=":
-            solveOperation()
+            solveOperation(p)
 
 def p_comparison2(p):
     'comparison2   :'
@@ -1246,7 +1262,7 @@ def p_exp1(p):
     'exp1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "+" or program.pOper[-1] == "-":
-            solveOperation()
+            solveOperation(p)
 
 def p_exp2(p):
     'exp2   :'
@@ -1268,7 +1284,7 @@ def p_term1(p):
     'term1   :'
     if len(program.pOper) != 0:
         if program.pOper[-1] == "*" or program.pOper[-1] == "/":
-            solveOperation()
+            solveOperation(p)
 
 def p_term2(p):
     'term2   :'
@@ -1373,17 +1389,17 @@ def p_var_cte1(p):
                     else:
                         print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
                         error = True
-                        #sys.exit(0)
+                        sys.exit(0)
                 else:
 
                  #not array and not matrix
                     if program.pIDs[-1][0] in program.current_function.varTable.directory:
                         if program.current_function.varTable[program.pIDs[-1][0]].s_type.is_object():
-                            print(error_message + "cannot print object" + " in line " + str(p.lexer.lineno) + ".")
+                            print(error_message + "Cannot print object" + " in line " + str(p.lexer.lineno) + ".")
                             error = True
-                            #sys.exit(0)
+                            sys.exit(0)
                              
-                            ##sys.exit(0)
+                             
                         else:
                             address = program.current_function.varTable[program.pIDs[-1][0]].address
                             program.VP.append(address)
@@ -1449,6 +1465,7 @@ def p_var_cte4(p):
 
 def p_var_cte5(p):
     'var_cte5   :'
+    global error
     if len(program.pOper) > 0:
         operator = program.pOper[-1]
         if operator == "-" or operator == "!":
@@ -1456,6 +1473,9 @@ def p_var_cte5(p):
             result = program.VP.pop()
             t = program.pType.pop()
             res_address = program.current_function.tempMemory.get_next_address(t)
+            if res_address is None:
+                error = True
+                sys.exit(0)
             program.current_quad = (operator, result, None, res_address)
             program.add_quad()
             program.VP.append(res_address)
@@ -1497,11 +1517,11 @@ def p_array1(p):
     var = program.current_function.varTable[program.pIDs[-1][0]]
     row_type = program.pType[-1].type
     if row_type != "Int":
-        print(error_message + "to access array you need to provide Int index in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "To access array you need to provide Int index in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     else:
         
         program.current_quad = ("VER", 0, var.s_type.row - 1, program.VP[-1])
@@ -1518,17 +1538,18 @@ def p_array2(p):
 
     col_type = program.pType[-1].type
     if col_type != "Int":
-        print(error_message + "to access array you need to provide Int index in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "To access array you need to provide Int index in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     else:
         program.current_quad = ("VER", 0, var.s_type.col - 1, program.VP[-1])
         program.add_quad()
 
 def p_array3(p):
     'array3 :'
+    global error
     current_array = program.pArray.pop()
     base_address = program.current_function.varTable[current_array].address
     total_rows = program.current_function.varTable[current_array].s_type.row
@@ -1540,6 +1561,9 @@ def p_array3(p):
         t = SparkyType()
         t.type = "Int"
         result = program.current_function.tempMemory.get_next_address(t)
+        if result is None:
+            error = True
+            sys.exit(0)
         if var.is_param:
             program.current_quad = ("+", rows, ("pointer", base_address), result)
         else:
@@ -1548,7 +1572,9 @@ def p_array3(p):
         program.VP.append(("pointer", result))
         
         t = SparkyType()
-        t = program.current_function.varTable[program.pIDs[-1][0]].s_type
+        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
+        t.row = 0
+        t.col = 0
         #t.row = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         #t.col = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         program.pType.append(t)
@@ -1562,14 +1588,23 @@ def p_array3(p):
         t = SparkyType()
         t.type = "Int"
         result = program.current_function.tempMemory.get_next_address(t)
+        if result is None:
+            error = True
+            sys.exit(0)
         program.current_quad = ("*", rows, ("cte", total_rows), result)
         program.add_quad()
 
         result2 = program.current_function.tempMemory.get_next_address(t)
+        if result2 is None:
+            error = True
+            sys.exit(0)
         program.current_quad = ("+", result, cols, result2)
         program.add_quad()
 
         result3 = program.current_function.tempMemory.get_next_address(t)
+        if result3 is None:
+            error = True
+            sys.exit(0)
         if var.is_param:
             program.current_quad = ("+", result2, ("pointer", base_address), result3)
         else:
@@ -1612,6 +1647,7 @@ def p_call_func(p):
 
 def p_call_f1(p):
     'call_f1    :'
+    global error
     #TODO : checar si la función existe en la funcDir Neccesaria o en clase
     program.pOper.append("$")
     if program.pIDs[-1][3] is None:
@@ -1631,20 +1667,26 @@ def p_call_f1(p):
         program.current_quad = ("ERAO", current_id, None, None)
         program.add_quad()
         paramo_list = []
-        for address in program.current_function.varTable.objects[current_id].memMap:
-            old_memo = program.current_function.varTable.objects[current_id].memMap[address]
-            program.current_quad = ("PARAMO", address, None, old_memo)
+        if current_id in program.current_function.varTable.objects:
+            for address in program.current_function.varTable.objects[current_id].memMap:
+                old_memo = program.current_function.varTable.objects[current_id].memMap[address]
+                program.current_quad = ("PARAMO", address, None, old_memo)
+                program.add_quad()
+                paramo_list.append(("=", old_memo, None, address))
+            # Termina PARAMOs
+            program.called_function = program.ClassDir[s_type.type].funDir[attribute]
+            #program.called_function = program.funDir[program.pIDs[-1][0]]
+            x = program.pIDs.pop()
+            program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
+            program.current_param_num = 0
+            program.current_quad = ("ERA", program.called_function.address, None, None)
             program.add_quad()
-            paramo_list.append(("=", old_memo, None, address))
-        # Termina PARAMOs
-        program.called_function = program.ClassDir[s_type.type].funDir[attribute]
-        #program.called_function = program.funDir[program.pIDs[-1][0]]
-        x = program.pIDs.pop()
-        program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
-        program.current_param_num = 0
-        program.current_quad = ("ERA", program.called_function.address, None, None)
-        program.add_quad()
-        program.pEras.append((program.called_function.return_type, program.called_function.address, True, (True, current_id, paramo_list)))
+            program.pEras.append((program.called_function.return_type, program.called_function.address, True, (True, current_id, paramo_list)))
+        else:
+            print(error_message + "Function not found for variable " + current_id + " in line " +  str(p.lexer.lineno) + ".")
+            error = True
+            sys.exit(0)
+
 
 
 def p_call_func_optional(p):
@@ -1663,18 +1705,21 @@ def p_call_f3(p):
     if era_return[0].type == "void":
         print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
         # pide memoria para tipo temporal
     if era_return[3][0]:
         for paramo in era_return[3][2]:
-            print(paramo)
+            #print(paramo)
             program.current_quad = paramo
             program.add_quad()
         program.current_quad = ("GOSUBO", era_return[3][1], None, None)
         program.add_quad()
     address = program.current_function.tempMemory.get_next_address(era_return[0])
+    if address is None:
+        error = True
+        sys.exit(0)
     program.current_quad = ("=", program.varTable[era_return[1]].address, None, address)
     program.add_quad()
     program.VP.append(address)
@@ -1696,22 +1741,22 @@ def p_error(p):
     if p:
         print(error_message + "Unexpected token '" + str(p.value) + "' at line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
         #print(p.type)
     else:
         print(error_message + "Syntax error at EOF")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
 
 
 # Build the parser
 parser = yacc.yacc(start='program')
 
-def solveOperation():
+def solveOperation(p):
     global error
     right_operand = program.VP.pop()
     right_type = program.pType.pop()
@@ -1720,15 +1765,18 @@ def solveOperation():
     operator = program.pOper.pop()
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
-        print(error_message + "TYPE MISMATCH, HELP in operation")
+        print(error_message + "Type missmatch in operation in line " + str(p.lexer.lineno) + ".")
         error = True
-        #sys.exit(0)
+        sys.exit(0)
          
-        ##sys.exit(0)
+         
     else:
         t = SparkyType()
         t.type = result_type
         result = program.current_function.tempMemory.get_next_address(t)
+        if result is None:
+            error = True
+            sys.exit(0)
         program.current_quad = (operator, left_operand, right_operand, result)
         program.add_quad()
         program.VP.append(result)
@@ -1736,84 +1784,83 @@ def solveOperation():
 
 
 if len(sys.argv) != 2:
-    print(error_message + "please provide exactly one argument")
+    print(error_message + "Please provide exactly one argument")
     error = True
-    #sys.exit(0)
+    sys.exit(0)
      
-    ##sys.exit(0)
+     
 else:
     with open(sys.argv[1], "r") as inputFile:
         data = inputFile.read()
-    #print(sys.argv[1])
     try:
         result = parser.parse(data)
     finally:
         if not error:
-            print("VirtualMachine.execute()")
-            program.print_quads()
-            print("pJumps")
-            for x in program.pJumps:
-                print(x)
-            print("VP")
-            for x in program.VP:
-                print(x)
-            print("pOpers")
-            for x in program.pOper:
-                print(x)
-            print("pType")
-            for x in program.pType:
-                print(x)
-            print("pType")
-            for x in program.pArray:
-                print(x)
-            print("pIDs")
-            for x in program.pIDs:
-                print(x)
-            print("pendingQuads")
-            for x in program.pendingQuads:
-                print(x)
-            print("eras")
-            for x in program.pEras:
-                print(x)
-            for cla in program.ClassDir.directory:
-                print("Class: " + cla + "{")
-                for var in program.ClassDir[cla].varTable.directory:
-                    if program.ClassDir[cla].varTable[var].s_type.is_object():
-                        print("object: " + var)
-                        for o_var in program.ClassDir[cla].varTable.objects[var].varTable.directory:
-                            print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable.objects[var].varTable[o_var].address)))
-                    else:
-                        print('{:.40s} {}'.format('  var: ' + var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable[var].address)))
-                for fun in program.ClassDir[cla].funDir.directory:
-                    print()
-                    print("function: " + fun+"{")
-                    for var in program.ClassDir[cla].funDir[fun].varTable.directory:
-                        if program.ClassDir[cla].funDir[fun].varTable[var].s_type.is_object():
-                            print("object: " + var)
-                            for o_var in program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable.directory:
-                                print('{:.40s} {}'.format('\tvar: ' + o_var + (' ' + '.' * 10), "address: " + str(
-                                    program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable[o_var].address)))
-                        else:
-                            print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10),
-                                                      "address: " + str(program.ClassDir[cla].funDir[fun].varTable[var].address)))
-                    print("}")
-                print("}"+ "class "+ cla + " END")
-            for fun in program.funDir.directory:
-                print()
-                print("function: " + fun+"{")
-                for var in program.funDir[fun].varTable.directory:
-                    print(var)
-                    print(program.funDir[fun].varTable[var].s_type.is_object())
-                    print(program.funDir[fun].varTable[var].s_type.type)
-                    print(program.funDir[fun].varTable[var].s_type.row)
-                    print(program.funDir[fun].varTable[var].s_type.col)
-                    if program.funDir[fun].varTable[var].s_type.is_object():
-                        print("object: " + var)
-                        for o_var in program.funDir[fun].varTable.objects[var].varTable.directory:
-                            print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable.objects[var].varTable[o_var].address)))
-                    else:
-                        print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable[var].address)))
-                print("}")
+            #print("VirtualMachine.execute()")
+            #program.print_quads()
+            #print("pJumps")
+            #for x in program.pJumps:
+            #    print(x)
+            #print("VP")
+            #for x in program.VP:
+            #    print(x)
+            #print("pOpers")
+            #for x in program.pOper:
+            #    print(x)
+            #print("pType")
+            #for x in program.pType:
+            #    print(x)
+            #print("pType")
+            #for x in program.pArray:
+            #    print(x)
+            #print("pIDs")
+            #for x in program.pIDs:
+            #    print(x)
+            #print("pendingQuads")
+            #for x in program.pendingQuads:
+            #    print(x)
+            #print("eras")
+            #for x in program.pEras:
+            #    print(x)
+            #for cla in program.ClassDir.directory:
+            #    print("Class: " + cla + "{")
+            #    for var in program.ClassDir[cla].varTable.directory:
+            #        if program.ClassDir[cla].varTable[var].s_type.is_object():
+            #            print("object: " + var)
+            #            for o_var in program.ClassDir[cla].varTable.objects[var].varTable.directory:
+            #                print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable.objects[var].varTable[o_var].address)))
+            #        else:
+            #            print('{:.40s} {}'.format('  var: ' + var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable[var].address)))
+            #    for fun in program.ClassDir[cla].funDir.directory:
+            #        print()
+            #        print("function: " + fun+"{")
+            #        for var in program.ClassDir[cla].funDir[fun].varTable.directory:
+            #            if program.ClassDir[cla].funDir[fun].varTable[var].s_type.is_object():
+            #                print("object: " + var)
+            #                for o_var in program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable.directory:
+            #                    print('{:.40s} {}'.format('\tvar: ' + o_var + (' ' + '.' * 10), "address: " + str(
+            #                        program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable[o_var].address)))
+            #            else:
+            #                print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10),
+            #                                          "address: " + str(program.ClassDir[cla].funDir[fun].varTable[var].address)))
+            #        print("}")
+            #    print("}"+ "class "+ cla + " END")
+            #for fun in program.funDir.directory:
+            #    print()
+            #    print("function: " + fun+"{")
+            #    for var in program.funDir[fun].varTable.directory:
+            #        print(var)
+            #        print(program.funDir[fun].varTable[var].s_type.is_object())
+            #        print(program.funDir[fun].varTable[var].s_type.type)
+            #        print(program.funDir[fun].varTable[var].s_type.row)
+            #        print(program.funDir[fun].varTable[var].s_type.col)
+            #        if program.funDir[fun].varTable[var].s_type.is_object():
+            #            print("object: " + var)
+            #            for o_var in program.funDir[fun].varTable.objects[var].varTable.directory:
+            #                print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable.objects[var].varTable[o_var].address)))
+            #        else:
+            #            print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable[var].address)))
+            #    print("}")
             vm = VirtualMachine()
             vm.quads = program.Quads
             vm.execute()
@@ -1821,3 +1868,7 @@ else:
 
     if result is not None:
         print(result)
+
+
+
+

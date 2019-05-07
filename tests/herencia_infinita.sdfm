@@ -1,15 +1,11 @@
-let x : Int = 19;
-
 class A{
 	var age : Int;
 
-	init(){
-
-	}
+	init();
 
 	function foo(){
 		print("foo");
-		print(x);
+		age = 18;
 	}
 
 
@@ -19,9 +15,7 @@ class B : A{
 	var student_n : Int;
 	var graduated : Bool;
 
-	init(){
-
-	}
+	init();
 
 }
 
@@ -29,14 +23,13 @@ class C : B{
 	var course : Int;
 	var grade : Float;
 
-	init(){
-
-	}
+	init();
 
 }
 
 main(){
 	var diego : C;
+	var d : Int;
 	
 	diego.age = 23;
 	diego.student_n = 817441;
@@ -51,8 +44,7 @@ main(){
 	print(diego.grade);
 
 	diego.foo();
-
-	print("x");
-	print(x);
 	print(diego.age);
+
+
 }

@@ -66,25 +66,25 @@ class MemoryMap:
         if t.type == "Int":
             self.INT_LOC = self.INT_LOC + total_space
             if self.INT_LOC > self.MAX_INT_LOC:
-                print(error_message + " Too many variables")
-                sys.exit(0)
+                print(error_message + "Too many variables")
+                return None
             return self.INT_LOC - total_space
         elif t.type == "Float":
             self.FLOAT_LOC = self.FLOAT_LOC + total_space
             if self.FLOAT_LOC > self.MAX_FLOAT_LOC:
-                print(error_message + " Too many variables")
-                sys.exit(0)
+                print(error_message + "Too many variables")
+                return None
             return self.FLOAT_LOC - total_space
         elif t.type == "Bool":
             self.BOOL_LOC = self.BOOL_LOC + total_space
             if self.BOOL_LOC > self.MAX_BOOL_LOC:
-                print(error_message + " Too many variables")
-                sys.exit(0)
+                print(error_message + "Too many variables")
+                return None
             return self.BOOL_LOC - total_space
         elif t.is_object():
             self.OBJ_LOC = self.OBJ_LOC + total_space
             if self.OBJ_LOC > self.MAX_OBJ_LOC:
-                print(error_message + " Too many variables")
-                sys.exit(0)
+                print(error_message + "Too many variables")
+                return None
             return self.OBJ_LOC - total_space
 

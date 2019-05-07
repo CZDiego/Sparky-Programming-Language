@@ -65,8 +65,10 @@ main(){
     
     var lista : [13]Int;
     var a : Int;
-    var size : Int;
+    var s : Int;
     var i : Int;
+
+
     lista[0] = 100;
     lista[1] = 56;
     lista[2] = 0;
@@ -80,22 +82,22 @@ main(){
     lista[10] = 67;
     lista[11] = 23;
     lista[12] = 5;
-    size = 13;
+    s = 13;
 
     print("Lista Desordenada");
     i = 0;
-    while(i<size) {
+    while(i<s) {
         print(lista[i]);
        i = i + 1;
     }
 
-    quickSort(lista, 0, size-1);
+    quickSort(lista, 0, s-1);
 
     print();
 
     print("Lista ordenada");
     i = 0;
-    while(i<size) {
+    while(i<s) {
         print(lista[i]);
        i = i + 1;
     }

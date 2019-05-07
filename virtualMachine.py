@@ -156,7 +156,12 @@ class VirtualMachine:
 
 	def equals(self, quad):
 		if not quad[3].__class__.__name__ in ('tuple'):
-			self.value_to_memory(quad[3], self.value_from_memory(quad[1]))
+			if quad[3] >= 25000 and quad[3] < 30000:
+				self.value_to_memory(quad[3], int(self.value_from_memory(quad[1])))
+			elif quad[3] >= 30000 and quad[3] < 35000:
+				self.value_to_memory(quad[3], float(self.value_from_memory(quad[1])))
+			else:
+				self.value_to_memory(quad[3], self.value_from_memory(quad[1]))
 		else:
 			self.value_to_memory_below(quad[3][1], self.value_from_memory(quad[1]), quad[3][3])
 
@@ -174,7 +179,8 @@ class VirtualMachine:
 
 	def plus(self, quad):
 		if not quad[2].__class__.__name__ in ('tuple'):
-			temp = self.value_from_memory(quad[1]) + self.value_from_memory(quad[2])
+
+			temp = self.value_from_memory(quad[1]) + self.value_from_memory(quad[2])	
 			self.value_to_memory(quad[3], temp)
 		else:
 			#('reference', base, size, 0)
@@ -262,33 +268,64 @@ class VirtualMachine:
 		#checar el tipo de la entrada
 		user_input = input()
 
-		if quad[1] == "Bool":
+		if quad[3].__class__.__name__ in ('tuple'):
 
-			if user_input.lower() == "true":
-				self.value_to_memory(quad[3], True)
-			elif user_input.lower() == "false":
-				self.value_to_memory(quad[3], False)
+			if quad[1] == "Bool":
+				if user_input.lower() == "true":
+					self.value_to_memory_below(quad[3][1], True, quad[3][3])
+				elif user_input.lower() == "false":
+					self.value_to_memory_below(quad[3][1], False, quad[3][3])
+				else:
+					print(error_message + "Invalid value for input Bool")
+					sys.exit(0)
+			elif quad[1] == "Float":
+				try:
+					val = float(user_input)
+					self.value_to_memory_below(quad[3][1], val, quad[3][3])
+				except ValueError:
+					print(error_message + "Invalid value for input Float")
+					sys.exit(0)
+			elif quad[1] == "Int":
+				try:
+					val = int(user_input)
+					self.value_to_memory_below(quad[3][1], val, quad[3][3])
+				except ValueError:
+					print(error_message + "Invalid value for input Int")
+					sys.exit(0)
 			else:
-				print(error_message + "Invalid value for input Bool")
+				print(error_message + "Cannot assign value to object")
 				sys.exit(0)
 
+		else:
+			if quad[1] == "Bool":
 
-		elif quad[1] == "Float":
-			try:
-				val = float(user_input)
-				self.value_to_memory(quad[3], val)
-			except ValueError:
-				print(error_message + "Invalid value for input Float")
+				if user_input.lower() == "true":
+					self.value_to_memory(quad[3], True)
+				elif user_input.lower() == "false":
+					self.value_to_memory(quad[3], False)
+				else:
+					print(error_message + "Invalid value for input Bool")
+					sys.exit(0)
+
+
+			elif quad[1] == "Float":
+				try:
+					val = float(user_input)
+					self.value_to_memory(quad[3], val)
+				except ValueError:
+					print(error_message + "Invalid value for input Float")
+					sys.exit(0)
+
+			elif quad[1] == "Int":
+				try:
+					val = int(user_input)
+					self.value_to_memory(quad[3], val)
+				except ValueError:
+					print(error_message + "Invalid value for input Int")
+					sys.exit(0)
+			else:
+				print(error_message + "Cannot assign value to object")
 				sys.exit(0)
-
-		elif quad[1] == "Int":
-			try:
-				val = int(user_input)
-				self.value_to_memory(quad[3], val)
-			except ValueError:
-				print(error_message + "Invalid value for input Int")
-				sys.exit(0)
-
 
 
 
@@ -306,9 +343,6 @@ class VirtualMachine:
 		self.activation_record.append(dict())
 		
 	def paramo(self,quad):
-		print("PARAMO")
-		print(self.value_from_memory(quad[1]))
-		print(quad[3])
 		self.class_memory[-1][quad[3]] = self.value_from_memory(quad[1])
 
 	def param(self, quad):
@@ -317,9 +351,6 @@ class VirtualMachine:
 		else:
 			#magia
 			#print("magia")
-			#print(quad)
-			#print("something")
-			#print(self.value_from_memory(quad[3]))
 			if self.value_from_memory(quad[3]).__class__.__name__ in ('tuple'):
 				self.activation_record[-1][quad[3]] = self.value_from_memory(quad[3])
 			else:
@@ -354,13 +385,12 @@ class VirtualMachine:
 		upper_limit = quad[2]
 		value = self.value_from_memory(quad[3])
 		if value < bottom_limit or value > upper_limit:
-			print(error_message + "Out of bounds")
+			print(error_message + " Out of bounds")
 			sys.exit(0)
 
-			
 
 	def end(self, quad):
 		self.end_time = time.time()
-		print("Execution time: " + str(self.end_time - self.start_time) + " seconds.")
+		print("\033[94m"  + "Execution time: " + str(self.end_time - self.start_time) + " seconds." + "\033[0m" )
 		sys.exit(0)
 
