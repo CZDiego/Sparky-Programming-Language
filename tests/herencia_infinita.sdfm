@@ -10,6 +10,7 @@ class A{
 	function foo(){
 		print("foo");
 		print(x);
+		age = 18;
 	}
 
 
@@ -51,8 +52,8 @@ main(){
 	print(diego.grade);
 
 	diego.foo();
-
 	print("x");
 	print(x);
 	print(diego.age);
+
 }

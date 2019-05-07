@@ -306,9 +306,6 @@ class VirtualMachine:
 		self.activation_record.append(dict())
 		
 	def paramo(self,quad):
-		print("PARAMO")
-		print(self.value_from_memory(quad[1]))
-		print(quad[3])
 		self.class_memory[-1][quad[3]] = self.value_from_memory(quad[1])
 
 	def param(self, quad):
@@ -317,9 +314,6 @@ class VirtualMachine:
 		else:
 			#magia
 			#print("magia")
-			#print(quad)
-			#print("something")
-			#print(self.value_from_memory(quad[3]))
 			if self.value_from_memory(quad[3]).__class__.__name__ in ('tuple'):
 				self.activation_record[-1][quad[3]] = self.value_from_memory(quad[3])
 			else:

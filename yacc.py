@@ -897,7 +897,31 @@ def p_assignment1(p):
 def p_assignment2(p):
     'assignment2 :'
     global error
-    var = program.current_function.varTable[program.pIDs[-1][0]]
+    #var = program.current_function.varTable[program.pIDs[-1][0]]
+    if program.pIDs[-1][0] in program.current_function.varTable:
+        var = program.current_function.varTable[program.pIDs[-1][0]]
+    elif program.current_class_name != "":
+        if program.pIDs[-1][0] in program.current_class.varTable:
+            var = program.current_class.varTable[program.pIDs[-1][0]]
+        elif program.pIDs[-1][0] in program.varTable:
+            var = program.varTable[program.pIDs[-1][0]]
+        else:
+            print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+            error = True
+            #sys.exit(0)
+    elif program.pIDs[-1][0] in program.varTable:
+        var = program.varTable[program.pIDs[-1][0]]
+    else:
+        print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+        error = True
+        #sys.exit(0)
+
+    if var.constant:
+        print(error_message + "Cannot assign value to a constant: "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+        error = True
+        #sys.exit(0)
+
+    #se sale con el sys.exit
     program.pIDs.pop()
     right_type = program.pType.pop()
     right_operand = program.VP.pop()
