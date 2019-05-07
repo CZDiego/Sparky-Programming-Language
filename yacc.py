@@ -1799,7 +1799,7 @@ else:
     finally:
         if not error:
             #print("VirtualMachine.execute()")
-            program.print_quads()
+            #program.print_quads()
             #print("pJumps")
             #for x in program.pJumps:
             #    print(x)
