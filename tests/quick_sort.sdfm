@@ -67,6 +67,8 @@ main(){
     var a : Int;
     var size : Int;
     var i : Int;
+
+
     lista[0] = 100;
     lista[1] = 56;
     lista[2] = 0;

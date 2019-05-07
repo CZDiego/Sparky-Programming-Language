@@ -38,6 +38,7 @@ class C : B{
 
 main(){
 	var diego : C;
+	var d : Int;
 	
 	diego.age = 23;
 	diego.student_n = 817441;
@@ -55,5 +56,6 @@ main(){
 	print("x");
 	print(x);
 	print(diego.age);
+
 
 }

@@ -1,0 +1,17 @@
+class Person{
+	var age : Int;
+
+	init(){
+
+	}
+
+
+}
+
+function foo(){
+	
+}
+main(){
+	
+
+}

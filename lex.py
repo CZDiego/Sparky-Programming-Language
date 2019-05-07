@@ -74,8 +74,7 @@ tokens = tokens + list(reservedWords.values())
 
 # A string containing ignored characters (spaces and tabs) and comments
 t_ignore  = ' \t' # spaces and tabs
-t_ignore_SIMPLE_COMMENT = r'\/\/.*'
-t_ignore_MULTI_COMMENT = r'\/\*.*.\*\/'
+t_ignore_comment  = '\/\/.*' # 
 
 # Regular expression rules for simple tokens
 t_COMMA         = ','

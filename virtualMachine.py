@@ -348,13 +348,12 @@ class VirtualMachine:
 		upper_limit = quad[2]
 		value = self.value_from_memory(quad[3])
 		if value < bottom_limit or value > upper_limit:
-			print(error_message + "Out of bounds")
+			print(error_message + " Out of bounds")
 			sys.exit(0)
 
-			
 
 	def end(self, quad):
 		self.end_time = time.time()
-		print("Execution time: " + str(self.end_time - self.start_time) + " seconds.")
+		print("\033[94m"  + "Execution time: " + str(self.end_time - self.start_time) + " seconds." + "\033[0m" )
 		sys.exit(0)
 
