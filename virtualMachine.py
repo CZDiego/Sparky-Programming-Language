@@ -156,7 +156,12 @@ class VirtualMachine:
 
 	def equals(self, quad):
 		if not quad[3].__class__.__name__ in ('tuple'):
-			self.value_to_memory(quad[3], self.value_from_memory(quad[1]))
+			if quad[3] >= 25000 and quad[3] < 30000:
+				self.value_to_memory(quad[3], int(self.value_from_memory(quad[1])))
+			elif quad[3] >= 30000 and quad[3] < 35000:
+				self.value_to_memory(quad[3], float(self.value_from_memory(quad[1])))
+			else:
+				self.value_to_memory(quad[3], self.value_from_memory(quad[1]))
 		else:
 			self.value_to_memory_below(quad[3][1], self.value_from_memory(quad[1]), quad[3][3])
 
@@ -174,7 +179,8 @@ class VirtualMachine:
 
 	def plus(self, quad):
 		if not quad[2].__class__.__name__ in ('tuple'):
-			temp = self.value_from_memory(quad[1]) + self.value_from_memory(quad[2])
+
+			temp = self.value_from_memory(quad[1]) + self.value_from_memory(quad[2])	
 			self.value_to_memory(quad[3], temp)
 		else:
 			#('reference', base, size, 0)

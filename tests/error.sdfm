@@ -1,0 +1,13 @@
+function hola(){
+	
+}
+
+main(){
+	var i : [19]Int;
+	var x : Int;
+	print("main");
+
+	x = 1.5 / 18;
+	print(x);
+	
+}

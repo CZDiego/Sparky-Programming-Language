@@ -23,15 +23,6 @@ reservedWords = {
     'Int'       : 'INT',
     'Float'     : 'FLOAT',
     'Bool'      : 'BOOL',
-    ##'find'      : 'FIND',
-    ##'append'    : 'APPEND',
-    'size'      : 'SIZE',
-    #'empty'     : 'EMPTY',
-    #'sort'      : 'SORT',
-    #'pow'       : 'POW',
-    #'ceil'      : 'CEIL',
-    #'floor'     : 'FLOOR',
-    'private'   : 'PRIVATE',
 }
 
 # List of token names.   This is always required
@@ -131,9 +122,6 @@ def t_CTE_B(t):
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reservedWords.get(t.value,'ID')    # Check for reserved words
-    #if t.value in reservedWords:
-    #    t.type = t.value
-    #t.value = (t.value, symbol_lookup(t.value)) # Look up symbol table information and return a tuple
     return t
 
 # Error handling rule
@@ -148,22 +136,3 @@ def t_newline(t):
 
 # Build the lexer
 lexer = lex.lex()
-
-"""
-data = '''
-true
-falase
-false
-truefalse
-'''
- 
-# Give the lexer some input
-lexer.input(data)
-
-# Tokenize
-while True:
-    tok = lexer.token()
-    if not tok: 
-        break      # No more input
-    print(tok)
-"""

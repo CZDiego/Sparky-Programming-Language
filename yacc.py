@@ -671,23 +671,17 @@ def p_class_a(p):
 
 def p_class_b(p):
     '''
-    class_b : class_e class_f class_b
-    | empty
-    '''
-
-def p_class_e(p):
-    '''
-    class_e : PRIVATE class3
+    class_b : class_f class_b
     | empty
     '''
 
 def p_class_f(p):
-    'class_f : var_class class4'
+    'class_f : var_class'
 
 # class_d = optional ->  recursive(optional(private)function)
 def p_class_d(p):
     '''
-    class_d : class_e function class5 class4 class_d
+    class_d : function class5 class_d
     | class6
     '''
 
@@ -720,16 +714,6 @@ def p_class2(p):
          
     #  This is inheritance copy all as deepcopy
     program.inherit_class(p[-1])
-
-def p_class3(p):
-    'class3 :'
-    program.current_security = True
-    program.current_function.private = "private"
-
-def p_class4(p):
-    'class4 :'
-    program.current_security = False
-    program.current_function.private = "public"
 
 def p_class5(p):
     'class5 :'
@@ -805,6 +789,8 @@ def p_return1(p):
 
 def p_obj(p):
     'obj : ID obj1 array attribute obj2'
+
+
 
 #  -----------------------------------------------------------------------
 #  Neuro points for  obj
@@ -1655,6 +1641,7 @@ def p_call_func(p):
 
 def p_call_f1(p):
     'call_f1    :'
+    global error
     #TODO : checar si la función existe en la funcDir Neccesaria o en clase
     program.pOper.append("$")
     if program.pIDs[-1][3] is None:
@@ -1674,20 +1661,26 @@ def p_call_f1(p):
         program.current_quad = ("ERAO", current_id, None, None)
         program.add_quad()
         paramo_list = []
-        for address in program.current_function.varTable.objects[current_id].memMap:
-            old_memo = program.current_function.varTable.objects[current_id].memMap[address]
-            program.current_quad = ("PARAMO", address, None, old_memo)
+        if current_id in program.current_function.varTable.objects:
+            for address in program.current_function.varTable.objects[current_id].memMap:
+                old_memo = program.current_function.varTable.objects[current_id].memMap[address]
+                program.current_quad = ("PARAMO", address, None, old_memo)
+                program.add_quad()
+                paramo_list.append(("=", old_memo, None, address))
+            # Termina PARAMOs
+            program.called_function = program.ClassDir[s_type.type].funDir[attribute]
+            #program.called_function = program.funDir[program.pIDs[-1][0]]
+            x = program.pIDs.pop()
+            program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
+            program.current_param_num = 0
+            program.current_quad = ("ERA", program.called_function.address, None, None)
             program.add_quad()
-            paramo_list.append(("=", old_memo, None, address))
-        # Termina PARAMOs
-        program.called_function = program.ClassDir[s_type.type].funDir[attribute]
-        #program.called_function = program.funDir[program.pIDs[-1][0]]
-        x = program.pIDs.pop()
-        program.pIDs.append((x[0], x[1], x[2], x[3], program.called_function.address))
-        program.current_param_num = 0
-        program.current_quad = ("ERA", program.called_function.address, None, None)
-        program.add_quad()
-        program.pEras.append((program.called_function.return_type, program.called_function.address, True, (True, current_id, paramo_list)))
+            program.pEras.append((program.called_function.return_type, program.called_function.address, True, (True, current_id, paramo_list)))
+        else:
+            print(error_message + "Function not found for variable " + current_id + " in line " +  str(p.lexer.lineno) + ".")
+            error = True
+            sys.exit(0)
+
 
 
 def p_call_func_optional(p):
