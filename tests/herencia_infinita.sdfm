@@ -3,9 +3,7 @@ let x : Int = 19;
 class A{
 	var age : Int;
 
-	init(){
-
-	}
+	init();
 
 	function foo(){
 		print("foo");
@@ -20,9 +18,7 @@ class B : A{
 	var student_n : Int;
 	var graduated : Bool;
 
-	init(){
-
-	}
+	init();
 
 }
 
@@ -30,9 +26,7 @@ class C : B{
 	var course : Int;
 	var grade : Float;
 
-	init(){
-
-	}
+	init();
 
 }
 

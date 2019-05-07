@@ -771,7 +771,7 @@ def p_class9(p):
 #-----------------------------------------------------------------------
 
 def p_init(p):
-    'init   : INIT class7 LP params RP class8 block class9'
+    'init   : INIT class7 LP RP class8 SEMICOL class9'
 
 def p_statement(p):
     '''
