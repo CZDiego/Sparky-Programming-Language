@@ -808,7 +808,7 @@ def p_assignement1(p):
         #is_object
         t = program.current_function.varTable[program.pIDs[-1][0]].s_type
         if t.row > 0:
-            print("array or matrix")
+            #print("array or matrix")
             program.pOper.append("=")
 
         elif t.is_object():
@@ -835,7 +835,7 @@ def p_assignement1(p):
             var = program.current_class.varTable[program.pIDs[-1][0]]
             t = program.current_class.varTable[program.pIDs[-1][0]].s_type
             if t.row > 0:
-                print("array or matrix")
+                #print("array or matrix")
                 program.pOper.append("=")
                 # program.pType.append(program.current_function.varTable[program.pIDs[-1][0]].s_type)
                 # print("ERROR YOU ARE TRYING TO ASSIGN VALUE TO ARRAY OBJECT")
@@ -1020,7 +1020,7 @@ def p_call_param1(p):
                 paramID += 1
             program.current_param_num += 1
         else:
-            print("not object ")
+            #print("not object ")
             if popped_type.row is 0:
                 program.current_quad = ("PARAM", program.VP.pop(), None, program.called_function.param_key[program.current_param_num][1])
                 #print(program.called_function.param_key[program.current_param_num][0].type)
@@ -1286,9 +1286,9 @@ def p_var_cte1(p):
                 #todo: checar global
                 if program.current_scope == "function":
                     tp = program.current_function.varTable[program.pIDs[-1][0]].s_type
-                    print(tp.type)
-                    print(tp.row)
-                    print(tp.col)
+                    #print(tp.type)
+                    #print(tp.row)
+                    #print(tp.col)
                     address = program.current_function.varTable[program.pIDs[-1][0]].address
                     program.VP.append(address)
                     t = SparkyType()
@@ -1315,12 +1315,8 @@ def p_var_cte1(p):
                         t = SparkyType()
                         t = program.current_class.varTable[program.pIDs[-1][0]].s_type
                         program.pType.append(t)
-            else:
-                print("array or matrix")
-                if program.pIDs[-1][1]:
-                    print("casilla")
-                else:
-                    print("array")
+            #else:
+            #    print("array or matrix")
 
             #elif program.current_id_is_matrix:
 
@@ -1665,70 +1661,70 @@ else:
         
         print("VirtualMachine.execute()")
         program.print_quads()
-        print("pJumps")
-        for x in program.pJumps:
-            print(x)
-        print("VP")
-        for x in program.VP:
-            print(x)
-        print("pOpers")
-        for x in program.pOper:
-            print(x)
-        print("pType")
-        for x in program.pType:
-            print(x)
-        print("pType")
-        for x in program.pArray:
-            print(x)
-        print("pIDs")
-        for x in program.pIDs:
-            print(x)
-        print("pendingQuads")
-        for x in program.pendingQuads:
-            print(x)
-        print("eras")
-        for x in program.pEras:
-            print(x)
+        #print("pJumps")
+        #for x in program.pJumps:
+        #    print(x)
+        #print("VP")
+        #for x in program.VP:
+        #    print(x)
+        #print("pOpers")
+        #for x in program.pOper:
+        #    print(x)
+        #print("pType")
+        #for x in program.pType:
+        #    print(x)
+        #print("pType")
+        #for x in program.pArray:
+        #    print(x)
+        #print("pIDs")
+        #for x in program.pIDs:
+        #    print(x)
+        #print("pendingQuads")
+        #for x in program.pendingQuads:
+        #    print(x)
+        #print("eras")
+        #for x in program.pEras:
+        #    print(x)
 
-        for cla in program.ClassDir.directory:
-            print("Class: " + cla + "{")
-            for var in program.ClassDir[cla].varTable.directory:
-                if program.ClassDir[cla].varTable[var].s_type.is_object():
-                    print("object: " + var)
-                    for o_var in program.ClassDir[cla].varTable.objects[var].varTable.directory:
-                        print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable.objects[var].varTable[o_var].address)))
-                else:
-                    print('{:.40s} {}'.format('  var: ' + var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable[var].address)))
-            for fun in program.ClassDir[cla].funDir.directory:
-                print()
-                print("function: " + fun+"{")
-                for var in program.ClassDir[cla].funDir[fun].varTable.directory:
-                    if program.ClassDir[cla].funDir[fun].varTable[var].s_type.is_object():
-                        print("object: " + var)
-                        for o_var in program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable.directory:
-                            print('{:.40s} {}'.format('\tvar: ' + o_var + (' ' + '.' * 10), "address: " + str(
-                                program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable[o_var].address)))
-                    else:
-                        print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10),
-                                                  "address: " + str(program.ClassDir[cla].funDir[fun].varTable[var].address)))
-                print("}")
-            print("}"+ "class "+ cla + " END")
-        for fun in program.funDir.directory:
-            print()
-            print("function: " + fun+"{")
-            for var in program.funDir[fun].varTable.directory:
-                print(var)
-                print(program.funDir[fun].varTable[var].s_type.is_object())
-                print(program.funDir[fun].varTable[var].s_type.type)
-                print(program.funDir[fun].varTable[var].s_type.row)
-                print(program.funDir[fun].varTable[var].s_type.col)
-                if program.funDir[fun].varTable[var].s_type.is_object():
-                    print("object: " + var)
-                    for o_var in program.funDir[fun].varTable.objects[var].varTable.directory:
-                        print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable.objects[var].varTable[o_var].address)))
-                else:
-                    print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable[var].address)))
-            print("}")
+        #for cla in program.ClassDir.directory:
+        #    print("Class: " + cla + "{")
+        #    for var in program.ClassDir[cla].varTable.directory:
+        #        if program.ClassDir[cla].varTable[var].s_type.is_object():
+        #            print("object: " + var)
+        #            for o_var in program.ClassDir[cla].varTable.objects[var].varTable.directory:
+        #                print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable.objects[var].varTable[o_var].address)))
+        #        else:
+        #            print('{:.40s} {}'.format('  var: ' + var + (' ' + '.' * 10), "address: " + str(program.ClassDir[cla].varTable[var].address)))
+        #    for fun in program.ClassDir[cla].funDir.directory:
+        #        print()
+        #        print("function: " + fun+"{")
+        #        for var in program.ClassDir[cla].funDir[fun].varTable.directory:
+        #            if program.ClassDir[cla].funDir[fun].varTable[var].s_type.is_object():
+        #                print("object: " + var)
+        #                for o_var in program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable.directory:
+        #                    print('{:.40s} {}'.format('\tvar: ' + o_var + (' ' + '.' * 10), "address: " + str(
+        #                        program.ClassDir[cla].funDir[fun].varTable.objects[var].varTable[o_var].address)))
+        #            else:
+        #                print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10),
+        #                                          "address: " + str(program.ClassDir[cla].funDir[fun].varTable[var].address)))
+        #        print("}")
+        #    print("}"+ "class "+ cla + " END")
+        #for fun in program.funDir.directory:
+        #    print()
+        #    print("function: " + fun+"{")
+        #    for var in program.funDir[fun].varTable.directory:
+        #        print(var)
+        #        print(program.funDir[fun].varTable[var].s_type.is_object())
+        #        print(program.funDir[fun].varTable[var].s_type.type)
+        #        print(program.funDir[fun].varTable[var].s_type.row)
+        #        print(program.funDir[fun].varTable[var].s_type.col)
+        #        if program.funDir[fun].varTable[var].s_type.is_object():
+        #            print("object: " + var)
+        #            for o_var in program.funDir[fun].varTable.objects[var].varTable.directory:
+        #                print('{:.40s} {}'.format('\tvar: '+o_var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable.objects[var].varTable[o_var].address)))
+        #        else:
+        #            print('{:.40s} {}'.format('var: ' + var + (' ' + '.' * 10), "address: " + str(program.funDir[fun].varTable[var].address)))
+        #    print("}")
         vm = VirtualMachine()
         vm.quads = program.Quads
         vm.execute()

@@ -57,11 +57,7 @@ class VirtualMachine:
 		self.iterators.append(0)
 
 		while True:
-			print("normal")
-			print(self.quads[self.iterators[-1]])
 			clean_quad = self.clean_quad(self.quads[self.iterators[-1]])
-			print("clean")
-			print(clean_quad)
 			self.funcs[clean_quad[0]](clean_quad)
 			self.iterators[-1] = self.iterators[-1] + 1
 
@@ -316,12 +312,19 @@ class VirtualMachine:
 			self.activation_record[-1][quad[3]] = self.value_from_memory(quad[1])
 		else:
 			#magia
-			current_memory = len(self.function_memory) - 1
-			size = quad[2]
-			address = quad[1]
-			print(("reference", address, size, current_memory))
-			self.activation_record[-1][quad[3]] = ("reference", address, size, current_memory)
-			#25000 = ("reference",25000,18,0)
+			#print("magia")
+			#print(quad)
+			#print("something")
+			#print(self.value_from_memory(quad[3]))
+			if self.value_from_memory(quad[3]).__class__.__name__ in ('tuple'):
+				self.activation_record[-1][quad[3]] = self.value_from_memory(quad[3])
+			else:
+				current_memory = len(self.function_memory) - 1
+				size = quad[2]
+				address = quad[1]
+				#print(("reference", address, size, current_memory))
+				self.activation_record[-1][quad[3]] = ("reference", address, size, current_memory)
+				#25000 = ("reference",25000,18,0)
 
 	def gosubo(self, quad):
 		print("GOSUBO")
