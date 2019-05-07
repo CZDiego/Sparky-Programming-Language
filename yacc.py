@@ -820,11 +820,11 @@ def p_obj2(p):
 
 #  ################
 #  -----------------------------------------------------------------------
-def p_assignement(p):
-    'assignment : obj IS assignement1 expression assignement2 SEMICOL'
+def p_assignment(p):
+    'assignment : obj IS assignment1 expression assignment2 SEMICOL'
 
-def p_assignement1(p):
-    'assignement1 :'
+def p_assignment1(p):
+    'assignment1 :'
     global error
     # OBJ = . EXPRESSION ;
     #buscar que exista en tabla de variables local y asi
@@ -894,8 +894,8 @@ def p_assignement1(p):
     #program.current_id = ""
     
 
-def p_assignement2(p):
-    'assignement2 :'
+def p_assignment2(p):
+    'assignment2 :'
     global error
     var = program.current_function.varTable[program.pIDs[-1][0]]
     program.pIDs.pop()
@@ -1335,13 +1335,7 @@ def p_var_cte1(p):
                 program.pType.append(t)
             elif not program.pIDs[-1][1] and not program.pIDs[-1][2]:
                 #checar que no sea array de verdad
-                #todo: checar global
                 if program.current_scope == "function":
-                    #print(program.current_class_name)
-                    #print("vars")
-                    #for var in program.current_class.varTable.directory:
-                    #    print(program.current_class.varTable[var].address)
-                    #print("endVars")
                     if program.pIDs[-1][0] in program.current_function.varTable:
                         tp = program.current_function.varTable[program.pIDs[-1][0]].s_type
                         address = program.current_function.varTable[program.pIDs[-1][0]].address
@@ -1351,7 +1345,7 @@ def p_var_cte1(p):
                         program.pType.append(t)
                     elif program.current_class_name != "":
 
-                        
+
                         if program.pIDs[-1][0] in program.current_class.varTable:
                             tp = program.current_class.varTable[program.pIDs[-1][0]].s_type
                             address = program.current_class.varTable[program.pIDs[-1][0]].address
@@ -1359,9 +1353,23 @@ def p_var_cte1(p):
                             t = SparkyType()
                             t = program.current_class.varTable[program.pIDs[-1][0]].s_type
                             program.pType.append(t)
+                        elif program.pIDs[-1][0] in program.varTable:
+                            tp = program.varTable[program.pIDs[-1][0]].s_type
+                            address = program.varTable[program.pIDs[-1][0]].address
+                            program.VP.append(address)
+                            t = SparkyType()
+                            t = program.varTable[program.pIDs[-1][0]].s_type
+                            program.pType.append(t)
                         else:
                             print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
                             error = True
+                    elif program.pIDs[-1][0] in program.varTable:
+                        tp = program.varTable[program.pIDs[-1][0]].s_type
+                        address = program.varTable[program.pIDs[-1][0]].address
+                        program.VP.append(address)
+                        t = SparkyType()
+                        t = program.varTable[program.pIDs[-1][0]].s_type
+                        program.pType.append(t)
                     else:
                         print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
                         error = True
