@@ -1,13 +1,7 @@
-function factorial( n : Int) -> Int{
-	if n == 1{
-		return 1;
-	}
-	return n * factorial(n-1);
-}
-
-
 main(){
 	var x : Int;
+	var y : Int;
 	x = 6;
-	print(factorial(x));
+	y = 4;
+	print(x / y);
 }

@@ -166,8 +166,12 @@ class VirtualMachine:
 		self.value_to_memory(quad[3], temp)
 
 	def division(self, quad):
-		temp = self.value_from_memory(quad[1]) / self.value_from_memory(quad[2])
-		self.value_to_memory(quad[3], temp)
+		if quad[3] >= 45000 and quad[3] < 50000:
+			temp = self.value_from_memory(quad[1]) // self.value_from_memory(quad[2])
+			self.value_to_memory(quad[3], temp)
+		else:
+			temp = self.value_from_memory(quad[1]) / self.value_from_memory(quad[2])
+			self.value_to_memory(quad[3], temp)
 
 	def plus(self, quad):
 		if not quad[2].__class__.__name__ in ('tuple'):

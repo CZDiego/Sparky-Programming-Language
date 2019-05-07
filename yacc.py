@@ -1468,7 +1468,7 @@ def p_array3(p):
         program.VP.append(("pointer", result))
         
         t = SparkyType()
-        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
+        t = program.current_function.varTable[program.pIDs[-1][0]].s_type
         #t.row = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         #t.col = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
         program.pType.append(t)
@@ -1499,7 +1499,7 @@ def p_array3(p):
 
         program.VP.append(("pointer", result3))
         t = SparkyType()
-        t.type = program.current_function.varTable[program.pIDs[-1][0]].s_type.type
+        t = program.current_function.varTable[program.pIDs[-1][0]].s_type
         program.pType.append(t)
     program.pOper.pop()
 
