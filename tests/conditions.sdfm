@@ -4,8 +4,8 @@ main(){
 	var b : Int;
 	var c : Int;
 
-	a = 10;
-	b = 6;
+	a = 4;
+	b = 4;
 	c = 18;
 
 	if a < b{
