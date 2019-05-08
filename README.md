@@ -6,6 +6,13 @@ Sparky is an object oriented programming language developed for the class of com
 
 ## Structure of a program
 
+```
+main () {
+  print("Hello World!");
+}
+```
+
+
 
 Desarrollar un lenguaje orientado a objetos con elementos básicos que se esperan para poder desarrollar código orientado a objetos como son los siguientes, que seran lo minimo que tenga el lenguaje:
 
@@ -15,9 +22,3 @@ Desarrollar un lenguaje orientado a objetos con elementos básicos que se espera
 - [ ] Herencia simple
 - [ ] Funciones
 - [ ] SpFunc Arreglos
-
-```
-function test() {
-  console.log("notice the blank line before this function?");
-}
-```
