@@ -32,7 +32,7 @@ function hello(){
 }
 ```
 
-Return Atomic type function:
+Return Atomic type function, in this example we show how to use recursion
 
 ```
 function factorial( n : Int) -> Int{
@@ -43,13 +43,80 @@ function factorial( n : Int) -> Int{
 }
 ```
 
+A class is declared like this:
+```
+class product{
+	var quantity : Int;
+	var price : Float;
+	var available : Bool;
+	
+	init();
+	
+	function getPrice() -> Float{
+		return price;
+	}
+}
+  
+```
+The init(); is mandatory, and it gives the object space in memory, also you can use variables and functions inside the class!
+An object can call its own methods by:
+```
+main(){
+	var x : Person;
+	
+	x.getPrice();
+}
+```
 
+We can also send objects as parameters in a function
 
-Desarrollar un lenguaje orientado a objetos con elementos básicos que se esperan para poder desarrollar código orientado a objetos como son los siguientes, que seran lo minimo que tenga el lenguaje:
+```
+function foo(p : Person){
+	print(p.age);
+}
 
-- [ ] Arreglos
-- [ ] Matrices
-- [ ] Clases
-- [ ] Herencia simple
-- [ ] Funciones
-- [ ] SpFunc Arreglos
+main(){
+	var x : Person;
+	
+	x.age = 23;
+	
+	foo(x);
+}
+```
+
+If we send arrays as parameters, they are sent as reference, that means that if you modify them inside a function, their value will be changed inside the main program as well. All the other values are sent by value, so we make a copy and if we modify it inside a function it wont be changed on the main program.
+
+A class can inherit from another one by:
+
+```
+class A {
+	var a : Int
+	init();
+}
+
+class B : A{
+	var b : Float;
+	init();
+}
+
+main(){
+	var c : B;
+	
+	c.a = 10;
+	c.b = 29.1;
+}
+```
+
+#Have Fun!
+Sparky contains:
+
+```
+variables
+constants
+arrays
+matrices
+objects
+infinite simple inheritance
+functions
+parameters
+```
