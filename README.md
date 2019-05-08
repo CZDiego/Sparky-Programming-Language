@@ -16,8 +16,8 @@ Desarrollar un lenguaje orientado a objetos con elementos básicos que se espera
 - [ ] Funciones
 - [ ] SpFunc Arreglos
 
-'''
+```
 function test() {
   console.log("notice the blank line before this function?");
 }
-'''
+```
