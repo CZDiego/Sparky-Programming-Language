@@ -1,0 +1,7 @@
+main(){
+	var x : Int;
+	var y : Int;
+	x = 6;
+	y = 4;
+	print(x / y);
+}

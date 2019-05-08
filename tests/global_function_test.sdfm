@@ -1,0 +1,16 @@
+function factorial(foo : Float, number : Int ) -> Int{
+    var a : Int;
+    var b : Int;
+    a = 1;
+    b = 19;
+    print("hello");
+    return b;
+}
+
+main(){
+    var a : Int;
+    var b : Float;
+    a = 1;
+    b = 5;
+    print(factorial(1.1,a + a));
+}

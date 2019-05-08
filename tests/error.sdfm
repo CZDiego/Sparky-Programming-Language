@@ -1,0 +1,10 @@
+class A{
+	var age : Int;
+	init();
+}
+
+main(){
+	var a : A;
+	input(a.age);
+	input(a.age);
+}

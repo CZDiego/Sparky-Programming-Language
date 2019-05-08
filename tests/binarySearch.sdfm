@@ -1,0 +1,45 @@
+function binarySearch(arr : [5]Int, lower : Int, upper : Int, x : Int) -> Int{
+    var mid : Int;
+    if upper >= lower{
+        mid = lower + (upper - lower) / 2;
+
+        if arr[mid] == x{
+            return mid;
+        }
+
+        if arr[mid] > x{
+            return binarySearch(arr, lower, mid -1, x);
+        }
+
+        return binarySearch(arr, mid + 1, upper, x);
+
+    }
+
+    return -1;
+
+}
+  
+main() { 
+
+    var arr : [5]Int;
+    var n : Int;
+    var x : Int;
+    var result : Int;
+
+    arr[0] = 2;
+    arr[1] = 3;
+    arr[2] = 4;
+    arr[3] = 11;
+    arr[4] = 40;
+
+    n = 5;
+    x = 10;
+    result = binarySearch(arr, 0, n-1, x);
+
+    if result == -1 {
+        print("element is not present in array");
+    }else{
+        print("element is present, at index: ");
+        print(result);
+    }
+} 

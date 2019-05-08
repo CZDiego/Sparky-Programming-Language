@@ -1,0 +1,14 @@
+function factorial( n : Int) -> Int{
+	if n == 1{
+		return 1;
+	}
+	return n * factorial(n-1);
+}
+
+
+main(){
+	var x : Int;
+	print("Numero para calcular el factorial:");
+	input(x);
+	print(factorial(x));
+}

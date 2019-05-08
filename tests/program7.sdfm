@@ -1,0 +1,29 @@
+function foo(n : [10][10]Int, x : Int){
+	print(x);
+	if x == 1{
+		n[5][7] = 8293;
+	}else{
+		foo(n, x-1);
+	}
+}
+
+function foo2(){
+	var h : [10][10]Int;
+	h[0][0] = 20;
+
+	foo(h, 19);
+
+	print(h[5][7]);
+	
+}
+
+main(){
+	var x : [10][10]Int;
+	var a : Int;
+	x[0][0] = 20;
+
+	foo2();
+
+	//print(x[5][7]);
+
+}

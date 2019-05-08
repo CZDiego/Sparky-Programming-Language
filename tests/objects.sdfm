@@ -1,0 +1,42 @@
+let c : Int = 10;
+let f : Float = 10.8;
+let b : Bool = true;
+
+class Person{
+	var age : Int;
+	var price : Int;
+
+	init(){
+
+	}
+
+	function plusOne() -> Int{
+		age = age + 1;
+		return age;
+	}
+
+	function hola(l : Int){
+		age = age + l;
+		price = price + 2;
+	}
+}
+
+function factorial( n : Int) -> Int{
+	if n == 1{
+		return 1;
+	}
+	return n * factorial(n-1);
+}
+
+
+
+main(){
+	
+	var diego : Person;
+	var i : Int;
+	print("diego");
+
+	diego.age = 7;
+	diego.price = 999999;
+	print(factorial(diego.age));
+}

@@ -1,0 +1,51 @@
+class Person{
+
+	var age : Int;
+	var name : Float;
+
+	init(){
+
+	}
+
+	function factorial(foo : Float, number : Int ){
+    var a : Int;
+    print("hello");
+    }
+
+}
+
+class Student : Person{
+
+    var grade : Float;
+    var group : Int;
+
+	init(){
+
+	}
+
+
+	function HOHOHO(foo : Float, number : Int ){
+
+    }
+
+}
+
+class x : Student{
+
+	init(){
+
+	}
+
+
+	function y(foo : Float, number : Int ){
+
+    }
+
+}
+
+
+main(){
+
+   var p : Person;
+
+}

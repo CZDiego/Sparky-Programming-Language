@@ -23,24 +23,15 @@ reservedWords = {
     'Int'       : 'INT',
     'Float'     : 'FLOAT',
     'Bool'      : 'BOOL',
-    #'find'      : 'FIND',
-    #'append'    : 'APPEND',
-    #'size'      : 'SIZE',
-    #'empty'     : 'EMPTY',
-    #'sort'      : 'SORT',
-    #'pow'       : 'POW',
-    #'ceil'      : 'CEIL',
-    #'floor'     : 'FLOOR',
-    'private'   : 'PRIVATE',
 }
 
 # List of token names.   This is always required
 tokens = [
     'ID',
-    'CTE_F', # constante Float
-    'CTE_I', # constante Int
-    'CTE_B', # constante Bool
-    'CTE_S', # constante String
+    'CTE_F',   # constante Float
+    'CTE_I',   # constante Int
+    'CTE_B',   # constante Bool
+    'CTE_S',   # constante String
     'COL',     # :
     'DOT',     # .
     'COMMA',   # ,
@@ -74,8 +65,7 @@ tokens = tokens + list(reservedWords.values())
 
 # A string containing ignored characters (spaces and tabs) and comments
 t_ignore  = ' \t' # spaces and tabs
-t_ignore_SIMPLE_COMMENT = r'\/\/.*'
-t_ignore_MULTI_COMMENT = r'\/\*.*.\*\/'
+t_ignore_comment  = '\/\/.*' # 
 
 # Regular expression rules for simple tokens
 t_COMMA         = ','
@@ -120,7 +110,9 @@ def t_CTE_I(t):
     return t
 
 def t_CTE_S(t):
-    r'\"[a-zA-Z_0-9]*\"'
+    r'\"[ !#-}]*\"'
+    t.value = t.value[1:]
+    t.value = t.value[:-1]
     return t
 
 def t_CTE_B(t):
@@ -130,9 +122,6 @@ def t_CTE_B(t):
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reservedWords.get(t.value,'ID')    # Check for reserved words
-    #if t.value in reservedWords:
-    #    t.type = t.value
-    #t.value = (t.value, symbol_lookup(t.value)) # Look up symbol table information and return a tuple
     return t
 
 # Error handling rule
@@ -147,22 +136,3 @@ def t_newline(t):
 
 # Build the lexer
 lexer = lex.lex()
-
-"""
-data = '''
-true
-falase
-false
-truefalse
-'''
- 
-# Give the lexer some input
-lexer.input(data)
-
-# Tokenize
-while True:
-    tok = lexer.token()
-    if not tok: 
-        break      # No more input
-    print(tok)
-"""

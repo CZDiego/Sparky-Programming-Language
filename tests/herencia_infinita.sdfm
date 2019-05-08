@@ -1,0 +1,50 @@
+class A{
+	var age : Int;
+
+	init();
+
+	function foo(){
+		print("foo");
+		age = 18;
+	}
+
+
+}
+
+class B : A{
+	var student_n : Int;
+	var graduated : Bool;
+
+	init();
+
+}
+
+class C : B{
+	var course : Int;
+	var grade : Float;
+
+	init();
+
+}
+
+main(){
+	var diego : C;
+	var d : Int;
+	
+	diego.age = 23;
+	diego.student_n = 817441;
+	diego.graduated = false;
+	diego.course = 5;
+	diego.grade = 10.0;
+
+	print(diego.age);
+	print(diego.student_n);
+	print(diego.graduated);
+	print(diego.course);
+	print(diego.grade);
+
+	diego.foo();
+	print(diego.age);
+
+
+}

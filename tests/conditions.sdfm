@@ -1,0 +1,22 @@
+main(){
+
+	var a : Int;
+	var b : Int;
+	var c : Int;
+
+	a = 4;
+	b = 4;
+	c = 18;
+
+	if a < b{
+		print("first");
+
+	}elseif a > b{
+		print("second");
+
+	}else{
+		print("last");
+	}
+
+	print("end");
+}
