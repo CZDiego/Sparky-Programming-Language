@@ -277,24 +277,24 @@ class VirtualMachine:
 				elif user_input.lower() == "false":
 					self.value_to_memory_below(quad[3][1], False, quad[3][3])
 				else:
-					print(error_message + "Invalid value for input Bool")
+					print(error_message + "Invalid value for input Bool value.")
 					sys.exit(0)
 			elif quad[1] == "Float":
 				try:
 					val = float(user_input)
 					self.value_to_memory_below(quad[3][1], val, quad[3][3])
 				except ValueError:
-					print(error_message + "Invalid value for input Float")
+					print(error_message + "Invalid value for input Float value.")
 					sys.exit(0)
 			elif quad[1] == "Int":
 				try:
 					val = int(user_input)
 					self.value_to_memory_below(quad[3][1], val, quad[3][3])
 				except ValueError:
-					print(error_message + "Invalid value for input Int")
+					print(error_message + "Invalid value for input Int value.")
 					sys.exit(0)
 			else:
-				print(error_message + "Cannot assign value to object")
+				print(error_message + "Cannot assign value to object.")
 				sys.exit(0)
 
 		else:
@@ -305,7 +305,7 @@ class VirtualMachine:
 				elif user_input.lower() == "false":
 					self.value_to_memory(quad[3], False)
 				else:
-					print(error_message + "Invalid value for input Bool")
+					print(error_message + "Invalid value for input Bool value.")
 					sys.exit(0)
 
 
@@ -314,7 +314,7 @@ class VirtualMachine:
 					val = float(user_input)
 					self.value_to_memory(quad[3], val)
 				except ValueError:
-					print(error_message + "Invalid value for input Float")
+					print(error_message + "Invalid value for input Float value.")
 					sys.exit(0)
 
 			elif quad[1] == "Int":
@@ -322,10 +322,10 @@ class VirtualMachine:
 					val = int(user_input)
 					self.value_to_memory(quad[3], val)
 				except ValueError:
-					print(error_message + "Invalid value for input Int")
+					print(error_message + "Invalid value for input Int value.")
 					sys.exit(0)
 			else:
-				print(error_message + "Cannot assign value to object")
+				print(error_message + "Cannot assign value to object.")
 				sys.exit(0)
 
 

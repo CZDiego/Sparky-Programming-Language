@@ -1,9 +1,7 @@
 class Person{
 	var age : Int;
 
-	init(){
-
-	}
+	init();
 
 }
 
@@ -11,9 +9,7 @@ class Student : Person{
 	var student_n : Int;
 	var graduated : Bool;
 
-	init(){
-
-	}
+	init();
 
 }
 

@@ -170,8 +170,6 @@ def p_var_c1(p):
             print(error_message + "Variable already declared in line " + str(p.lexer.lineno) + ".")
             error = True
             sys.exit(0)
-
-             
              
         else:
             program.current_var_name = p[-1]
@@ -181,8 +179,7 @@ def p_var_c1(p):
             print(error_message + "Variable already declared in line " + str(p.lexer.lineno) + ".")
             error = True
             sys.exit(0)
-             
-             
+
         else:
             program.current_var_name = p[-1]
 
@@ -438,7 +435,7 @@ def p_let3(p):
     #CHECK MAYBE FAILS ON GLOBAL MEMORY
     result = program.semanticCube.checkResult("=", program.current_var.s_type.type, program.current_type.type)
     if result == "Error":
-        print(error_message + " Type missmatch at line " + str(p.lexer.lineno) + ".")
+        print(error_message + " Type mismatch at line " + str(p.lexer.lineno) + ".")
         error = True
         sys.exit(0)
          
@@ -729,11 +726,6 @@ def p_class7(p):
     program.new_function()
     program.current_function_name = program.current_class_name
 
-def p_class8(p):
-    'class8 :'
-    program.current_function.add_params(program.current_params)
-    program.new_params()
-
 def p_class9(p):
     'class9 :'
     global error
@@ -755,7 +747,7 @@ def p_class9(p):
 #-----------------------------------------------------------------------
 
 def p_init(p):
-    'init   : INIT class7 LP RP class8 SEMICOL class9'
+    'init   : INIT class7 LP RP SEMICOL class9'
 
 def p_statement(p):
     '''
@@ -780,7 +772,7 @@ def p_return1(p):
         program.current_quad = ("RETURN", result, None, program.varTable[program.current_function.address].address)
         program.add_quad()
     else:
-        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type mismatch in line " + str(p.lexer.lineno) + ".")
         error = True
         sys.exit(0)
          
@@ -884,7 +876,6 @@ def p_assignment1(p):
 def p_assignment2(p):
     'assignment2 :'
     global error
-    #var = program.current_function.varTable[program.pIDs[-1][0]]
     if program.pIDs[-1][0] in program.current_function.varTable:
         var = program.current_function.varTable[program.pIDs[-1][0]]
     elif program.current_class_name != "":
@@ -893,13 +884,13 @@ def p_assignment2(p):
         elif program.pIDs[-1][0] in program.varTable:
             var = program.varTable[program.pIDs[-1][0]]
         else:
-            print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+            print(error_message + "Variable not declared in line " + str(p.lexer.lineno) + ".")
             error = True
             sys.exit(0)
     elif program.pIDs[-1][0] in program.varTable:
         var = program.varTable[program.pIDs[-1][0]]
     else:
-        print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Variable not declared in line " + str(p.lexer.lineno) + ".")
         error = True
         sys.exit(0)
 
@@ -908,7 +899,6 @@ def p_assignment2(p):
         error = True
         sys.exit(0)
 
-    #se sale con el sys.exit(0)
     program.pIDs.pop()
     right_type = program.pType.pop()
     right_operand = program.VP.pop()
@@ -917,7 +907,7 @@ def p_assignment2(p):
     operator = program.pOper.pop()
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
-        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type mismatch in line " + str(p.lexer.lineno) + ".")
         error = True
         sys.exit(0)
         
@@ -1005,7 +995,7 @@ def p_loop2(p):
     global error
     exp_type = program.pType.pop()
     if exp_type.type != "Bool":
-        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type mismatch in line " + str(p.lexer.lineno) + ".")
         error = True
         sys.exit(0)
         
@@ -1061,8 +1051,6 @@ def p_call_param1(p):
         error = True
         sys.exit(0)
          
-         
-
     popped_type = program.pType.pop()
     fun_param_type = program.called_function.param_key[program.current_param_num][0]
     
@@ -1139,7 +1127,7 @@ def p_condition1(p):
     program.pJumps.append("$")
     exp_type = program.pType.pop()
     if exp_type.type != "Bool":
-        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type mismatch in line " + str(p.lexer.lineno) + ".")
         error = True
         sys.exit(0)
          
@@ -1158,21 +1146,6 @@ def p_condition2(p):
     program.current_quad = ("GOTO", None, None, None)
     program.add_quad()
 
-def p_condition5(p):
-    'condition5 : '
-    exp_type = program.pType.pop()
-    if exp_type.type != "Bool":
-        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
-        error = True
-        sys.exit(0)
-         
-         
-    else:
-        result = program.VP.pop()
-        program.add_pJump()
-        program.current_quad = ("GOTOF", result, None, None)
-        program.add_quad()
-
 def p_condition3(p):
     'condition3 : '
     program.fill_quad(program.BASE + 1)
@@ -1185,6 +1158,21 @@ def p_condition4(p):
     while program.pJumps[-1] != "$":
         program.fill_quad(program.BASE)
     program.pJumps.pop()
+
+def p_condition5(p):
+    'condition5 : '
+    exp_type = program.pType.pop()
+    if exp_type.type != "Bool":
+        print(error_message + "Type mismatch in line " + str(p.lexer.lineno) + ".")
+        error = True
+        sys.exit(0)
+         
+         
+    else:
+        result = program.VP.pop()
+        program.add_pJump()
+        program.current_quad = ("GOTOF", result, None, None)
+        program.add_quad()
 
 #  -----------------------------------------------------------------------
 
@@ -1379,7 +1367,7 @@ def p_var_cte1(p):
                             t = program.varTable[program.pIDs[-1][0]].s_type
                             program.pType.append(t)
                         else:
-                            print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+                            print(error_message + "Variable not declared in line " + str(p.lexer.lineno) + ".")
                             error = True
                     elif program.pIDs[-1][0] in program.varTable:
                         tp = program.varTable[program.pIDs[-1][0]].s_type
@@ -1389,7 +1377,7 @@ def p_var_cte1(p):
                         t = program.varTable[program.pIDs[-1][0]].s_type
                         program.pType.append(t)
                     else:
-                        print(error_message + "Unkown variable "+ program.pIDs[-1][0] + " in line " + str(p.lexer.lineno) + ".")
+                        print(error_message + "Variable not declared in line " + str(p.lexer.lineno) + ".")
                         error = True
                         sys.exit(0)
                 else:
@@ -1397,7 +1385,7 @@ def p_var_cte1(p):
                  #not array and not matrix
                     if program.pIDs[-1][0] in program.current_function.varTable.directory:
                         if program.current_function.varTable[program.pIDs[-1][0]].s_type.is_object():
-                            print(error_message + "Cannot print object" + " in line " + str(p.lexer.lineno) + ".")
+                            print(error_message + "Cannot print object in line " + str(p.lexer.lineno) + ".")
                             error = True
                             sys.exit(0)
                              
@@ -1705,7 +1693,7 @@ def p_call_f3(p):
     program.current_quad = ("GOSUB", era_return[1], None, None)
     program.add_quad()
     if era_return[0].type == "void":
-        print(error_message + "Type missmatch in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type mismatch in line " + str(p.lexer.lineno) + ".")
         error = True
         sys.exit(0)
          
@@ -1767,7 +1755,7 @@ def solveOperation(p):
     operator = program.pOper.pop()
     result_type = program.semanticCube.checkResult(operator, left_type.type, right_type.type)
     if result_type == "Error":
-        print(error_message + "Type missmatch in operation in line " + str(p.lexer.lineno) + ".")
+        print(error_message + "Type mismatch in operation in line " + str(p.lexer.lineno) + ".")
         error = True
         sys.exit(0)
          
