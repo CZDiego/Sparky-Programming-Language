@@ -7,9 +7,22 @@ Sparky is an object oriented programming language developed for the class of com
 ## Structure of a program
 
 ```
+//Hello world program in Sparky
+
 main () {
   print("Hello World!");
 }
+```
+
+The main block, is the part that is going to be executed first. To declare a variable the syntaxis is:
+
+
+```
+var name : Int;
+var price : Float;
+var is_object : Bool;
+var arr : [10]Int;
+var diego : Person;
 ```
 
 
